@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="us-ascii" ?>
+
+<!-- 
+DesireTypes: 
+  KillPlayer,
+  Treasure,
+  Flee,
+  Eat
+-->
+<monster_types>
+
+  <monster name="rat" ascii_char="114" friendly="true" sight_dist="6">
+
+    <color r="118" g="81" b="35"/>
+
+    <weapon name="rat claw" type="Dagger" material="Bone" effect=""/>
+
+    <base_desires>
+      <desire_type name="KillPlayer" value="0"/>
+      <desire_type name="Treasure" value="1"/>
+      <desire_type name="Flee" value="4"/>
+      <desire_type name="Eat" value="2"/>
+    </base_desires>
+    
+    <class>
+
+      <major_skills>
+        <skill>ShortBlade</skill>
+        <skill>Unarmored</skill>
+        <skill>Sneak</skill>
+      </major_skills>
+
+      <minor_skills>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Intelligence</attribute>
+      </major_attributes>
+
+    </class>
+
+  </monster>
+
+  <monster name="cave_spider" ascii_char="115" friendly="false" sight_dist="4">
+    
+    <color r="148" g="108" b="15"/>
+    
+    <weapon name="cave-spider mandible" type="Dagger" material="Bone" effect="weak_poison"/>
+    
+    <base_desires>
+      <desire_type name="KillPlayer" value="2"/>
+      <desire_type name="Treasure" value="0"/>
+      <desire_type name="Flee" value="0"/>
+      <desire_type name="Eat" value="4"/>
+    </base_desires>
+    
+    <class>
+
+      <major_skills>
+        <skill>ShortBlade</skill>
+        <skill>Unarmored</skill>
+        <skill>Sneak</skill>
+      </major_skills>
+
+      <minor_skills>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Willpower</attribute>
+      </major_attributes>
+
+    </class>
+
+  </monster>
+
+  <monster name="bat" ascii_char="98" friendly="false" sight_dist="10">
+
+    <color r="115" g="126" b="158"/>
+
+    <weapon name="bat tooth" type="Dagger" material="Bone" effect="weak_lifesteal"/>
+    
+    <base_desires>
+      <desire_type name="KillPlayer" value="1"/>
+      <desire_type name="Treasure" value="2"/>
+      <desire_type name="Flee" value="0"/>
+      <desire_type name="Eat" value="0"/>
+    </base_desires>
+    
+    <class>
+
+      <major_skills>
+        <skill>ShortBlade</skill>
+        <skill>Unarmored</skill>
+      </major_skills>
+
+      <minor_skills>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Intelligence</attribute>
+        <attribute>Luck</attribute>
+      </major_attributes>
+      
+    </class>
+  </monster>
+  
+  <monster name="snake" ascii_char="73" friendly="false" sight_dist="5">
+
+    <color r="30" g="115" b="82"/>
+
+    <weapon name="snake fang" type="Dagger" material="Bone" effect="weak_poison"/>
+
+    <base_desires>
+      <desire_type name="KillPlayer" value="3"/>
+      <desire_type name="Treasure" value="0"/>
+      <desire_type name="Flee" value="0"/>
+      <desire_type name="Eat" value="2"/>
+    </base_desires>
+      
+    <class>
+
+      <major_skills>
+        <skill>ShortBlade</skill>
+        <skill>Unarmored</skill>
+        <skill>Illusion</skill>
+      </major_skills>
+
+      <minor_skills>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Intelligence</attribute>
+      </major_attributes>
+
+    </class>
+  </monster>
+
+  <monster name="grootslang" ascii_char="126" friendly="false" sight_dist="5">
+
+    <color r="89" g="152" b="47"/>
+
+    <weapon name="grootslang tooth" type="Dagger" material="Bone" effect=""/>
+
+    <base_desires>
+      <desire_type name="KillPlayer" value="0"/>
+      <desire_type name="Treasure" value="0"/>
+      <desire_type name="Flee" value="1"/>
+      <desire_type name="Eat" value="1"/>
+    </base_desires>
+    
+    <class>
+
+      <major_skills>
+        <skill>ShortBlade</skill>
+        <skill>Unarmored</skill>
+        <skill>Sneak</skill>
+      </major_skills>
+
+      <minor_skills>
+        <skill>Alteration</skill>
+        <skill>Restoration</skill>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Intelligence</attribute>
+        <attribute>Willpower</attribute>
+      </major_attributes>
+
+    </class>
+  </monster>
+
+  <monster name="scorpion" ascii_char="116" friendly="false" sight_dist="7">
+
+    <color r="116" g="105" b="109"/>
+
+    <weapon name="scorpion tail" type="Sword" material="Bone" effect=""/>
+
+    <base_desires>
+      <desire_type name="KillPlayer" value="4"/>
+      <desire_type name="Treasure" value="1"/>
+      <desire_type name="Flee" value="0"/>
+      <desire_type name="Eat" value="2"/>
+    </base_desires>
+    
+    <class>
+
+      <major_skills>
+        <skill>LongBlade</skill>
+        <skill>LightArmor</skill>
+      </major_skills>
+
+      <minor_skills>
+        <skill>Destruction</skill>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Strength</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Willpower</attribute>
+      </major_attributes>
+
+    </class>
+  </monster>
+
+  <monster name="soldier-ant" ascii_char="97" friendly="false" sight_dist="6">
+
+    <color r="157" g="21" b="44"/>
+
+    <weapon name="soldier-ant mandible" type="Dagger" material="Bone" effect=""/>
+
+    <base_desires>
+      <desire_type name="KillPlayer" value="5"/>
+      <desire_type name="Treasure" value="3"/>
+      <desire_type name="Flee" value="0"/>
+      <desire_type name="Eat" value="1"/>
+    </base_desires>
+    
+    <class>
+
+      <major_skills>
+        <skill>ShortBlade</skill>
+        <skill>LightArmor</skill>
+      </major_skills>
+
+      <minor_skills>
+        <skill>Crafting</skill>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Personality</attribute>
+      </major_attributes>
+
+    </class>
+  </monster>
+
+  <monster name="cave-lizard" ascii_char="108" friendly="true" sight_dist="5">
+
+    <color r="34" g="139" b="34"/>
+
+    <weapon name="cave-lizard claw" type="Dagger" material="Bone" effect=""/>
+
+    <base_desires>
+      <desire_type name="KillPlayer" value="0"/>
+      <desire_type name="Treasure" value="0"/>
+      <desire_type name="Flee" value="3"/>
+      <desire_type name="Eat" value="1"/>
+    </base_desires>
+    
+    <class>
+
+      <major_skills>
+        <skill>ShortBlade</skill>
+        <skill>LightArmor</skill>
+      </major_skills>
+
+      <minor_skills>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Luck</attribute>
+      </major_attributes>
+
+    </class>
+  </monster>
+
+  <monster name="kobold" ascii_char="107" friendly="false" sight_dist="8">
+
+    <color r="65" g="146" b="75"/>
+    
+    <base_desires>
+      <desire_type name="KillPlayer" value="3"/>
+      <desire_type name="Treasure" value="1"/>
+      <desire_type name="Flee" value="0"/>
+      <desire_type name="Eat" value="1"/>
+    </base_desires>
+    
+    <class>
+      
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Luck</attribute>
+      </major_attributes>
+      
+      <major_skills>
+        <skill>ShortBlade</skill>
+        <skill>LightArmor</skill>
+        <skill>Sneak</skill>
+      </major_skills>
+      
+      <minor_skills>
+        <skill>Lockpick</skill>
+      </minor_skills>
+      
+    </class>
+
+  </monster>
+  
+</monster_types>

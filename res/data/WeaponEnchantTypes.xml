@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!--
+Enchantment attributes:
+  name: this is the name of the enchantment
+  damage_type: this is the type of damage that this enchantment deals ( can deal None)
+  appliedEffect: this is the name of the special effect that has a chance to be applied on hit. It checks EffectTypes.xml
+  
+Enchantment sub-elements:
+  victim_damage: the range of values from which to pick the damage value that this enchantment does
+  part_names: the part names from which to choose. They are used like this: "<part_name> <weapon_name>", e.g. smoldering copper sword or vampiric silver scepter
+  
+Damage types:
+  Blunt
+  Shear
+  Magic
+  Burn
+  Freeze
+  Shock
+  Poison
+  None
+-->
+
+<weapon_enchantments>
+
+  <enchantment name="weak_burn_damage" damage_type="Burn" applied_effect="weak_burn">
+    <victim_damage min="2" max="5"/>
+    <part_names>
+      <name string="smoldering"/>
+      <name string="burning"/>
+      <name string="glowing"/>
+    </part_names>
+  </enchantment>
+
+  <enchantment name="weak_poison_damage" damage_type="Poison" applied_effect="weak_poison">
+    <victim_damage min="2" max="5"/>
+    <part_names>
+      <name string="venomous"/>
+      <name string="poisonous"/>
+      <name string="hazardous"/>
+    </part_names>
+  </enchantment>
+
+  <enchantment name="weak_magic_damage" damage_type="Magic" applied_effect="weak_magicka_drain">
+    <victim_damage min="2" max="5"/>
+    <part_names>
+      <name string="magical"/>
+      <name string="anti-mage"/>
+      <name string="warlock's"/>
+    </part_names>
+  </enchantment>
+
+  <enchantment name="weak_frost_damage" damage_type="Frost" applied_effect="weak_frostbite">
+    <victim_damage min="2" max="5"/>
+    <part_names>
+      <name string="frozen"/>
+      <name string="subzero"/>
+      <name string="frosty"/>
+    </part_names>
+  </enchantment>
+
+  <enchantment name="weak_shock_damage" damage_type="Shock" applied_effect="weak_shock">
+    <victim_damage min="2" max="5"/>
+    <part_names>
+      <name string="shocking"/>
+      <name string="electrified"/>
+    </part_names>
+  </enchantment>
+  
+  <!---
+
+  <enchantment name="lifesteal" damage_type="None" applied_effect="weak_lifesteal">
+    <effect min="0" max="0"/>
+    <part_names>
+      <name string="vampiric"/>
+      <name string="life draining"/>
+      <name string="vampire's"/>
+    </part_names>
+  </enchantment>
+  
+  -->
+  
+</weapon_enchantments>

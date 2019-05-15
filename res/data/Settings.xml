@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<settings>
+  <graphics>
+    <!--- 0 for console resizing, 1 for scaling, 2 for locked resolution -->
+    <resize_mode value ="0"/>
+    <!--- 0 for false, 1 for true -->
+    <fullscreen_on value ="0"/>
+    <!-- measures number of tiles -->
+    <screen_resolution value="80x40"/>
+  </graphics>
+  <gameplay>
+    <!--- 0 for false, 1 for true -->
+    <permadeath value="0"/>
+  </gameplay>
+  <volume/>
+</settings>

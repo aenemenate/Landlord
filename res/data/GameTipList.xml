@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="us-ascii" ?>
+
+<gametips>
+  
+  <tip category="Combat" text="Don't die! Death will wipe your save, destroying all the progress you've made."></tip>
+
+  <tip category="Combat" text="You can use any item as a weapon."></tip>
+
+  <tip category="Combat" text="Characters with a higher speed will move faster than those with a slower one."></tip>
+
+  <tip category="Levelling" text="All skills in the game are increased through use."></tip>
+
+  <tip category="Levelling" text="Levelling a skill will allow you to increase its governing attribute more upon gaining a level."></tip>
+  
+  <tip category="Controls" text="Try right clicking or shift-clicking items in your inventory and status panels!"></tip>
+  
+  <tip category="Crafting" text="Trees can be chopped down with an axe or a sword, and doing so will improve your weapon skill!"></tip>
+  
+</gametips>

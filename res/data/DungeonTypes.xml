@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="us-ascii" ?>
+
+<dungeon_types>
+
+  <dungeon>
+    <level_range min_lvl="1" max_lvl="5"/>
+    <names>
+      <name>Small Cave</name>
+      <name>Little Cove</name>
+      <name>Crawler's Cavern</name>
+    </names>
+    <floors number="5"/>
+    <algorithms>
+      <algorithm name="Cave_s" floor="0"/>
+    </algorithms>
+    <monster_types boss="vampire-bat" persistent="rat cave-spider bat" unique="snake grootslang scorpion soldier-ant cave-lizard" unique_count="3"/>
+  </dungeon>
+  
+  <dungeon>
+    <level_range min_lvl="6" max_lvl="12"/>
+    <names>
+      <name>Kobold Caverns</name>
+      <name>Creepy Cavern</name>
+      <name>Expansive Caves</name>
+      <name>Corrupted Cave</name>
+    </names>
+    <floors number="9"/>
+    <algorithms>
+      <algorithm name="Cave_l" floor="0"/>
+      <algorithm name="RoomPlacement_s" floor="(last_floor) - 3"/>
+    </algorithms>
+    <monster_types boss="spider-queen" persistent="kobold ratling cave-spider" unique="gremlin troglodyte dregar goblin" unique_count="3"/>
+  </dungeon>
+
+  <dungeon>
+    <level_range min_lvl="13" max_lvl="19"/>
+    <names>
+      <name>Slaver's Stable</name>
+      <name>Black Market Underground</name>
+      <name>Drug Den</name>
+      <name>Gang's Coven</name>
+    </names>
+    <floors number="14"/>
+    <algorithms>
+      <algorithm name="RoomPlacement_s" floor="0"/>
+    </algorithms>
+    <monster_types boss="slavemaster" persistent="mafioso" unique=""/>
+  </dungeon>
+
+  <dungeon>
+    <level_range min_lvl="20" max_lvl="26"/>
+    <names>
+      <name></name>
+    </names>
+    <floors number="19"/>
+    <algorithms>
+      <algorithm name="RoomPlacement_s" floor="0"/>
+    </algorithms>
+    <monster_types/>
+  </dungeon>
+
+  <dungeon>
+    <names>
+      <level_range min_lvl="27" max_lvl="33"/>
+      <name>Warlocks's Dungeon</name>
+      <name>Dungeon of Undeath</name>
+      <name>Desolate Depths</name>
+      <name>Torturer's Tilt</name>
+    </names>
+    <floors number="24"/>
+    <algorithms>
+      <algorithm name="RoomPlacement_l" floor="0"/>
+    </algorithms>
+    <monster_types boss ="warlock witch" persistent="skeleton zombie necromancer" unique="chimera aberration fiend demon poe rifter siren succubus" unique_count="4"/>
+  </dungeon>
+
+</dungeon_types>

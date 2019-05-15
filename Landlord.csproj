@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{17C7C038-30D9-48F6-9005-CBE3717A8D07}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Landlord</RootNamespace>
+    <AssemblyName>Landlord</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Landlord.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>res\graphics\landlord_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=1.8.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.8.5\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Polenter.SharpSerializer, Version=3.0.1.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpSerializer.3.0.1\lib\net452\Polenter.SharpSerializer.dll</HintPath>
+    </Reference>
+    <Reference Include="SadConsole, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SadConsole.6.5.0\lib\net\SadConsole.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Common, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.Common.4.3.0\lib\net451\System.Data.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Creature_Code\Effect.cs" />
+    <Compile Include="Creature_Code\RPG_Stuff\Level.cs" />
+    <Compile Include="Graphics_Code\Animation.cs" />
+    <Compile Include="Graphics_Code\Interface_Code\Panels\InventoryPanel.cs" />
+    <Compile Include="Graphics_Code\Interface_Code\Panels\StatusPanel.cs" />
+    <Compile Include="Input_Code\BuildingModeInput.cs" />
+    <Compile Include="Item_Code\Armor\Armor.cs" />
+    <Compile Include="Item_Code\Armor\ArmorEnchantment.cs" />
+    <Compile Include="Audio_Code\AudioPlaybackEngine.cs" />
+    <Compile Include="Input_Code\PlayerInput.cs" />
+    <Compile Include="Item_Code\Items\EmptyBottle.cs" />
+    <Compile Include="Item_Code\Materials\Resources\CoalOre.cs" />
+    <Compile Include="Item_Code\Materials\Resources\StoneWheel.cs" />
+    <Compile Include="Item_Code\Materials\Resources\WoodWheel.cs" />
+    <Compile Include="Item_Code\Materials\Resources\Stone.cs" />
+    <Compile Include="Item_Code\Materials\Resources\Log.cs" />
+    <Compile Include="Item_Code\Items\Potion.cs" />
+    <Compile Include="Item_Code\Materials\Resources\Plank.cs" />
+    <Compile Include="Item_Code\Tools\Building\Blueprints\WoodCartBlueprint.cs" />
+    <Compile Include="Item_Code\Tools\Building\Blueprints\WoodStoneMill.cs" />
+    <Compile Include="Item_Code\Tools\Building\Blueprints\WoodCraftingTableBlueprint.cs" />
+    <Compile Include="Item_Code\Tools\Crafting\CraftingRecipe.cs" />
+    <Compile Include="Item_Code\Tools\Crafting\Crafting_Recipes\ShapeWheelRecipe.cs" />
+    <Compile Include="Item_Code\Tools\Crafting\Crafting_Recipes\GlueWheelRecipe.cs" />
+    <Compile Include="Item_Code\Tools\Crafting\Crafting_Recipes\ProcessLogRecipe.cs" />
+    <Compile Include="Item_Code\Tools\Crafting\RecipePouch.cs" />
+    <Compile Include="Item_Code\Tools\Building\BlueprintPouch.cs" />
+    <Compile Include="Item_Code\Tools\Building\Blueprint.cs" />
+    <Compile Include="Item_Code\Tools\Building\Blueprints\WoodChestBlueprint.cs" />
+    <Compile Include="Item_Code\Tools\Building\Blueprints\WoodDoorBlueprint.cs" />
+    <Compile Include="Item_Code\Tools\Building\Blueprints\WoodFloorBlueprint.cs" />
+    <Compile Include="Item_Code\Tools\Building\Blueprints\WoodWallBlueprint.cs" />
+    <Compile Include="Item_Code\Tools\RecipeComponent.cs" />
+    <Compile Include="Item_Code\Weapons\Melee_Weapons\Axe.cs" />
+    <Compile Include="Map_Code\Dungeon.cs" />
+    <Compile Include="Map_Code\Proc_Gen\DungeonHandler.cs" />
+    <Compile Include="Map_Code\Proc_Gen\DungeonHelper.cs" />
+    <Compile Include="Audio_Code\MusicHandler.cs" />
+    <Compile Include="Program_Code\BuildingManager\BuildingPlaceholder.cs" />
+    <Compile Include="Map_Code\Map_Objects\Block.cs" />
+    <Compile Include="Creature_Code\RPG_Stuff\Body.cs" />
+    <Compile Include="Creature_Code\RPG_Stuff\Class.cs" />
+    <Compile Include="Item_Code\Weapons\Melee_Weapons\Mace.cs" />
+    <Compile Include="Item_Code\Weapons\Melee_Weapons\Dagger.cs" />
+    <Compile Include="Map_Code\Djikstra_Maps\DijkstraMaps.cs" />
+    <Compile Include="Item_Code\Weapons\Melee_Weapons\Shield.cs" />
+    <Compile Include="Item_Code\Weapons\Melee_Weapons\Sword.cs" />
+    <Compile Include="Item_Code\Weapons\MeleeWeapon.cs" />
+    <Compile Include="Graphics_Code\MsgConsole.cs" />
+    <Compile Include="Creature_Code\Npcs\Monster.cs" />
+    <Compile Include="Map_Code\Djikstra_Maps\PatrolMaps.cs" />
+    <Compile Include="Creature_Code\Player.cs" />
+    <Compile Include="Item_Code\Weapons\Melee_Weapons\Spear.cs" />
+    <Compile Include="Map_Code\Proc_Gen\MapGeneration.cs" />
+    <Compile Include="Program_Code\BuildingManager\BuildingManager.cs" />
+    <Compile Include="Program_Code\CraftingManager.cs" />
+    <Compile Include="Program_Code\DataReader.cs" />
+    <Compile Include="Program_Code\Game_States\Menus\CharacterSheet.cs" />
+    <Compile Include="Program_Code\Game_States\Menus\CraftMenu.cs" />
+    <Compile Include="Program_Code\Game_States\Screens\ChooseSkills.cs" />
+    <Compile Include="Program_Code\Game_States\Menus\DialogWindow.cs" />
+    <Compile Include="Program_Code\Game_States\Screens\Intro.cs" />
+    <Compile Include="Program_Code\Game_States\Screens\GeneratingMap.cs" />
+    <Compile Include="Program_Code\Game_States\Screens\CreateCharacter.cs" />
+    <Compile Include="Program_Code\Game_States\Save_Load\Saving.cs" />
+    <Compile Include="Program_Code\Game_States\Save_Load\Loading.cs" />
+    <Compile Include="Program_Code\Game_States\Screens\MainMenu.cs" />
+    <Compile Include="Program_Code\Game_States\Side_Bar_Stuff\ViewAttributes.cs" />
+    <Compile Include="Program_Code\Game_States\Side_Bar_Stuff\ViewSkills.cs" />
+    <Compile Include="Program_Code\Game_States\Side_Bar_Stuff\ViewEquipment.cs" />
+    <Compile Include="Program_Code\Game_States\Menus\ViewLoot.cs" />
+    <Compile Include="Program_Code\Game_States\Side_Bar_Stuff\ViewItem.cs" />
+    <Compile Include="Program_Code\Game_States\Menus\LevelUp.cs" />
+    <Compile Include="Program_Code\Game_States\Menus\ViewWorld.cs" />
+    <Compile Include="Program_Code\Game_States\Play.cs" />
+    <Compile Include="Scheduler_Code\Scheduler.cs" />
+    <Compile Include="Scheduler_Code\Time.cs" />
+    <Compile Include="Input_Code\UserInterfaceInput.cs" />
+    <Compile Include="Item_Code\Weapons\WeaponEnchantment.cs" />
+    <Compile Include="Program_Code\GameState.cs" />
+    <Compile Include="Item_Code\Identification.cs" />
+    <Compile Include="Item_Code\Materials\Convert.cs" />
+    <Compile Include="Creature_Code\Creature.cs" />
+    <Compile Include="Map_Code\DungeonFloor.cs" />
+    <Compile Include="Map_Code\Map_Objects\Element.cs" />
+    <Compile Include="Scheduler_Code\Engine.cs" />
+    <Compile Include="Graphics_Code\Interface_Code\GUI.cs" />
+    <Compile Include="Item_Code\Item.cs" />
+    <Compile Include="Item_Code\Materials\MaterialProperties.cs" />
+    <Compile Include="Graphics_Code\Menus.cs" />
+    <Compile Include="Creature_Code\Behavior\Pathfinder.cs" />
+    <Compile Include="Map_Code\Proc_Gen\RoomPlacementAlgorithm.cs" />
+    <Compile Include="Creature_Code\Behavior\RayCaster.cs" />
+    <Compile Include="Program_Code\Game_States\Save_Load\ReadWrite.cs" />
+    <Compile Include="Map_Code\Proc_Gen\SimplexNoise.cs" />
+    <Compile Include="Graphics_Code\Point.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Creature_Code\RPG_Stuff\Stats.cs" />
+    <Compile Include="Graphics_Code\Themes.cs" />
+    <Compile Include="Map_Code\Map_Objects\Tile.cs" />
+    <Compile Include="Graphics_Code\Window.cs" />
+    <Compile Include="Map_Code\World_Map\WorldMap.cs" />
+    <Compile Include="Map_Code\World_Map\WorldTile.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\graphics\fonts\Haowan_16x16.font">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="res\graphics\fonts\alloy12.font">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="App.config" />
+    <Compile Include="Map_Code\MapTile.cs" />
+    <None Include="MonoGame.Framework.dll.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\graphics\fonts\Alloy_12x12.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="!DOCUMENTATION\AbilityList.txt" />
+    <Content Include="!DOCUMENTATION\CraftingList.txt" />
+    <Content Include="!DOCUMENTATION\Creatures.txt" />
+    <Content Include="!DOCUMENTATION\FinishedFeatures.txt" />
+    <Content Include="!DOCUMENTATION\BuildingList.txt" />
+    <Content Include="!DOCUMENTATION\RpgMechanics.txt" />
+    <Content Include="!DOCUMENTATION\SpellList.txt" />
+    <Content Include="res\data\EffectTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\data\Settings.xml" />
+    <Content Include="res\data\WeaponEnchantTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\data\MonsterTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="res\data\DungeonTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="res\data\GameTipList.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\graphics\fonts\16x16_sm.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\graphics\landlord_icon.ico" />
+    <Content Include="res\music\Day1.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\music\Dungeon1.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\music\Main_Menu.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\music\Night1.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\music\Transition.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\sfx\closeMap.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\sfx\closeMenu.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\sfx\grabBlueprint.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\sfx\openMap.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\sfx\openMenu.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\sfx\suspenseChord.mp3" />
+    <Content Include="SDL2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="!DOCUMENTATION\FeatureList.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Map_Code\Map_Objects\Blocks\" />
+    <Folder Include="Map_Code\Map_Objects\Tiles\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(TargetDir)saves" mkdir "$(TargetDir)saves"
+if not exist "$(TargetDir)saves\data" mkdir "$(TargetDir)saves\data"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

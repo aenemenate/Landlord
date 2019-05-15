@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!--
+DamageTypes: Blunt, Shear, Magic, Burn, Frost, Shock, Poison, None
+
+<user/victim_damage>: the amount of damage the user/victim recieves from this effect
+<user/victim_damage_type>: the type of damage to deal to the user/victim
+<user/victim_healing>: the healing factor
+<turns>: how many turns will elapse before the effect fades
+
+the game randomly selects a static value from the ranges defined with the min and max attributes
+
+StatusEffects:
+  None: Does nothing. Why would you even read this, you dumb piece of shit?
+  Paralyzed: Stops the user from moving for a certain amount of seconds times the amount of turns (for example, if the effect is set to 3 and turns is set to 2, you will be paralyzed for 3 seconds twice, elapsing a total of 6 seconds)
+  Frozen: Makes all actions take 1.5x as long to perform
+  
+ 
+-->
+
+<effects>
+  
+  <effect name="weak_poison">
+    <victim_damage min="2" max="5"/>
+    <victim_damage_type>Poison</victim_damage_type>
+    <victim_magicka_drain min="0" max="0"/>
+    <victim_stamina_drain min="0" max="0"/>
+    
+    <victim_status_effect name="None"/>
+
+    <victim_healing min="0" max="0"/>
+    <victim_magicka_healing min="0" max="0"/>
+    <victim_stamina_healing min="0" max="0"/>
+    
+    <user_healing min="0" max="0"/>
+    <user_magicka_healing min="0" max="0"/>
+    <user_stamina_healing min="0" max="0"/>
+
+    <inflict_chance chance ="50"/>
+    <turns min="2" max="5"/>
+  </effect>
+
+  <effect name="weak_burn">
+    <victim_damage min="2" max="5"/>
+    <victim_damage_type>Burn</victim_damage_type>
+    <victim_magicka_drain min="0" max="0"/>
+    <victim_stamina_drain min="0" max="0"/>
+    
+    <victim_status_effect name="None"/>
+
+    <victim_healing min="0" max="0"/>
+    <victim_magicka_healing min="0" max="0"/>
+    <victim_stamina_healing min="0" max="0"/>
+    
+    <user_healing min="0" max="0"/>
+    <user_magicka_healing min="0" max="0"/>
+    <user_stamina_healing min="0" max="0"/>
+
+    <inflict_chance chance ="50"/>
+    <turns min="2" max="5"/>
+  </effect>
+
+  <effect name="weak_frostbite">
+    <victim_damage min="2" max="5"/>
+    <victim_damage_type>Frost</victim_damage_type>
+    <victim_magicka_drain min="0" max="0"/>
+    <victim_stamina_drain min="0" max="0"/>
+
+    <victim_status_effect name="None"/>
+
+    <victim_healing min="0" max="0"/>
+    <victim_magicka_healing min="0" max="0"/>
+    <victim_stamina_healing min="0" max="0"/>
+    
+    <user_healing min="0" max="0"/>
+    <user_magicka_healing min="0" max="0"/>
+    <user_stamina_healing min="0" max="0"/>
+
+    <inflict_chance chance ="50"/>
+    <turns min="2" max="5"/>
+  </effect>
+
+  <effect name="weak_magicka_drain">
+    <victim_damage min="0" max="0"/>
+    <victim_damage_type>None</victim_damage_type>
+    <victim_magicka_drain min="2" max="5"/>
+    <victim_stamina_drain min="0" max="0"/>
+
+    <victim_status_effect name="None"/>
+
+    <victim_healing min="0" max="0"/>
+    <victim_magicka_healing min="0" max="0"/>
+    <victim_stamina_healing min="0" max="0"/>
+
+    <user_healing min="0" max="0"/>
+    <user_magicka_healing min="0" max="0"/>
+    <user_stamina_healing min="0" max="0"/>
+
+    <inflict_chance chance ="50"/>
+    <turns min="2" max="5"/>
+  </effect>
+
+  <effect name="weak_shock">
+    <victim_damage min="1" max="3"/>
+    <victim_damage_type>Shock</victim_damage_type>
+    <victim_magicka_drain min="1" max="3"/>
+    <victim_stamina_drain min="0" max="0"/>
+
+    <victim_status_effect name="Paralyzed"/>
+
+    <victim_healing min="0" max="0"/>
+    <victim_magicka_healing min="0" max="0"/>
+    <victim_stamina_healing min="0" max="0"/>
+
+    <user_healing min="0" max="0"/>
+    <user_magicka_healing min="0" max="0"/>
+    <user_stamina_healing min="0" max="0"/>
+
+    <inflict_chance chance ="50"/>
+    <turns min="2" max="5"/>
+  </effect>
+
+  <effect name="weak_lifesteal">
+    <victim_damage min="2" max="5"/>
+    <victim_damage_type>Magic</victim_damage_type>
+    <victim_magicka_drain min="0" max="0"/>
+    <victim_stamina_drain min="0" max="0"/>
+    
+    <victim_status_effect name="None"/>
+
+    <victim_healing min="0" max="0"/>
+    <victim_magicka_healing min="0" max="0"/>
+    <victim_stamina_healing min="0" max="0"/>
+    
+    <user_healing min="2" max="5"/>
+    <user_magicka_healing min="0" max="0"/>
+    <user_stamina_healing min="0" max="0"/>
+
+    <inflict_chance chance ="30"/>
+    <turns min="2" max="5"/>
+  </effect>
+  
+</effects>

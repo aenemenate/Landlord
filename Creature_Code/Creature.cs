@@ -9,14 +9,15 @@ namespace Landlord
     {
         private Point position;
         private Block currentBlock;
+        private double id;
 
-        private List<Item> inventory = new List<Item>();
+        private List<Item> inventory;
         private int sightDist;
-        private List<Point> visiblePoints = new List<Point>();
+        private List<Point> visiblePoints;
         
         private string gender;
         private float gold;
-        private Body body = new Body();
+        private Body body;
         private Stats stats;
         private Class uclass;
         private List<Effect> effects;
@@ -33,16 +34,20 @@ namespace Landlord
             bool solid, bool opaque, BlockType type = BlockType.Creature, bool interactive = true, bool enterable = false) 
             : base (graphic, name, type, solid, opaque, interactive, enterable)
         {
-            this.position = position;
-            this.sightDist = sightDist;
+            id = (DateTime.Now - new DateTime(year: 2019, month: 5, day: 15)).TotalSeconds;
+            inventory = new List<Item>();
+            visiblePoints = new List<Point>();
+            body = new Body();
             currentBlock = map[position.X * 100 + position.Y];
             BackColor = Color.Pink;
-            this.gender = gender;
-            this.friendly = friendly;
             nextActionTime = new Time(Program.TimeHandler.CurrentTime);
             effects = new List<Effect>();
-            
             gold = 0F;
+
+            this.position = position;
+            this.sightDist = sightDist;
+            this.gender = gender;
+            this.friendly = friendly;
         }
 
         public Creature() : base()
@@ -1033,79 +1038,71 @@ namespace Landlord
             get { return position; }
             set { position = value; }
         }
-
         public int SightDist
         {
             get { return sightDist; }
             set { sightDist = value; }
         }
-
+        public double ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
         public float Gold
         {
             get { return gold; }
             set { gold = value; }
         }
-
         public Stats Stats
         {
             get { return stats; }
             set { stats = value; }
         }
-
         public Class Class
         {
             get { return uclass; }
             set { uclass = value; }
         }
-
         public List<Effect> Effects
         {
             get { return effects; }
             set { effects = value; }
         }
-
         public Block CurrentBlock
         {
             get { return currentBlock; }
             set { currentBlock = value;}
         }
-
         public string Gender
         {
             get { return gender; }
             set { gender = value; }
         }
-
         public bool Friendly
         {
             get { return friendly; }
             set { friendly = value; }
         }
-
         public bool Alive
         {
             get { return alive; }
             set { alive = value; }
         }
-
         public Time NextActionTime
         {
             get { return nextActionTime; }
             set { nextActionTime = value; }
         }
-
         public List<Item> Inventory
         {
             get { return inventory; }
             set { inventory = value; }
         }
-
         public List<Point> VisiblePoints
         {
             get { return visiblePoints; }
             set { visiblePoints = value; }
         }
-
         public Body Body
         {
             get { return body; }

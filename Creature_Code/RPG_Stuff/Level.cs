@@ -111,7 +111,6 @@ namespace Landlord
                 { Skill.Conjuration, 0 },
                 { Skill.Enchant, 0 },
                 { Skill.Lockpick, 0 },
-                { Skill.Alteration, 0 },
                 { Skill.Destruction, 0 },
                 { Skill.Restoration, 0 },
                 { Skill.Crafting, 0 }
@@ -139,7 +138,6 @@ namespace Landlord
                 { Skill.Conjuration, baseSkillLvls[Skill.Conjuration] * skillExpIncrement },
                 { Skill.Enchant, baseSkillLvls[Skill.Enchant] * skillExpIncrement },
                 { Skill.Lockpick, baseSkillLvls[Skill.Lockpick] * skillExpIncrement },
-                { Skill.Alteration, baseSkillLvls[Skill.Alteration] * skillExpIncrement },
                 { Skill.Destruction, baseSkillLvls[Skill.Destruction] * skillExpIncrement },
                 { Skill.Restoration, baseSkillLvls[Skill.Restoration] * skillExpIncrement },
                 { Skill.Crafting, baseSkillLvls[Skill.Crafting] * skillExpIncrement }

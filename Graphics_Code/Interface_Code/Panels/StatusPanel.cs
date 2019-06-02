@@ -67,6 +67,7 @@ namespace Landlord
             return itemHoveredOver;
         }
 
+        // returns true if an entry in a displayed list is being highlighted
         public static bool RenderStatus()
         {
             Color textColor = Color.AntiqueWhite, highlightedColor = Color.OrangeRed, bgColor = statusColorDarker;
@@ -118,105 +119,6 @@ namespace Landlord
                         for (int j = 0; j < Program.Console.Height; j++)
                             Program.Console.SetGlyph( i, j, ' ', statusColorDarker, statusColorDarker );
             }
-
-            //void PrintResourceBars()
-            //{
-            //    if (Program.Player.Stats.Resources[Resource.HP] != previousHP || Program.Console.GetGlyph( StartX + 1, 4 ) != 'H')
-            //    {
-            //        int hp = Program.Player.Stats.Resources[Resource.HP], maxhp = Program.Player.Stats.Resources[Resource.MaxHP];
-            //        int hpBarOffset = 5;
-            //        int hpBarWidth = width - ( hpBarOffset + 1 );
-
-            //        Program.Console.Print( StartX + 1, 4, "HP: ", textColor );
-
-            //        for (int i = 0; i < hpBarWidth; i++)
-            //        {
-            //            if (( ( i * maxhp ) / hpBarWidth ) + 1 <= hp && hp != 0)
-            //                Program.Console.SetGlyph( StartX + hpBarOffset + i, 4, 178, Color.Red, Color.Red );
-            //            else
-            //                Program.Console.Print( StartX + hpBarOffset + i, 4, " ", statusColor, statusColor );
-            //        }
-
-            //        string healthNum = $"{hp}/{maxhp}";
-
-            //        int numStartX = StartX + hpBarOffset + hpBarWidth / 2 - healthNum.Length / 2;
-
-            //        Program.Console.Print( numStartX, 4, healthNum, textColor );
-
-            //        previousHP = hp;
-            //    } else if (Program.Player.Stats.Resources[Resource.MP] != previousMP || Program.Console.GetGlyph( StartX + 1, 6 ) != 'M')
-            //    {
-            //        int mp = Program.Player.Stats.Resources[Resource.MP], maxmp = Program.Player.Stats.Resources[Resource.MaxMP];
-            //        int mpBarOffset = 5;
-            //        int mpBarWidth = width - ( mpBarOffset + 1 );
-
-            //        Program.Console.Print( StartX + 1, 6, "MP: ", textColor );
-
-            //        for (int i = 0; i < mpBarWidth; i++)
-            //        {
-            //            if (( ( i * mp ) / mpBarWidth ) + 1 <= mp && mp != 0)
-            //                Program.Console.SetGlyph( StartX + mpBarOffset + i, 6, 178, Color.RoyalBlue, Color.RoyalBlue );
-            //            else
-            //                Program.Console.Print( StartX + mpBarOffset + i, 6, " ", statusColor, statusColor );
-            //        }
-
-            //        string manaNum = $"{mp}/{maxmp}";
-
-            //        int numStartX = StartX + mpBarOffset + mpBarWidth / 2 - manaNum.Length / 2;
-
-            //        Program.Console.Print( numStartX, 6, manaNum, textColor );
-
-            //        previousMP = mp;
-            //    } else if (Program.Player.Stats.Resources[Resource.SP] != previousSP || Program.Console.GetGlyph( StartX + 1, 8 ) != 'S')
-            //    {
-            //        int sp = Program.Player.Stats.Resources[Resource.SP], maxsp = Program.Player.Stats.Resources[Resource.MaxSP];
-            //        int spBarOffset = 5;
-            //        int spBarWidth = width - ( spBarOffset + 1 );
-
-            //        Program.Console.Print( StartX + 1, 8, "SP: ", textColor );
-
-            //        for (int i = 0; i < spBarWidth; i++)
-            //        {
-            //            if (( ( i * maxsp ) / spBarWidth ) + 1 <= sp && sp != 0)
-            //                Program.Console.SetGlyph( StartX + spBarOffset + i, 8, 178, Color.YellowGreen, Color.YellowGreen );
-            //            else
-            //                Program.Console.Print( StartX + spBarOffset + i, 8, " ", statusColor, statusColor );
-            //        }
-
-            //        string staminaNum = $"{sp}/{maxsp}";
-
-            //        int numStartX = StartX + spBarOffset + spBarWidth / 2 - staminaNum.Length / 2;
-
-            //        Program.Console.Print( numStartX, 8, staminaNum, textColor );
-
-            //        previousSP = sp;
-            //    }
-            //}
-
-            //void PrintSkillsStats()
-            //{
-            //    bool highlighting = false;
-
-            //    int y = 11;
-
-            //    if (mousePos.Y == y && mousePos.X >= StartX + 1 && mousePos.X <= StartX + 8)
-            //        highlighting = true;
-
-            //    if (!highlighting)
-            //        Program.Console.Print( StartX + 1, y, "[SKILLS]", textColor, statusColor );
-            //    else
-            //        Program.Console.Print( StartX + 1, y, "[SKILLS]", highlightedColor, statusColor );
-
-            //    highlighting = false;
-
-            //    if (mousePos.Y == y && mousePos.X >= Program.Console.Width - 1 - "[STATS]".Length && mousePos.X <= Program.Console.Width - 2)
-            //        highlighting = true;
-
-            //    if (!highlighting)
-            //        Program.Console.Print( Program.Console.Width - 1 - "[STATS]".Length, y, "[STATS]", textColor, statusColor );
-            //    else
-            //        Program.Console.Print( Program.Console.Width - 1 - "[STATS]".Length, y, "[STATS]", highlightedColor, statusColor );
-            //}
 
             void DrawResourceBar(int y, int hp, int maxhp, int barWidth, Color barColor, string text = "")
             {

@@ -31,7 +31,6 @@ namespace Landlord
         Conjuration,
         Enchant,
         Lockpick,
-        Alteration,
         Destruction,
         Restoration,
         Crafting
@@ -145,7 +144,6 @@ namespace Landlord
                 { Skill.Conjuration, 5 },
                 { Skill.Enchant, 5 },
                 { Skill.Lockpick, 5 },
-                { Skill.Alteration, 5 },
                 { Skill.Destruction, 5 },
                 { Skill.Restoration, 5 },
                 { Skill.Crafting, 5 }
@@ -191,7 +189,6 @@ namespace Landlord
                 case (Skill.Illusion):
                 case (Skill.Alchemy):
                 case (Skill.Enchant):
-                case (Skill.Alteration):
                     return Attribute.Intelligence;
                 case (Skill.Conjuration):
                 case (Skill.Restoration):

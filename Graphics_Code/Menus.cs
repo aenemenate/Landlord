@@ -1401,9 +1401,6 @@ namespace Landlord
             //ENCHANT
             y += 4;
             var enchant = SkillButton(Program.ControlsConsole.Width / 7 - 1, new Point(Program.ControlsConsole.Width / 7 * 4, y), "Enchantment", Skill.Enchant);
-            //ALTERATION
-            y += 4;
-            var alteration = SkillButton(Program.ControlsConsole.Width / 7 - 1, new Point(Program.ControlsConsole.Width / 7 * 4, y), "Alteration", Skill.Alteration);
 
             //WILLPOWER
             y = Program.ControlsConsole.Height / 2 - 8;
@@ -1504,7 +1501,6 @@ namespace Landlord
             Program.ControlsConsole.Add(illusion);
             Program.ControlsConsole.Add(alchemy);
             Program.ControlsConsole.Add(enchant);
-            Program.ControlsConsole.Add(alteration);
 
             Program.ControlsConsole.Add(willpowerLabel);
             Program.ControlsConsole.Add(necromancy);

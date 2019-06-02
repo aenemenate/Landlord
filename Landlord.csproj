@@ -223,13 +223,6 @@
     <None Include="res\graphics\fonts\Alloy_12x12.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="!DOCUMENTATION\AbilityList.txt" />
-    <Content Include="!DOCUMENTATION\CraftingList.txt" />
-    <Content Include="!DOCUMENTATION\Creatures.txt" />
-    <Content Include="!DOCUMENTATION\FinishedFeatures.txt" />
-    <Content Include="!DOCUMENTATION\BuildingList.txt" />
-    <Content Include="!DOCUMENTATION\RpgMechanics.txt" />
-    <Content Include="!DOCUMENTATION\SpellList.txt" />
     <Content Include="res\data\EffectTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -286,7 +279,6 @@
     <Content Include="SDL2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="!DOCUMENTATION\FeatureList.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

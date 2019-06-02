@@ -11,3 +11,5 @@ My goals with this codebase as of 2019 are to (1) Optimize and (2) Implement new
 
 Optimizations are welcome and appreciated. Features though are touchier. If you'd like
 to aid in feature development please email me at aenemenate@gmail.com.
+
+* Note to contributors: Running in debug is VERY slow. Up to 10x slower or more. I only do so when I'm trying to squash a particularly tricky bug.

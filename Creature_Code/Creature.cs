@@ -9,7 +9,7 @@ namespace Landlord
     {
         private Point position;
         private Block currentBlock;
-        private double id;
+        private UInt64 id;
 
         private List<Item> inventory;
         private int sightDist;
@@ -34,7 +34,7 @@ namespace Landlord
             bool solid, bool opaque, BlockType type = BlockType.Creature, bool interactive = true, bool enterable = false) 
             : base (graphic, name, type, solid, opaque, interactive, enterable)
         {
-            id = (DateTime.Now - new DateTime(year: 2019, month: 5, day: 15)).TotalSeconds;
+            id = (UInt64)((DateTime.Now - new DateTime(year: 2019, month: 5, day: 15)).TotalSeconds * 100);
             inventory = new List<Item>();
             visiblePoints = new List<Point>();
             body = new Body();
@@ -1043,7 +1043,7 @@ namespace Landlord
             get { return sightDist; }
             set { sightDist = value; }
         }
-        public double ID
+        public UInt64 ID
         {
             get { return id; }
             set { id = value; }

@@ -9,7 +9,6 @@ Then open Landlord.csproj and save a new solution in the first of the two Landlo
 
 My goals with this codebase as of 2019 are to (1) Optimize and (2) Implement new features. 
 
-Optimizations are welcome and appreciated. Features though are touchier. If you'd like
-to aid in feature development please email me at aenemenate@gmail.com.
+I have no intention of selling Landlord at any point. I am open sourcing this codebase because this is a learning project and I believe in open-source principles as a sound software development method.
 
-* Note to contributors: Running in debug is VERY slow. Up to 10x slower or more. I only do so when I'm trying to squash a particularly tricky bug.
+I believe that the creativity and skills of particular contributors will vastly exceed mine along many dimensions and I am welcoming and excited to see our overlap blossom forth into a fun game, thank you!

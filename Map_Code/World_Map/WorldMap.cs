@@ -9,6 +9,9 @@ namespace Landlord
 {
     class WorldMap
     {
+        public event EventHandler<EventArgs> OnFinishedGenerating;
+
+        private int width, height;
         private MapTile[,] worldMap;
         private Point worldIndex;
         private float[,] heightMap;
@@ -26,7 +29,11 @@ namespace Landlord
             else
                 this.seed = seed;
 
-            GenerateWorldMap(width, height, name);
+            this.width = width;
+            this.height = height;
+            this.name = name;
+
+            //GenerateWorldMap(width, height, name);
         }
 
         public WorldMap()
@@ -36,9 +43,8 @@ namespace Landlord
 
         // FUNCTIONS //
 
-        private void GenerateWorldMap(int width, int height, string name)
+        public void GenerateWorldMap()
         {
-            this.name = name;
             worldMap = new MapTile[5, 5];
             worldIndex = new Point(0, 0);
 
@@ -81,6 +87,7 @@ namespace Landlord
             //        worldMap[worldIndex.X, worldIndex.Y].Floor[tilePosition.X * 100 + tilePosition.Y].Explored = true;
             //        worldMap[worldIndex.X, worldIndex.Y].Blocks[tilePosition.X * 100 + tilePosition.Y].Explored = true;
             //    }
+            OnFinishedGenerating(this, EventArgs.Empty);
         }
 
         // PROPERTIES //

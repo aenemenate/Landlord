@@ -13,7 +13,7 @@ namespace Landlord
 
         // funcs that work on individual tiles
 
-        public static void GenerateForestMap(MapTile map, Point worldIndex, float[,] heightMap)
+        public static void GenerateForestMap(Random rng, MapTile map, Point worldIndex, float[,] heightMap)
         {
             for (int i = 0; i < map.Width; i++)
                 for (int j = 0; j < map.Height; j++)
@@ -37,11 +37,11 @@ namespace Landlord
                         map.Floor[i * map.Width + j] = new Water();
                     }
                 }
-            GenerateTrees(map, 5, 17);
-            GenerateOre( map, Program.RNG, 0.025f );
+            GenerateTrees(rng, map, 5, 17);
+            GenerateOre( map, rng, 0.025f );
         }
 
-        public static void GenerateTrees(MapTile map, int numOfSeedTrees, int growthGenerations)
+        public static void GenerateTrees(Random rng, MapTile map, int numOfSeedTrees, int growthGenerations)
         {
             // place seed trees
             List<Point> availableSpots = map.GetAllGrassTiles();
@@ -56,7 +56,7 @@ namespace Landlord
                 int count = 0;
                 while (nextSpot == null && count < availableSpots.Count) {
                     count++;
-                    potentialSpot = availableSpots[Program.RNG.Next(0, availableSpots.Count)];
+                    potentialSpot = availableSpots[rng.Next(0, availableSpots.Count)];
                     if (potentialSpot.DistFrom(map.GetClosestOfTileTypeToPos(potentialSpot, new Water())) <= 8) {
                         nextSpot = potentialSpot;
                     }
@@ -76,12 +76,12 @@ namespace Landlord
                 for (int j = 0; j < treesThisGen; j++)
                 {
                     Point currentTree = treeSpots[j];
-                    nextSpot = new Point(Program.RNG.Next(Math.Max(currentTree.X - 8, 0), Math.Min(currentTree.X + 8, map.Width - 1)), Program.RNG.Next(Math.Max(currentTree.Y - 8, 0), Math.Min(currentTree.Y + 8, map.Height - 1)));
+                    nextSpot = new Point(rng.Next(Math.Max(currentTree.X - 8, 0), Math.Min(currentTree.X + 8, map.Width - 1)), rng.Next(Math.Max(currentTree.Y - 8, 0), Math.Min(currentTree.Y + 8, map.Height - 1)));
                     int count = 0;
                     do
                     {
                         count++;
-                        nextSpot = new Point(Program.RNG.Next(Math.Max(currentTree.X - 8, 0), Math.Min(currentTree.X + 8, map.Width - 1)), Program.RNG.Next(Math.Max(currentTree.Y - 8, 0), Math.Min(currentTree.Y + 8, map.Height - 1)));
+                        nextSpot = new Point(rng.Next(Math.Max(currentTree.X - 8, 0), Math.Min(currentTree.X + 8, map.Width - 1)), rng.Next(Math.Max(currentTree.Y - 8, 0), Math.Min(currentTree.Y + 8, map.Height - 1)));
                         for (int x = Math.Max(nextSpot.X - 3, 0); x <= Math.Min(nextSpot.X + 3, map.Width - 1); x++)
                             for (int y = Math.Max(nextSpot.Y - 3, 0); y <= Math.Min(nextSpot.Y + 3, map.Height - 1); y++)
                                 if (map[x, y] is Tree)
@@ -137,8 +137,8 @@ namespace Landlord
             Point leftPoint = new Point( 1, rng.Next( 2, 497 ) );
             Point rightPoint = new Point( 498, rng.Next( 2, 497 ) );
             while (leftPoint.Y % 100 == 0 || rightPoint.Y % 100 == 0 ||
-                    heightMap[leftPoint.X, leftPoint.Y] >= WorldMapGeneration.StoneCutoff ||
-                      heightMap[rightPoint.X, rightPoint.Y] >= WorldMapGeneration.StoneCutoff)
+                    heightMap[leftPoint.X, leftPoint.Y] >= StoneCutoff ||
+                      heightMap[rightPoint.X, rightPoint.Y] >= StoneCutoff)
             {
                 leftPoint = new Point( 1, rng.Next( 2, 497 ) );
                 rightPoint = new Point( 498, rng.Next( 2, 497 ) );
@@ -148,7 +148,7 @@ namespace Landlord
             int numOfRivers = 10;
             bool CheckedCanSpawnRiverHere( int i, int j )
             {
-                if (heightMap[i, j] >= WorldMapGeneration.StoneCutoff)
+                if (heightMap[i, j] >= StoneCutoff)
                 {
                     for (int k = i - 1; k <= i + 1; k++)
                         for (int m = j - 1; m <= j + 1; m++)
@@ -194,8 +194,8 @@ namespace Landlord
                 while (( springIndex == 0 && depositIndex == 0 )
                       || potentialRiverSprings[springIndex].DistFrom( potentialRiverDeposits[depositIndex] ) > 500)
                 {
-                    springIndex = Program.RNG.Next( 0, potentialRiverSprings.Count );
-                    depositIndex = Program.RNG.Next( 0, potentialRiverDeposits.Count );
+                    springIndex = rng.Next( 0, potentialRiverSprings.Count );
+                    depositIndex = rng.Next( 0, potentialRiverDeposits.Count );
                 }
                 if (rng.Next( 0, 100 ) < 75)
                     Generate1x1River( potentialRiverSprings[springIndex], potentialRiverDeposits[depositIndex], heightMap );
@@ -209,8 +209,8 @@ namespace Landlord
             List<Point> path = Riverfinder.FindPath( start, end, heightMap );
             foreach (Point point in path)
             {
-                if (heightMap[point.X, point.Y] >= WorldMapGeneration.WaterCutoff)
-                    heightMap[point.X, point.Y] = WorldMapGeneration.WaterCutoff - 1;
+                if (heightMap[point.X, point.Y] >= WaterCutoff)
+                    heightMap[point.X, point.Y] = WaterCutoff - 1;
             }
         }
 
@@ -219,16 +219,16 @@ namespace Landlord
             List<Point> path = Riverfinder.FindPath( start, end, heightMap );
             foreach (Point point in path)
             {
-                if (heightMap[point.X, point.Y] >= WorldMapGeneration.WaterCutoff)
-                    heightMap[point.X, point.Y] = WorldMapGeneration.WaterCutoff - 1;
-                if (heightMap[point.X + 1, point.Y] >= WorldMapGeneration.WaterCutoff)
-                    heightMap[point.X + 1, point.Y] = WorldMapGeneration.WaterCutoff - 1;
-                if (heightMap[point.X, point.Y + 1] >= WorldMapGeneration.WaterCutoff)
-                    heightMap[point.X, point.Y + 1] = WorldMapGeneration.WaterCutoff - 1;
-                if (heightMap[point.X - 1, point.Y] >= WorldMapGeneration.WaterCutoff)
-                    heightMap[point.X - 1, point.Y] = WorldMapGeneration.WaterCutoff - 1;
-                if (heightMap[point.X, point.Y - 1] >= WorldMapGeneration.WaterCutoff)
-                    heightMap[point.X, point.Y - 1] = WorldMapGeneration.WaterCutoff - 1;
+                if (heightMap[point.X, point.Y] >= WaterCutoff)
+                    heightMap[point.X, point.Y] = WaterCutoff - 1;
+                if (heightMap[point.X + 1, point.Y] >= WaterCutoff)
+                    heightMap[point.X + 1, point.Y] = WaterCutoff - 1;
+                if (heightMap[point.X, point.Y + 1] >= WaterCutoff)
+                    heightMap[point.X, point.Y + 1] = WaterCutoff - 1;
+                if (heightMap[point.X - 1, point.Y] >= WaterCutoff)
+                    heightMap[point.X - 1, point.Y] = WaterCutoff - 1;
+                if (heightMap[point.X, point.Y - 1] >= WaterCutoff)
+                    heightMap[point.X, point.Y - 1] = WaterCutoff - 1;
             }
         }
 
@@ -240,8 +240,8 @@ namespace Landlord
                 for (int i = Math.Max( 0, point.X - 2 ); i <= Math.Min( 499, point.X + 2 ); i++)
                     for (int j = Math.Max( 0, point.Y - 2 ); j <= Math.Min( 499, point.Y + 2 ); j++)
                     {
-                        if (heightMap[i, j] >= WorldMapGeneration.WaterCutoff)
-                            heightMap[i, j] = WorldMapGeneration.WaterCutoff - 1;
+                        if (heightMap[i, j] >= WaterCutoff)
+                            heightMap[i, j] = WaterCutoff - 1;
                     }
             }
         }

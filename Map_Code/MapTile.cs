@@ -40,7 +40,7 @@ namespace Landlord
             floor = new Tile[width * height];
             creatures = new List<Creature>();
             dijkstraMaps = new DijkstraMaps(width, height);
-            Init(worldIndex, heightMap, containsDungeon);
+            Init(new Random(), worldIndex, heightMap, containsDungeon);
             owned = false;
             inDungeon = false;
             loading = false;
@@ -54,9 +54,9 @@ namespace Landlord
 
         // FUNCTIONS //
         // init functions
-        public void Init(Point worldIndex, float[,] heightMap, bool containsDungeon)
+        public void Init(Random rng, Point worldIndex, float[,] heightMap, bool containsDungeon)
         {
-            WorldMapGeneration.GenerateForestMap(this, worldIndex, heightMap);
+            WorldMapGeneration.GenerateForestMap(rng, this, worldIndex, heightMap);
             if (containsDungeon == true)
                 WorldMapGeneration.GenerateDungeonEntrance(this);
             DetermineCost();

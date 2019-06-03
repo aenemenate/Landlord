@@ -165,7 +165,7 @@ namespace Landlord
             bool dungeonNotCreated = Program.WorldMap.LocalTile.Dungeon == null;
             if (dungeonNotCreated)
             {
-                Program.CurrentState = new GeneratingMap();
+                Program.CurrentState = new GeneratingDungeon();
                 return; // program will stop here and generate the map, then recall this function and skip to the rest
             }
 

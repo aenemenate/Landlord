@@ -678,7 +678,7 @@ namespace Landlord
 
             }
 
-            static public void GenerateScreen()
+            static public void GenerateDungeonScreen()
             {
                 if (ClickedDialog)
                     ClickedDialog = !ClickedDialog;
@@ -687,19 +687,46 @@ namespace Landlord
                     Program.Console.Clear();
                     loading = true;
                     DungeonHandler.CreateDungeon( Program.WorldMap.LocalTile );
-                    Program.WorldMap.LocalTile.Dungeon.OnFinishedGenerating += CloseGenerateScreen;
+                    Program.WorldMap.LocalTile.Dungeon.OnFinishedGenerating += CloseGenerateDungeonScreen;
                     loadThread =
                         new System.Threading.Thread( new System.Threading.ThreadStart( Program.WorldMap.LocalTile.Dungeon.Init ) );
                     loadThread.Start();
-                    Program.Animations = new List<Animation>() { new LoadingAnim( "Generating" ) };
+                    Program.Animations = new List<Animation>() { new LoadingAnim( "Generating Dungeon" ) };
                 }
             }
-
-            static public void CloseGenerateScreen( object sender, EventArgs e )
+            static public void CloseGenerateDungeonScreen( object sender, EventArgs e )
             {
                 Program.Console.Clear();
                 Program.FinishedAnims.Add( Program.Animations[0] );
                 Program.Player.TakeStairsDown();
+                Program.CurrentState = new Play();
+                loading = false;
+            }
+
+            static public void GenerateWorldMapScreen()
+            {
+                if (ClickedDialog)
+                    ClickedDialog = !ClickedDialog;
+                if (!loading)
+                {
+                    Program.Console.Clear();
+                    loading = true;
+                    Program.WorldMap.OnFinishedGenerating += CloseGenerateWorldMapScreen;
+                    loadThread =
+                        new System.Threading.Thread(new System.Threading.ThreadStart(Program.WorldMap.GenerateWorldMap));
+                    loadThread.Start();
+                    Program.Animations = new List<Animation>() { new LoadingAnim("Generating World") };
+                }
+            }
+            static public void CloseGenerateWorldMapScreen(object sender, EventArgs e)
+            {
+                Program.Console.Clear();
+                Program.FinishedAnims.Add(Program.Animations[0]);
+
+                GeneratingWorldMap state = (GeneratingWorldMap)Program.CurrentState;
+
+                CreaturePlacementHelper.PlacePlayer(state.UClass, state.Gender, state.Name);
+
                 Program.CurrentState = new Play();
                 loading = false;
             }
@@ -1436,8 +1463,7 @@ namespace Landlord
             var speechcraft = SkillButton(Program.ControlsConsole.Width / 7 - 1, new Point(Program.ControlsConsole.Width / 7 * 6, y), "Speech", Skill.Speech);
 
             //PLAY GAME
-            var playButton = new SadConsole.Controls.Button(Program.ControlsConsole.Width / 3)
-            {
+            var playButton = new SadConsole.Controls.Button(Program.ControlsConsole.Width / 3) {
                 Position = new Microsoft.Xna.Framework.Point(Program.ControlsConsole.Width / 3, Program.ControlsConsole.Height - 4),
                 Text = "Play!"
             };
@@ -1445,17 +1471,17 @@ namespace Landlord
             {
                 if (numOfMajorSkills == maxSkills && numOfMinorSkills == maxSkills)
                 {
-                    Menus.ClickedDialog = true;
-                    SadConsole.Global.CurrentScreen.Children.Remove(Program.ControlsConsole);
-                    Program.CurrentState = new Play();
-                    Program.WorldMap = new WorldMap(100, 100, "TEST");
-                    Program.Identification = new Identification(true);
-                    CreaturePlacementHelper.PlacePlayer(uclass, "male", name);
-                    name = "";
-                    uclass = new Class();
                     numOfMajorAttr = 0;
                     numOfMajorSkills = 0;
                     numOfMinorSkills = 0;
+                    Menus.ClickedDialog = true;
+                    SadConsole.Global.CurrentScreen.Children.Remove(Program.ControlsConsole);
+                    Program.CurrentState = new GeneratingWorldMap(uclass, "male", name);
+
+                    Program.WorldMap = new WorldMap(100, 100, "Test");
+                    Program.Identification = new Identification(true);
+                    name = "";
+                    uclass = new Class();
                 }
             };
 

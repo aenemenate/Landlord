@@ -163,8 +163,9 @@
     <Compile Include="Program_Code\Game_States\Menus\CraftMenu.cs" />
     <Compile Include="Program_Code\Game_States\Screens\ChooseSkills.cs" />
     <Compile Include="Program_Code\Game_States\Menus\DialogWindow.cs" />
+    <Compile Include="Program_Code\Game_States\Screens\GeneratingWorldMap.cs" />
     <Compile Include="Program_Code\Game_States\Screens\Intro.cs" />
-    <Compile Include="Program_Code\Game_States\Screens\GeneratingMap.cs" />
+    <Compile Include="Program_Code\Game_States\Screens\GeneratingDungeon.cs" />
     <Compile Include="Program_Code\Game_States\Screens\CreateCharacter.cs" />
     <Compile Include="Program_Code\Game_States\Save_Load\Saving.cs" />
     <Compile Include="Program_Code\Game_States\Save_Load\Loading.cs" />

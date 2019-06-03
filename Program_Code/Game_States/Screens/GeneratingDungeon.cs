@@ -3,15 +3,15 @@ using Microsoft.Xna.Framework;
 
 namespace Landlord
 {
-    class GeneratingMap : GameState
+    class GeneratingDungeon : GameState
     {
-        public GeneratingMap() : base()
+        public GeneratingDungeon() : base()
         {
         }
 
         public override void Update()
         {
-            Menus.LoadSave.GenerateScreen();
+            Menus.LoadSave.GenerateDungeonScreen();
         }
 
         public override void Render()

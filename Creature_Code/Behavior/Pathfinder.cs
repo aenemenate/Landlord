@@ -163,12 +163,12 @@ namespace Landlord
                 Point returnGoal = new Point(tempGoal.X, tempGoal.Y);
                 if (xDeltaNon0) {
                     for (int j = ( tempGoal.Y / 100 ) * 100 + 10; j < ( tempGoal.Y / 100 ) * 100 + 90; j++) {
-                        if (new Point( tempGoal.X, j ).DistFrom( end ) + heightMap[tempGoal.X, j] < returnGoal.DistFrom( end ) + heightMap[end.X, end.Y] && false == heightMap[tempGoal.X, j] >= MapGeneration.StoneCutoff)
+                        if (new Point( tempGoal.X, j ).DistFrom( end ) + heightMap[tempGoal.X, j] < returnGoal.DistFrom( end ) + heightMap[end.X, end.Y] && false == heightMap[tempGoal.X, j] >= WorldMapGeneration.StoneCutoff)
                             returnGoal = new Point( tempGoal.X, j );
                     }
                 } else if (yDeltaNon0) {
                     for (int i = ( tempGoal.X / 100 ) * 100 + 10; i < ( tempGoal.X / 100 ) * 100 + 90; i++) {
-                        if (new Point( i, tempGoal.Y ).DistFrom( end ) + heightMap[i, tempGoal.Y] < returnGoal.DistFrom( end ) + heightMap[end.X, end.Y] && false == heightMap[i, tempGoal.Y] >= MapGeneration.StoneCutoff)
+                        if (new Point( i, tempGoal.Y ).DistFrom( end ) + heightMap[i, tempGoal.Y] < returnGoal.DistFrom( end ) + heightMap[end.X, end.Y] && false == heightMap[i, tempGoal.Y] >= WorldMapGeneration.StoneCutoff)
                             returnGoal = new Point( i, tempGoal.Y);
                     }
                 }
@@ -203,7 +203,7 @@ namespace Landlord
                     for (int i = adjacentNodes.Count - 1; i >= 0; i--)
                     {
                         Node node = adjacentNodes[i];
-                        if (heightMap[node.Pos.X, node.Pos.Y] >= MapGeneration.StoneCutoff && !( heightMap[currentNode.Pos.X, currentNode.Pos.Y] >= MapGeneration.StoneCutoff ))
+                        if (heightMap[node.Pos.X, node.Pos.Y] >= WorldMapGeneration.StoneCutoff && !( heightMap[currentNode.Pos.X, currentNode.Pos.Y] >= WorldMapGeneration.StoneCutoff ))
                             continue;
                         if (node.Pos.Equals( nextGoal ))
                         {

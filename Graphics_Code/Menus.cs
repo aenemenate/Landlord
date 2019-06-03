@@ -1450,7 +1450,7 @@ namespace Landlord
                     Program.CurrentState = new Play();
                     Program.WorldMap = new WorldMap(100, 100, "TEST");
                     Program.Identification = new Identification(true);
-                    Engine.PlacePlayer(uclass, "male", name);
+                    CreaturePlacementHelper.PlacePlayer(uclass, "male", name);
                     name = "";
                     uclass = new Class();
                     numOfMajorAttr = 0;

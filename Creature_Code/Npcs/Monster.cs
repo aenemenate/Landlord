@@ -97,7 +97,7 @@ namespace Landlord
             if (nextToPlayer && wantToKillPlayer)
             {
                 LaunchAttack(Program.Player);
-                Engine.flag = true;
+                CreaturePlacementHelper.flag = true; // What's going on here?
             }
             else if (itemSpots.Count > 0 && CurrentDesires[DesireType.Treasure] > 0)
             {

@@ -137,8 +137,8 @@ namespace Landlord
             Point leftPoint = new Point( 1, rng.Next( 2, 497 ) );
             Point rightPoint = new Point( 498, rng.Next( 2, 497 ) );
             while (leftPoint.Y % 100 == 0 || rightPoint.Y % 100 == 0 ||
-                    heightMap[leftPoint.X, leftPoint.Y] >= MapGeneration.StoneCutoff ||
-                      heightMap[rightPoint.X, rightPoint.Y] >= MapGeneration.StoneCutoff)
+                    heightMap[leftPoint.X, leftPoint.Y] >= WorldMapGeneration.StoneCutoff ||
+                      heightMap[rightPoint.X, rightPoint.Y] >= WorldMapGeneration.StoneCutoff)
             {
                 leftPoint = new Point( 1, rng.Next( 2, 497 ) );
                 rightPoint = new Point( 498, rng.Next( 2, 497 ) );
@@ -148,7 +148,7 @@ namespace Landlord
             int numOfRivers = 10;
             bool CheckedCanSpawnRiverHere( int i, int j )
             {
-                if (heightMap[i, j] >= MapGeneration.StoneCutoff)
+                if (heightMap[i, j] >= WorldMapGeneration.StoneCutoff)
                 {
                     for (int k = i - 1; k <= i + 1; k++)
                         for (int m = j - 1; m <= j + 1; m++)
@@ -162,7 +162,7 @@ namespace Landlord
             }
             bool CheckedCanDepositRiverHere( int i, int j )
             {
-                if (heightMap[i, j] < MapGeneration.WaterCutoff)
+                if (heightMap[i, j] < WorldMapGeneration.WaterCutoff)
                 {
                     for (int k = i - 1; k <= i + 1; k++)
                         for (int m = j - 1; m <= j + 1; m++)
@@ -209,8 +209,8 @@ namespace Landlord
             List<Point> path = Riverfinder.FindPath( start, end, heightMap );
             foreach (Point point in path)
             {
-                if (heightMap[point.X, point.Y] >= MapGeneration.WaterCutoff)
-                    heightMap[point.X, point.Y] = MapGeneration.WaterCutoff - 1;
+                if (heightMap[point.X, point.Y] >= WorldMapGeneration.WaterCutoff)
+                    heightMap[point.X, point.Y] = WorldMapGeneration.WaterCutoff - 1;
             }
         }
 
@@ -219,16 +219,16 @@ namespace Landlord
             List<Point> path = Riverfinder.FindPath( start, end, heightMap );
             foreach (Point point in path)
             {
-                if (heightMap[point.X, point.Y] >= MapGeneration.WaterCutoff)
-                    heightMap[point.X, point.Y] = MapGeneration.WaterCutoff - 1;
-                if (heightMap[point.X + 1, point.Y] >= MapGeneration.WaterCutoff)
-                    heightMap[point.X + 1, point.Y] = MapGeneration.WaterCutoff - 1;
-                if (heightMap[point.X, point.Y + 1] >= MapGeneration.WaterCutoff)
-                    heightMap[point.X, point.Y + 1] = MapGeneration.WaterCutoff - 1;
-                if (heightMap[point.X - 1, point.Y] >= MapGeneration.WaterCutoff)
-                    heightMap[point.X - 1, point.Y] = MapGeneration.WaterCutoff - 1;
-                if (heightMap[point.X, point.Y - 1] >= MapGeneration.WaterCutoff)
-                    heightMap[point.X, point.Y - 1] = MapGeneration.WaterCutoff - 1;
+                if (heightMap[point.X, point.Y] >= WorldMapGeneration.WaterCutoff)
+                    heightMap[point.X, point.Y] = WorldMapGeneration.WaterCutoff - 1;
+                if (heightMap[point.X + 1, point.Y] >= WorldMapGeneration.WaterCutoff)
+                    heightMap[point.X + 1, point.Y] = WorldMapGeneration.WaterCutoff - 1;
+                if (heightMap[point.X, point.Y + 1] >= WorldMapGeneration.WaterCutoff)
+                    heightMap[point.X, point.Y + 1] = WorldMapGeneration.WaterCutoff - 1;
+                if (heightMap[point.X - 1, point.Y] >= WorldMapGeneration.WaterCutoff)
+                    heightMap[point.X - 1, point.Y] = WorldMapGeneration.WaterCutoff - 1;
+                if (heightMap[point.X, point.Y - 1] >= WorldMapGeneration.WaterCutoff)
+                    heightMap[point.X, point.Y - 1] = WorldMapGeneration.WaterCutoff - 1;
             }
         }
 
@@ -240,8 +240,8 @@ namespace Landlord
                 for (int i = Math.Max( 0, point.X - 2 ); i <= Math.Min( 499, point.X + 2 ); i++)
                     for (int j = Math.Max( 0, point.Y - 2 ); j <= Math.Min( 499, point.Y + 2 ); j++)
                     {
-                        if (heightMap[i, j] >= MapGeneration.WaterCutoff)
-                            heightMap[i, j] = MapGeneration.WaterCutoff - 1;
+                        if (heightMap[i, j] >= WorldMapGeneration.WaterCutoff)
+                            heightMap[i, j] = WorldMapGeneration.WaterCutoff - 1;
                     }
             }
         }

@@ -130,7 +130,7 @@ namespace Landlord
                 else if (movementCooldownReached)
                 {
                     if (nextPos.X == Program.WorldMap.LocalTile.Width || nextPos.X == -1 || nextPos.Y == Program.WorldMap.LocalTile.Height || nextPos.Y == -1)
-                        Engine.HandleMapSwitching(Program.Player);
+                        CreaturePlacementHelper.HandleMapSwitching(Program.Player);
                     else if (Program.WorldMap.LocalTile[nextPos.X, nextPos.Y] is Creature && ((Creature)Program.WorldMap.LocalTile[nextPos.X, nextPos.Y]).Alive)
                         Program.WorldMap.LocalTile.GetCreatureAtPosition(nextPos).Activate(Program.Player);
                     else
@@ -170,7 +170,7 @@ namespace Landlord
                 {
                     if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is Player)
                     {
-                        bool movedMaps = Engine.HandleMapSwitching(Program.Player);
+                        bool movedMaps = CreaturePlacementHelper.HandleMapSwitching(Program.Player);
                         if (movedMaps == false && Program.Player.CurrentBlock.Enterable)
                             Program.Player.CurrentBlock.Activate(Program.Player);
                     }

@@ -56,9 +56,9 @@ namespace Landlord
         // init functions
         public void Init(Point worldIndex, float[,] heightMap, bool containsDungeon)
         {
-            MapGeneration.GenerateForestMap(this, worldIndex, heightMap);
+            WorldMapGeneration.GenerateForestMap(this, worldIndex, heightMap);
             if (containsDungeon == true)
-                MapGeneration.GenerateDungeonEntrance(this);
+                WorldMapGeneration.GenerateDungeonEntrance(this);
             DetermineCost();
         }
 

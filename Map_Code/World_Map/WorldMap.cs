@@ -51,7 +51,7 @@ namespace Landlord
             List<Point> dungeons = new List<Point>();
             bool dungeon = false;
 
-            MapGeneration.GenerateRivers( rng, width, height, heightMap );
+            WorldMapGeneration.GenerateRivers( rng, width, height, heightMap );
 
             for (int i = 0; i < 5; i++)
                 for (int j = 0; j < 5; j++)

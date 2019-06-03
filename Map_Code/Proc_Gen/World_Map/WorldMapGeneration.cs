@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Landlord
 {
-    static class MapGeneration
+    static class WorldMapGeneration
     {
         // if height higher than 180f a tile is stone, lower than that but higher than 65f it's grass, lower than or equal to that that it's water.
         public static float StoneCutoff = 180f, WaterCutoff = 65f;

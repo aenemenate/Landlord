@@ -2,7 +2,7 @@
 
 namespace Landlord
 {
-    static class Engine
+    static class CreaturePlacementHelper
     {
         static public bool flag = false;
 

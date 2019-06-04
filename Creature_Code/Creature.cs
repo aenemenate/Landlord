@@ -203,8 +203,8 @@ namespace Landlord
         {
             ApplyActionCost(12);
 
-            Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor + 1][Position.X, Position.Y] = currentBlock;
-            bool removed = Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures.Remove(this);
+            Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor][Position.X, Position.Y] = currentBlock;
+            Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures.Remove(this);
             currentFloor -= 1;
 
             List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;

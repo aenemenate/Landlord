@@ -63,12 +63,10 @@ namespace Landlord
 
             creatures.Sort();
             for (int i = 0; i < creatures.Count; i++)
-                if (creatures[i].NextActionTime.IsLessThan(Program.TimeHandler.CurrentTime) || creatures[i].NextActionTime.Equals(Program.TimeHandler.CurrentTime))
-                {
+                if (creatures[i].NextActionTime.IsLessThan(Program.TimeHandler.CurrentTime) || creatures[i].NextActionTime.Equals(Program.TimeHandler.CurrentTime)) {
                     if (creatures[i] is Player == false)
                         creatures[i].DetermineAction();
-                    else
-                    {
+                    else {
                         BuildingManager.DeterminePlayerAction();
                         for (i = 0; i < creatures.Count; i++)
                             if (creatures[i] is Player)

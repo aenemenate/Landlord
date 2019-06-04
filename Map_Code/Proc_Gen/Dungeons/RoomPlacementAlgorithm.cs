@@ -62,8 +62,7 @@ namespace Landlord
 
             firstRoomPos = floor > 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[floor - 1].GetDownStairPos() : Program.Player.Position;
 
-            for (int c = 0; c < placementAttempts; c++) // create all rooms
-            {
+            for (int c = 0; c < placementAttempts; c++) /* create all rooms */ {
                 if (rooms.Count >= maxRoomCount)
                     break;
                 room = GenerateRoom(); // generate the first room
@@ -79,7 +78,6 @@ namespace Landlord
                 for (int j = 0; j < dungeonFloor.Height; j++) {
                     if (dungeonFloor.Blocks[i * dungeonFloor.Width + j] == null)
                         dungeonFloor.Blocks[i * dungeonFloor.Width + j] = new Air();
-                    dungeonFloor.Blocks[i * dungeonFloor.Width + j].Explored = true;
                 }
         }
         

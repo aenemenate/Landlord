@@ -17,14 +17,13 @@
         public void DecideTrack()
         {
             if ( Program.CurrentState is Play ) {
-                if (Program.WorldMap.LocalTile.InDungeon == false)
-                {
+                if (Program.Player.CurrentFloor >= 0 == false) {
                     if (Program.TimeHandler.CurrentTime.Hour >= 8 && Program.TimeHandler.CurrentTime.Hour < 20)
                         SetTrack( "Day1" );
                     else
                         SetTrack( "Night1" );
-                } else
-                {
+                }
+                else {
                     SetTrack( "Dungeon1" );
                 }
             }

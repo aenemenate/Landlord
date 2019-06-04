@@ -40,11 +40,11 @@ namespace Landlord
         public void Init()
         {
             Point firstRoomPos = Program.Player.Position;
+            Point worldIndex = Program.Player.WorldIndex;
 
-            for (int i = 0; i < floors.GetLength(0); i++)
-            {
-                floors[i] = new DungeonFloor(new Point(Program.WorldMap.LocalTile.Width, Program.WorldMap.LocalTile.Height));
-                floors[i].Init(dungeonType, monsterTypes, i);
+            for (int i = 0; i < floors.GetLength(0); i++) {
+                floors[i] = new DungeonFloor(new Point(Program.WorldMap.TileWidth, Program.WorldMap.TileHeight));
+                floors[i].Init(dungeonType, monsterTypes, worldIndex, i);
             }
 
             OnFinishedGenerating(this, EventArgs.Empty);

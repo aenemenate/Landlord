@@ -278,26 +278,22 @@ namespace Landlord
             while (true)
             {
                 Point startPoint = Program.Window.CalculateMapStartPoint();
-                Program.WorldMap.LocalTile.DrawCell(cursor.X + startPoint.X, cursor.Y + startPoint.Y);
+                Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DrawCell(cursor.X + startPoint.X, cursor.Y + startPoint.Y);
 
-                if (dir.X == 1 && cursor.X == rightLimit)
-                {
+                if (dir.X == 1 && cursor.X == rightLimit) {
                     dir = new Point(0, 1);
                     rightLimit--;
                 }
-                else if (dir.Y == 1 && cursor.Y == downLimit)
-                {
+                else if (dir.Y == 1 && cursor.Y == downLimit) {
                     dir = new Point(-1, 0);
                     if (downLimit > endPoint.Y)
                         downLimit--;
                 }
-                if (dir.X == -1 && cursor.X == leftLimit)
-                {
+                if (dir.X == -1 && cursor.X == leftLimit) {
                     dir = new Point(0, -1);
                     leftLimit++;
                 }
-                else if (dir.Y == -1 && cursor.Y == upLimit)
-                {
+                else if (dir.Y == -1 && cursor.Y == upLimit) {
                     dir = new Point(1, 0);
                     if (upLimit < endPoint.Y)
                         upLimit++;
@@ -307,8 +303,7 @@ namespace Landlord
                 cursor = new Point(cursor.X + dir.X, cursor.Y + dir.Y);
 
                 // the animation ends once the cursor is less than the leftBoundary
-                if (cursor.Equals(endPoint))
-                {
+                if (cursor.Equals(endPoint)) {
                     Delete();
                     Program.CurrentState = new Play();
                     InventoryPanel.Displaying = false;
@@ -396,10 +391,15 @@ namespace Landlord
 
         public override void Play()
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             while (true)
             {
                 Point startPoint = Program.Window.CalculateMapStartPoint();
-                Program.WorldMap.LocalTile.DrawCell(cursor.X + startPoint.X - InventoryPanel.Width, cursor.Y + startPoint.Y);
+                Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DrawCell(cursor.X + startPoint.X - InventoryPanel.Width, cursor.Y + startPoint.Y);
 
                 if (dir.X == 1 && cursor.X == rightLimit)
                 {

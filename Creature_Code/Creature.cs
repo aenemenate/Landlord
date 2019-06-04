@@ -9,6 +9,8 @@ namespace Landlord
     {
         private Point position;
         private Block currentBlock;
+        private Point worldIndex;
+        private int currentFloor;
         private UInt64 id;
 
         private List<Item> inventory;
@@ -30,10 +32,9 @@ namespace Landlord
 
         // CONSTRUCTORS //
 
-        public Creature (Block[] map, Point position, int sightDist, byte graphic, string name, string gender, bool friendly,
+        public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, bool friendly,
             bool solid, bool opaque, BlockType type = BlockType.Creature, bool interactive = true, bool enterable = false) 
-            : base (graphic, name, type, solid, opaque, interactive, enterable)
-        {
+                : base (graphic, name, type, solid, opaque, interactive, enterable) {
             id = (UInt64)((DateTime.Now - new DateTime(year: 2019, month: 5, day: 15)).TotalSeconds * 100);
             inventory = new List<Item>();
             visiblePoints = new List<Point>();
@@ -45,6 +46,8 @@ namespace Landlord
             gold = 0F;
 
             this.position = position;
+            this.worldIndex = worldIndex;
+            this.currentFloor = currentFloor;
             this.sightDist = sightDist;
             this.gender = gender;
             this.friendly = friendly;
@@ -52,7 +55,6 @@ namespace Landlord
 
         public Creature() : base()
         {
-
         }
 
         // FUNCTIONS //
@@ -134,21 +136,24 @@ namespace Landlord
         
 
         // moving maps //
-        public bool MoveMaps(Point to, MapTile mapFrom, MapTile mapTo)
+        public bool MoveMaps(Point to, int xDir, int yDir)
         {
-            if (mapTo[to.X, to.Y].Solid)
+            int width = Program.WorldMap.TileWidth;
+
+            if (currentFloor >= 0)
+                return false;
+            if (Program.WorldMap[WorldIndex.X + xDir, WorldIndex.Y + yDir].Blocks[to.X * width + to.Y].Solid)
                 return false;
 
-            mapFrom[position.X, position.Y] = currentBlock;
+            Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks[position.X * width + position.Y] = currentBlock;
 
-            currentBlock = mapTo[to.X, to.Y];
-
-            mapFrom.Creatures.Remove(this);
-            mapTo.Creatures.Add(this);
-
-            mapTo[to.X, to.Y] = this;
-
+            currentBlock = Program.WorldMap[WorldIndex.X + xDir, WorldIndex.Y + yDir].Blocks[to.X * width + to.Y];
             position = to;
+            worldIndex = new Point(worldIndex.X + xDir, worldIndex.Y + yDir);
+
+            Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures.Add(this);
+            Program.WorldMap[worldIndex.X - xDir, worldIndex.Y - yDir].Creatures.Remove(this);
+            Program.WorldMap[worldIndex.X, worldIndex.Y][to.X, to.Y] = this;
 
             ApplyActionCost(8);
             return true;
@@ -156,63 +161,64 @@ namespace Landlord
 
         public void TakeStairsDown()
         {
-            if (!Program.WorldMap.LocalTile.Owned)
-            {
+            if (!Program.WorldMap[worldIndex.X, worldIndex.Y].Owned && this is Player) {
                 Menus.DisplayIncorrectUsage("You need to buy this hectare to enter the dungeon. Click a plot on the world map to buy it.");
                 return;
             }
 
-            bool dungeonNotCreated = Program.WorldMap.LocalTile.Dungeon == null;
-            if (dungeonNotCreated)
-            {
-                Program.CurrentState = new GeneratingDungeon();
+            bool dungeonNotCreated = Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon == null;
+            if (dungeonNotCreated) {
+                if (this is Player)
+                    Program.CurrentState = new GeneratingDungeon();
                 return; // program will stop here and generate the map, then recall this function and skip to the rest
             }
 
-            bool onFinalFloor = Program.WorldMap.LocalTile.CurrentFloor == Program.WorldMap.LocalTile.Dungeon.Floors.GetLength(0) - 1;
+            bool onFinalFloor = currentFloor == Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors.GetLength(0) - 1;
             if (onFinalFloor)
                 return;
 
             ApplyActionCost(12);
 
-            Program.WorldMap.LocalTile.Blocks[this.Position.X * Program.WorldMap.LocalTile.Width + this.Position.Y] = this.CurrentBlock;
+            Block[] blocksFrom = currentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
+            List<Creature> creaturesFrom = currentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Creatures;
 
-            Program.WorldMap.LocalTile.Creatures.Remove(this);
+            blocksFrom[this.Position.X * Program.WorldMap.TileWidth + this.Position.Y] = currentBlock;
+            creaturesFrom.Remove(this);
 
-            Program.WorldMap.LocalTile.InDungeon = true;
-            Program.WorldMap.LocalTile.CurrentFloor += 1; // go down a floor
+            currentFloor += 1; // go down a floor
 
+            Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[currentFloor].Creatures.Add(this);
+            CurrentBlock = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[currentFloor][this.Position.X, this.Position.Y];
+            Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[currentFloor][this.Position.X, this.Position.Y] = this;
 
-            Program.WorldMap.LocalTile.Dungeon.Floors[Program.WorldMap.LocalTile.CurrentFloor].Creatures.Add(this);
-
-            CurrentBlock = Program.WorldMap.LocalTile.Dungeon.Floors[Program.WorldMap.LocalTile.CurrentFloor][this.Position.X, this.Position.Y];
-            Program.WorldMap.LocalTile.Dungeon.Floors[Program.WorldMap.LocalTile.CurrentFloor][this.Position.X, this.Position.Y] = this;
-
-            Program.WorldMap.LocalTile.DijkstraMaps.CallItemPosChanged(this);
-            Program.WorldMap.LocalTile.DijkstraMaps.CallPlayerMoved(this);
+            if (this is Player) {
+                Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
+                Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallPlayerMoved(this);
+            }
             
-            Scheduler.InitCreatureListScheduling(Program.WorldMap.LocalTile);
+            Scheduler.InitCreatureListScheduling(Program.WorldMap[WorldIndex.X, WorldIndex.Y], currentFloor);
         }
 
         public void TakeStairsUp()
         {
             ApplyActionCost(12);
 
-            bool removed = Program.WorldMap.LocalTile.Creatures.Remove(this);
-            Program.WorldMap.LocalTile.CurrentFloor -= 1;
+            Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor + 1][Position.X, Position.Y] = currentBlock;
+            bool removed = Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures.Remove(this);
+            currentFloor -= 1;
 
-            if (Program.WorldMap.LocalTile.CurrentFloor == -1)
-                Program.WorldMap.LocalTile.InDungeon = false;
+            List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
 
-            Program.WorldMap.LocalTile.Creatures.Add(this);
-            Program.WorldMap.LocalTile.Dungeon.Floors[Program.WorldMap.LocalTile.CurrentFloor + 1][Position.X, Position.Y] = CurrentBlock;
+            creatures.Add(this);
 
-            CurrentBlock = Program.WorldMap.LocalTile.Blocks[Position.X * Program.WorldMap.LocalTile.Width + Position.Y];
-            Program.WorldMap.LocalTile.Blocks[Position.X * Program.WorldMap.LocalTile.Width + Position.Y] = this;
+            currentBlock = blocks[Position.X * Program.WorldMap.TileWidth + Position.Y];
+            blocks[Position.X * Program.WorldMap.TileWidth + Position.Y] = this;
 
-            Program.WorldMap.LocalTile.DijkstraMaps.CallItemPosChanged(this);
+            if (this is Player)
+                Program.WorldMap[worldIndex.X, worldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
 
-            Scheduler.InitCreatureListScheduling( Program.WorldMap.LocalTile );
+            Scheduler.InitCreatureListScheduling( Program.WorldMap[worldIndex.X, worldIndex.Y], currentFloor );
         }
 
         
@@ -379,97 +385,15 @@ namespace Landlord
         
 
         // get positions //
-        public Point GetNearbyBlockClosestToTargetForMovement(Point target, MapTile map)
-        {
-            List<Point> nearbyPoints = new List<Point>();
-            List<Point> walkablePoints = new List<Point>();
-
-            Point closestPoint = new Point();
-            Point nextClosestPoint = new Point();
-            Point closestWalkablePoint = new Point();
-
-            nearbyPoints.Add(new Point(Position.X, Position.Y + 1));
-            nearbyPoints.Add(new Point(Position.X, Position.Y - 1));
-            nearbyPoints.Add(new Point(Position.X + 1, Position.Y));
-            nearbyPoints.Add(new Point(Position.X - 1, Position.Y));
-            nearbyPoints.Add(new Point(Position.X - 1, Position.Y + 1));
-            nearbyPoints.Add(new Point(Position.X + 1, Position.Y - 1));
-            nearbyPoints.Add(new Point(Position.X + 1, Position.Y + 1));
-            nearbyPoints.Add(new Point(Position.X - 1, Position.Y - 1));
-
-            foreach (Point point in nearbyPoints)
-            {
-                if (map.PointWithinBounds(point) && map[point.X, point.Y].Solid == false)
-                    walkablePoints.Add(point);
-
-                if (point.DistFrom(target) < closestPoint.DistFrom(target))
-                {
-                    nextClosestPoint = closestPoint;
-                    closestPoint = point;
-                }
-            }
-
-            if (map[closestPoint.X, closestPoint.Y].Solid == true && map[target.X, target.Y].Solid == false)
-                closestPoint = nextClosestPoint;
-
-            foreach (Point point in walkablePoints)
-            {
-                int deltaX = point.X - target.X;
-                int deltaY = point.Y - target.Y;
-                int closestDeltaX = closestPoint.X - target.X;
-                int closestDeltaY = closestPoint.Y - target.Y;
-
-                if (Math.Sqrt(deltaX * deltaX + deltaY * deltaY) <= Math.Sqrt(closestDeltaX * closestDeltaX + closestDeltaY * closestDeltaY))
-                    closestWalkablePoint = point;
-            }
-
-            return closestWalkablePoint;
-        }
-        
-        public Point GetAdjacentFreePointClosestToTarget(Point target, MapTile map)
-        {
-            List<Point> nearbyPoints = new List<Point>();
-            List<Point> walkablePoints = new List<Point>();
-
-            Point closestPoint = new Point(0, 0);
-
-            nearbyPoints.Add(new Point(position.X, position.Y + 1));
-            nearbyPoints.Add(new Point(position.X, position.Y - 1));
-            nearbyPoints.Add(new Point(position.X + 1, position.Y));
-            nearbyPoints.Add(new Point(position.X - 1, position.Y));
-            nearbyPoints.Add(new Point(position.X - 1, position.Y + 1));
-            nearbyPoints.Add(new Point(position.X + 1, position.Y - 1));
-            nearbyPoints.Add(new Point(position.X + 1, position.Y + 1));
-            nearbyPoints.Add(new Point(position.X - 1, position.Y - 1));
-
-            foreach (Point point in nearbyPoints)
-            {
-                Block block = map[point.X, point.Y];
-
-                if (block.Solid == false)
-                    walkablePoints.Add(point);
-            }
-
-            foreach (Point point in walkablePoints)
-            {
-                int deltaX = point.X - target.X;
-                int deltaY = point.Y - target.Y;
-                int closestDeltaX = closestPoint.X - target.X;
-                int closestDeltaY = closestPoint.Y - target.Y;
-
-                if (Math.Sqrt(deltaX * deltaX + deltaY * deltaY) <= Math.Sqrt(closestDeltaX * closestDeltaX + closestDeltaY * closestDeltaY))
-                    closestPoint = point;
-            }
-
-            return closestPoint;
-        }
-
         public List<Point> GetNearbyBlocksOfType(BlockType type)
         {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth;
+
             List<Point> nearbyPointsOfType = new List<Point>();
-            for (int i = Math.Max(0, Position.X - 1); i <= Math.Min(Program.WorldMap.LocalTile.Width - 1, Position.X + 1); i++)
-                for (int j = Math.Max(0, Position.Y - 1); j <= Math.Min(Program.WorldMap.LocalTile.Height - 1, Position.Y + 1); j++)
-                    if (Program.WorldMap.LocalTile[i, j].Type == type && Position.Equals(new Point(i, j)) == false)
+            for (int i = Math.Max(0, Position.X - 1); i <= Math.Min(Program.WorldMap.TileWidth - 1, Position.X + 1); i++)
+                for (int j = Math.Max(0, Position.Y - 1); j <= Math.Min(Program.WorldMap.TileHeight - 1, Position.Y + 1); j++)
+                    if (blocks[i * width + j].Type == type && Position.Equals(new Point(i, j)) == false)
                         nearbyPointsOfType.Add(new Point(i, j));
 
             return nearbyPointsOfType;
@@ -477,11 +401,11 @@ namespace Landlord
 
         private Point GetNearbyTreePos(Tree tree)
         {
-            for (int i = Position.X - 1; i <= Position.X + 1; i++)
-            {
-                for (int j = Position.Y - 1; j <= Position.Y + 1; j++)
-                {
-                    if (Program.WorldMap.LocalTile[i, j] is Tree foundTree && foundTree.Thickness == tree.Thickness)
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth;
+            for (int i = Position.X - 1; i <= Position.X + 1; i++) {
+                for (int j = Position.Y - 1; j <= Position.Y + 1; j++) {
+                    if (blocks[i * width + j] is Tree foundTree && foundTree.Thickness == tree.Thickness)
                         return new Point(i, j);
                 }
             }
@@ -651,34 +575,39 @@ namespace Landlord
             if (this is Player == false) UnequipAll();
         }
         // movement
-        public void Move( Point to, MapTile map, bool openDoors = false )
+        public void Move( Point to, bool openDoors = false )
         {
-            if ( map[to.X, to.Y] is Door door && door.Solid == true && openDoors ) {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+            if (to.Equals(new Point()))
+                return;
+            if (blocks[to.X * width + to.Y] is Door door && door.Solid == true && openDoors ) {
                 OpenDoor( door );
                 return;
             }
-            if ( map[to.X, to.Y] is Cart cart && cart.Solid == true )
+            if ( blocks[to.X * width + to.Y] is Cart cart && cart.Solid == true )
             {
                 int xDir = to.X - position.X, yDir = to.Y - position.Y;
-                PushCart( map, to, new Point(to.X + xDir, to.Y + yDir) );
+                PushCart( to, new Point(to.X + xDir, to.Y + yDir) );
                 return;
             }
 
-            bool destinationNotValid = ((to == Position || to == new Point()) || (to.X < 0 || to.X >= map.Width) || (to.Y < 0 || to.Y >= map.Width)) || map[to.X, to.Y].Solid;
+            bool destinationNotValid = ((to == Position || to == new Point()) || (to.X < 0 || to.X >= width) || (to.Y < 0 || to.Y >= height)) || blocks[to.X * width + to.Y].Solid;
 
             if (destinationNotValid)
                 return;
             
-            map[position.X, position.Y] = currentBlock;
-            currentBlock = map[to.X, to.Y];
+            blocks[position.X * width + position.Y] = currentBlock;
+            currentBlock = blocks[to.X * width + to.Y];
 
-            map[to.X, to.Y] = this;
+            blocks[to.X * width + to.Y] = this;
             position = to;
 
             ChangeResource(Resource.SP, 2);
 
             if (this is Player)
-                Program.WorldMap.LocalTile.DijkstraMaps.CallPlayerMoved(this);
+                Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallPlayerMoved(this);
 
             ApplyActionCost(8);
         }
@@ -706,36 +635,39 @@ namespace Landlord
             ApplyActionCost(4);
         }
 
-        public void PushCart( MapTile map, Point oldPos, Point newPos )
+        public void PushCart( Point oldPos, Point newPos )
         {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             if (this is Player && Program.CurrentState is Play play && play.PlayMode == PlayMode.BuildMode)
                 return;
 
-            Block cart = map[oldPos.X, oldPos.Y];
+            Block cart = blocks[oldPos.X * width + oldPos.Y];
 
             void PushToMap(MapTile pushTo)
             {
-                if (pushTo[newPos.X, newPos.Y].Solid == false)
-                {
+                if (pushTo[newPos.X, newPos.Y].Solid == false) {
                     pushTo[newPos.X, newPos.Y] = cart;
-                    map[oldPos.X, oldPos.Y] = new Air();
+                    blocks[oldPos.X * width + oldPos.Y] = new Air();
                     Program.MsgConsole.WriteLine( $"{Name} pushed the {cart.Name}" );
-                } else
+                }
+                else
                     Program.MsgConsole.WriteLine( $"{Name} tried to push the {cart.Name} into a {pushTo[newPos.X, newPos.Y].Name}" );
             }
 
             void PushToDifferentMap()
             {
-                int xDir = newPos.X >= 0 && newPos.X < map.Width ? 0 : newPos.X >= map.Width ?  1 : -1, 
-                    yDir = newPos.Y >= 0 && newPos.Y < map.Height ? 0 : newPos.Y >= map.Height ? 1 : -1;
-                MapTile newMap = Program.WorldMap[Program.WorldMap.WorldIndex.X + xDir, Program.WorldMap.WorldIndex.Y + yDir];
-                newPos = new Point( newPos.X - (xDir * map.Width ) + xDir, newPos.Y - (yDir * map.Height) + yDir );
+                int xDir = newPos.X >= 0 && newPos.X < width ? 0 : newPos.X >= width ?  1 : -1, 
+                    yDir = newPos.Y >= 0 && newPos.Y < height ? 0 : newPos.Y >= height ? 1 : -1;
+                MapTile newMap = Program.WorldMap[worldIndex.X + xDir, worldIndex.Y + yDir];
+                newPos = new Point( newPos.X - (xDir * width ) + xDir, newPos.Y - (yDir * height) + yDir );
 
                 PushToMap( newMap );
             }
 
-            if (newPos.X >= 0 && newPos.Y >= 0 && newPos.X < map.Width && newPos.Y < map.Height)
-                PushToMap( map );
+            if (newPos.X >= 0 && newPos.Y >= 0 && newPos.X < width && newPos.Y < height)
+                PushToMap( Program.WorldMap[worldIndex.X, worldIndex.Y] );
             else
                 PushToDifferentMap();
             ApplyActionCost( 20 );
@@ -744,21 +676,20 @@ namespace Landlord
         public void ChopTree( Tree tree )
         {
             Item weapon = body.MainHand;
-            if (weapon is Axe || weapon is Sword)
-            {
+            Random rng = new Random();
+            if (weapon is Axe || weapon is Sword) {
                 Point pos = GetNearbyTreePos(tree);
 
                 tree.Thickness -= GetWepDmg(weapon);
                 ApplyActionCost(GetWeaponCost(weapon));
-                if (Program.RNG.Next(0, 100) < 10)
+                if (rng.Next(0, 100) < 10)
                     LvlWeaponSkill(weapon, 5);
                 // deplete stamina
                 ChangeResource( Resource.SP, -(int)( weapon.Weight * 2 ) );
                 Program.MsgConsole.WriteLine($"{Name} chopped the tree.");
                 
-                if (tree.Thickness <= 0)
-                {
-                    tree.DropLogs(pos);
+                if (tree.Thickness <= 0) {
+                    tree.DropLogs(pos, this);
                     if (Program.CurrentState is Play play && play.PlayMode == PlayMode.BuildMode)
                         Wield(inventory.FindIndex(i => i is BlueprintPouch), true);
                 }
@@ -769,7 +700,6 @@ namespace Landlord
         {
             if ( !(wall.Material == Material.Stone || wall.Material == Material.Coal) )
                 return;
-
             if (Body.MainHand is Axe axe && axe.WeaponName == "pickaxe")
             {
                 Program.MsgConsole.WriteLine( $"{Name} struck the {wall.Name}" );
@@ -779,18 +709,18 @@ namespace Landlord
                 ChangeResource( Resource.SP, -(int)( axe.Weight * 2 ) );
                 wall.HP -= (int)Physics.ImpactYields[axe.Material] - (int)Physics.ImpactYields[Material.Stone];
             }
-
-            if (wall.HP <= 0)
-            {
+            if (wall.HP <= 0) {
                 Item drop = new Stone( true );
                 if (wall.Material == Material.Coal)
                     drop = new CoalOre( true );
                 Point pos = new Point();
                 List<Point> potentialSpots = GetNearbyBlocksOfType( BlockType.Wall );
                 potentialSpots.AddRange( GetNearbyBlocksOfType( BlockType.OreWall ) );
-                pos = potentialSpots.Find( w => ( (Wall)Program.WorldMap.LocalTile[w.X, w.Y] ).HP == wall.HP );
-                
-                Program.WorldMap.LocalTile[pos.X, pos.Y] = drop;
+
+                Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+                int width = Program.WorldMap.TileWidth;
+                pos = potentialSpots.Find( w => ( (Wall)blocks[w.X * width + w.Y] ).HP == wall.HP );
+                blocks[pos.X * width + pos.Y] = drop;
                 Program.MsgConsole.WriteLine( $"The {wall.Name} collapsed!" );
             }
         }
@@ -802,14 +732,16 @@ namespace Landlord
         // item interactions
         public void GetItem(Point itemPos)
         {
-            if (Program.WorldMap.LocalTile[itemPos.X, itemPos.Y] is Item item)
-            {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth;
+
+            if (blocks[itemPos.X * width + itemPos.Y] is Item item) {
                 bool itemAdded = AddItem(item);
-                if (itemAdded)
-                {
+                if (itemAdded) {
                     Block replacementBlock = item.BlockPlacedOn ?? new Air();
-                    Program.WorldMap.LocalTile[itemPos.X, itemPos.Y] = replacementBlock;
-                    Program.WorldMap.LocalTile.DijkstraMaps.CallItemPosChanged(this);
+                    blocks[itemPos.X * width + itemPos.Y] = replacementBlock;
+                    if (currentFloor == Program.Player.CurrentFloor && worldIndex.Equals(Program.Player.WorldIndex))
+                        Program.WorldMap[worldIndex.X, worldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
                     if (this.Visible)
                         Program.MsgConsole.WriteLine($"{Name} picked up the {item.Name}");
                     ApplyActionCost(4);
@@ -853,18 +785,19 @@ namespace Landlord
 
         public void Drop(Item item)
         {
-            List<Point> freeDirections = Program.WorldMap.LocalTile.GetEmptyAdjacentBlocks(position);
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
-            if (freeDirections.Count == 0)
-            {
+            List<Point> freeDirections = blocks.GetEmptyAdjacentBlocks(new Point(width, height), position); 
+            if (freeDirections.Count == 0) {
                 Menus.DisplayIncorrectUsage("There's no space to drop that.");
                 return;
             }
 
             Point point = freeDirections[new Random().Next(0, freeDirections.Count)];
 
-            item.BlockPlacedOn = Program.WorldMap.LocalTile[point.X, point.Y];
-            Program.WorldMap.LocalTile[point.X, point.Y] = item;
+            item.BlockPlacedOn = blocks[point.X * width + point.Y];
+            blocks[point.X * width + point.Y] = item;
 
             inventory.Remove(item);
 
@@ -872,19 +805,17 @@ namespace Landlord
 
             ApplyActionCost(10);
 
-            Program.WorldMap.LocalTile.DijkstraMaps.CallItemPosChanged(this);
+            Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
         }
         // equipment interactions
         public void Wield(int itemIndex, bool mainHand)
         {
-            if (mainHand)
-            {
+            if (mainHand) {
                 if (body.MainHand != null)
                     inventory.Add(body.MainHand);
                 body.MainHand = inventory[itemIndex];
             }
-            else
-            {
+            else {
                 if (body.OffHand != null)
                     inventory.Add(body.OffHand);
                 body.OffHand = inventory[itemIndex];
@@ -892,46 +823,38 @@ namespace Landlord
             
             if (this.Visible)
                 Program.MsgConsole.WriteLine($"{Name} wielded the {inventory[itemIndex].Name}");
-
             inventory.RemoveAt(itemIndex);
-
             ApplyActionCost(10);
         }
 
         public void Equip(Armor armorPiece)
         {
-            if (armorPiece is Helmet helmet)
-            {
+            if (armorPiece is Helmet helmet) {
                 if (body.Helmet != null)
                     inventory.Add(body.Helmet);
                 body.Helmet = helmet;
             }
-            else if (armorPiece is ChestPiece chestPiece)
-            {
+            else if (armorPiece is ChestPiece chestPiece) {
                 if (body.ChestPiece != null)
                     inventory.Add(body.ChestPiece);
                 body.ChestPiece = chestPiece;
             }
-            else if (armorPiece is Shirt shirt)
-            {
+            else if (armorPiece is Shirt shirt) {
                 if (body.Shirt != null)
                     inventory.Add(body.Shirt);
                 body.Shirt = shirt;
             }
-            else if (armorPiece is Gauntlets gauntlets)
-            {
+            else if (armorPiece is Gauntlets gauntlets) {
                 if (body.Gauntlets != null)
                     inventory.Add(body.Gauntlets);
                 body.Gauntlets = gauntlets;
             }
-            else if (armorPiece is Leggings leggings)
-            {
+            else if (armorPiece is Leggings leggings) {
                 if (body.Leggings != null)
                     inventory.Add(body.Leggings);
                 body.Leggings = leggings;
             }
-            else if (armorPiece is Boots boots)
-            {
+            else if (armorPiece is Boots boots) {
                 if (body.Boots != null)
                     inventory.Add(body.Boots);
                 body.Boots = boots;
@@ -941,68 +864,55 @@ namespace Landlord
                 Program.MsgConsole.WriteLine($"{Name} equipped the {armorPiece.Name}");
 
             inventory.Remove(armorPiece);
-
             ApplyActionCost(18);
         }
 
         public void Unequip(Item item)
         {
-            if (item is Armor)
-            {
-                if (item is Helmet)
-                {
+            if (item is Armor) {
+                if (item is Helmet) {
                     bool addedItem = AddItem(body.Helmet);
                     if (addedItem) body.Helmet = null;
                 }
-                else if (item is ChestPiece)
-                {
+                else if (item is ChestPiece) {
                     bool addedItem = AddItem(body.ChestPiece);
                     if (addedItem) body.ChestPiece = null;
                 }
-                else if (item is Shirt)
-                {
+                else if (item is Shirt) {
                     bool addedItem = AddItem(body.Shirt);
                     if (addedItem) body.Shirt = null;
                 }
-                else if (item is Gauntlets)
-                {
+                else if (item is Gauntlets) {
                     bool addedItem = AddItem(body.Gauntlets);
                     if (addedItem) body.Gauntlets = null;
                 }
-                else if (item is Leggings)
-                {
+                else if (item is Leggings) {
                     bool addedItem = AddItem(body.Leggings);
                     if (addedItem) body.Leggings = null;
                 }
-                else if (item is Boots)
-                {
+                else if (item is Boots) {
                     bool addedItem = AddItem(body.Boots);
                     if (addedItem) body.Boots = null;
                 }
 
                 ApplyActionCost(16);
             }
-            else
-            {
-                if (body.OffHand != null && body.OffHand.Equals(item))
-                {
+            else {
+                if (body.OffHand != null && body.OffHand.Equals(item)) {
                     bool addedItem = AddItem(body.OffHand);
                     if (addedItem) body.OffHand = null;
                 }
-                else if (body.MainHand != null && body.MainHand.Equals(item))
-                {
+                else if (body.MainHand != null && body.MainHand.Equals(item)) {
                     bool addedItem = AddItem(body.MainHand);
                     if (addedItem)
                         body.MainHand = null;
-                    else
-                    {
+                    else {
                         inventory.Add( body.MainHand );
                         Drop( body.MainHand );
                         body.MainHand = null;
                         ApplyActionCost( 8 );
                     }
                 }
-
                 ApplyActionCost(8);
             }
 
@@ -1032,79 +942,71 @@ namespace Landlord
 
 
         // PROPERTIES //
-
-        public Point Position
-        {
+        public Point Position {
             get { return position; }
             set { position = value; }
         }
-        public int SightDist
-        {
+        public Point WorldIndex {
+            get { return worldIndex; }
+            set { worldIndex = value; }
+        }
+        public int CurrentFloor {
+            get { return currentFloor; }
+            set { currentFloor = value; }
+        }
+        public int SightDist {
             get { return sightDist; }
             set { sightDist = value; }
         }
-        public UInt64 ID
-        {
+        public UInt64 ID {
             get { return id; }
             set { id = value; }
         }
-        public float Gold
-        {
+        public float Gold {
             get { return gold; }
             set { gold = value; }
         }
-        public Stats Stats
-        {
+        public Stats Stats {
             get { return stats; }
             set { stats = value; }
         }
-        public Class Class
-        {
+        public Class Class {
             get { return uclass; }
             set { uclass = value; }
         }
-        public List<Effect> Effects
-        {
+        public List<Effect> Effects {
             get { return effects; }
             set { effects = value; }
         }
-        public Block CurrentBlock
-        {
+        public Block CurrentBlock {
             get { return currentBlock; }
             set { currentBlock = value;}
         }
-        public string Gender
-        {
+        public string Gender {
             get { return gender; }
             set { gender = value; }
         }
-        public bool Friendly
-        {
+        public bool Friendly {
             get { return friendly; }
             set { friendly = value; }
         }
-        public bool Alive
-        {
+        public bool Alive {
             get { return alive; }
             set { alive = value; }
         }
-        public Time NextActionTime
-        {
+        public Time NextActionTime {
             get { return nextActionTime; }
             set { nextActionTime = value; }
         }
-        public List<Item> Inventory
-        {
+        public List<Item> Inventory {
             get { return inventory; }
             set { inventory = value; }
         }
-        public List<Point> VisiblePoints
-        {
+        public List<Point> VisiblePoints {
             get { return visiblePoints; }
             set { visiblePoints = value; }
         }
-        public Body Body
-        {
+        public Body Body {
             get { return body; }
             set { body = value; }
         }

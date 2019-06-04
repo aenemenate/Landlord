@@ -11,6 +11,7 @@ namespace Landlord
     class MapTile
     {
         private int width, height;
+        private Point worldIndex;
         private Block[] map; // x * width + y
         private Block[] memoryMap; // x * width + y
         private Tile[] floor; // x * width + y
@@ -24,17 +25,13 @@ namespace Landlord
         private Point dungeonEntrance;
         private Dungeon dungeon;
 
-        private int currentFloor;
-        private bool inDungeon;
-        private bool loading;
-
-
         // CONSTRUCTOR //
 
 		public MapTile(Point size, Point worldIndex, float[,] heightMap, bool containsDungeon)
         {
             width = size.X;
             height = size.Y;
+            this.worldIndex = worldIndex;
             map = new Block[width * height];
             memoryMap = new Block[width * height];
             floor = new Tile[width * height];
@@ -42,9 +39,6 @@ namespace Landlord
             dijkstraMaps = new DijkstraMaps(width, height);
             Init(new Random(), worldIndex, heightMap, containsDungeon);
             owned = false;
-            inDungeon = false;
-            loading = false;
-            currentFloor = -1;
         }
 
         public MapTile()
@@ -85,20 +79,26 @@ namespace Landlord
         public void DrawCell(int x, int y)
         {
             Point startPoint = Program.Window.CalculateMapStartPoint();
-            Color floorForeColor = Floor[x * width + y].ForeColor;
-            Color floorBackColor = Floor[x * width + y].BackColor;
+
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            Tile[] tiles = currentFloor >= 0 ? Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+            Color floorForeColor = tiles[x * width + y].ForeColor;
+            Color floorBackColor = tiles[x * width + y].BackColor;
 
             float nonVisibleMultiplierFore, nonVisibleMultiplierBack, visibleMultiplierFore, visibleMultiplierBack, heightMultiplierFore, heightMultiplierBack;
 
-            if (inDungeon == true)
-            {
+            if (Program.Player.CurrentFloor >= 0 == true) {
                 heightMultiplierFore = 0F;
                 heightMultiplierBack = 0F;
             }
             else
             {
-                float cellHeight = Program.WorldMap.HeightMap[x + 100 * Program.WorldMap.WorldIndex.X, y + 100 * Program.WorldMap.WorldIndex.Y];
-                float playerHeight = Program.WorldMap.HeightMap[Program.Player.Position.X + 100 * Program.WorldMap.WorldIndex.X, Program.Player.Position.Y + 100 * Program.WorldMap.WorldIndex.Y];
+                float cellHeight = Program.WorldMap.HeightMap[x + 100 * Program.Player.WorldIndex.X, y + 100 * Program.Player.WorldIndex.Y];
+                float playerHeight = Program.WorldMap.HeightMap[Program.Player.Position.X + 100 * Program.Player.WorldIndex.X, Program.Player.Position.Y + 100 * Program.Player.WorldIndex.Y];
                 heightMultiplierFore = ((90F - cellHeight) / 128F) * 0.25F;
                 heightMultiplierBack = ((90F - cellHeight) / 128F) * 0.1F;
             }
@@ -107,27 +107,26 @@ namespace Landlord
             nonVisibleMultiplierBack = 0.9F - heightMultiplierBack;
             visibleMultiplierFore = 0.95F - heightMultiplierFore;
             visibleMultiplierBack = 1F - heightMultiplierBack;
-            
 
             void RenderFloorTile()
             {
-                if (!Floor[x * width + y].Explored)
-                    Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, Floor[x * width + y].Graphic, Color.Black, Color.Black);
+                if (!tiles[x * width + y].Explored)
+                    Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, Color.Black, Color.Black);
                 else
-                    switch (Floor[x * width + y].Visible)
+                    switch (tiles[x * width + y].Visible)
                     {
                         case (false):
-                            Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, Floor[x * width + y].Graphic, floorForeColor * nonVisibleMultiplierFore, floorBackColor * nonVisibleMultiplierBack);
+                            Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, floorForeColor * nonVisibleMultiplierFore, floorBackColor * nonVisibleMultiplierBack);
                             break;
                         case (true):
-                            Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, Floor[x * width + y].Graphic, floorForeColor * visibleMultiplierFore, floorBackColor * visibleMultiplierBack);
+                            Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, floorForeColor * visibleMultiplierFore, floorBackColor * visibleMultiplierBack);
                             break;
                     }
             }
 
             void RenderBlock()
             {
-                Block block = Blocks[x * width + y];
+                Block block = blocks[x * width + y];
                 Color blockForeColor = block.ForeColor;
                 Color blockBackColor = block.BackColor;
 
@@ -180,7 +179,7 @@ namespace Landlord
             }
 
 
-            if (Blocks[x * width + y].Type == BlockType.Empty)
+            if (blocks[x * width + y].Type == BlockType.Empty)
                 RenderFloorTile();
             else
                 RenderBlock();
@@ -215,21 +214,6 @@ namespace Landlord
             return false;
         }
 
-        internal List<Point> GetEmptyAdjacentBlocks(Point point)
-        {
-            List<Point> emptyBlocks = new List<Point>();
-
-            int maxX = Math.Min(height - 1, point.X + 1), maxY = Math.Min(width - 1, point.Y + 1);
-            int minX = Math.Max(0, point.X - 1), minY = Math.Max(0, point.Y - 1);
-
-            for (int i = minX; i <= maxX; i++)
-                for (int j = minY; j <= maxY; j++)
-                    if (!point.Equals(new Point(i, j)) && this[i, j].Solid == false && this[i, j] is Item == false)
-                        emptyBlocks.Add(new Point(i, j));
-
-            return emptyBlocks;
-        }
-
         internal bool PointIsNextToWater(Point point)
         {
             int maxX = Math.Min(height - 1, point.X + 1), maxY = Math.Min(width - 1, point.Y + 1);
@@ -241,33 +225,6 @@ namespace Landlord
                         return true;
 
             return false;
-        }
-
-        internal Creature GetCreatureAtPosition(Point position)
-        {
-            // Program.Player is the actual player, this is just a placeholder
-            if (Program.Player.Position.Equals(position))
-                return Program.Player;
-
-            foreach (Creature creature in Creatures)
-                if (creature.Position.Equals(position))
-                    return creature;
-            return null;
-        }
-
-        internal Point GetClosestOfBlockTypeToPos(Point pos, BlockType blockType, Material material = Material.Null)
-        {
-            Point closestPoint = new Point();
-            double nearestDist = 100000;
-            for (int i = 0; i < Width; i++)
-                for (int j = 0; j < Height; j++) {
-                    double dist = new Point(i, j).DistFrom(pos);
-                    if (Program.WorldMap.LocalTile[i, j].Type == blockType  && (material == Material.Null || material == Program.WorldMap.LocalTile[i, j].Material) && dist < nearestDist) {
-                        nearestDist = dist;
-                        closestPoint = new Point(i, j);
-                    }
-                }
-            return closestPoint;
         }
 
         internal Point GetClosestOfTileTypeToPos( Point pos, Tile tileType  )
@@ -305,98 +262,59 @@ namespace Landlord
         
         // PROPERTIES //
 
-        public Block this[int x, int y]
-        {
-            get { if (!inDungeon || loading) return map[x * width + y]; else return dungeon.Floors[currentFloor][x, y]; }
-            set { if (!inDungeon || loading) map[x * width + y] = value; else dungeon.Floors[currentFloor][x, y] = value; }
+        public Block this[int x, int y] {
+            get { return map[x * width + y]; }
+            set { map[x * width + y] = value; }
         }
-
-        public Block[] Blocks
-        {
-            get { if (!inDungeon || loading) return map; else return dungeon.Floors[currentFloor].Blocks; }
-            set { if (!inDungeon || loading) map = value; else dungeon.Floors[currentFloor].Blocks = value; }
+        public Point WorldIndex {
+            get { return worldIndex; }
+            set { worldIndex = value; }
         }
-
-        public Block[] MemoryMap
-        {
-            get { if (!inDungeon || loading) return memoryMap; else return dungeon.Floors[currentFloor].MemoryMap; }
-            set { if (!inDungeon || loading) memoryMap = value; else dungeon.Floors[currentFloor].MemoryMap = value; }
+        public Block[] Blocks {
+            get { return map; }
+            set { map = value; }
         }
-
-        public Tile[] Floor
-        {
-            get { if (!inDungeon || loading) return floor; else return dungeon.Floors[currentFloor].Floor; }
-            set { if (!inDungeon || loading) floor = value; else dungeon.Floors[currentFloor].Floor = value; }
+        public Block[] MemoryMap {
+            get { return memoryMap; }
+            set { memoryMap = value; }
         }
-
-        public int Width
-        {
+        public Tile[] Floor {
+            get { return floor; }
+            set { floor = value; }
+        }
+        public int Width {
 			get { return width; }
 			set { width = value; }
         }
-
-        public int Height
-        {
+        public int Height {
             get { return height; }
 			set { height = value; }
         }
-
-        public bool Owned
-        {
+        public bool Owned {
             get { return owned; }
             set { owned = value; }
         }
-
-        public float Cost
-        {
+        public float Cost {
             get { return cost; }
             set { cost = value; }
         }
-
-        public int SqMeters
-        {
+        public int SqMeters {
             get { return sqMeters; }
             set { sqMeters = value; }
         }
-
-        public List<Creature> Creatures
-        {
-            get { if (!inDungeon || loading) return creatures; else return dungeon.Floors[currentFloor].Creatures; }
-            set { if (!inDungeon || loading) creatures = value; else dungeon.Floors[currentFloor].Creatures = value; }
+        public List<Creature> Creatures {
+            get { return creatures; }
+            set { creatures = value; }
         }
-
-        public DijkstraMaps DijkstraMaps
-        {
+        public DijkstraMaps DijkstraMaps {
             get { return dijkstraMaps; }
             set { dijkstraMaps = value; }
         }
-
-        public Point DungeonEntrance
-        {
+        public Point DungeonEntrance {
             get { return dungeonEntrance; }
             set { dungeonEntrance = value; }
         }
-
-        public bool InDungeon
-        {
-            get { return inDungeon; }
-            set { inDungeon = value; }
-        }
-
-        public bool Loading
-        {
-            get { return loading; }
-            set { loading = value; }
-        }
-
-        public int CurrentFloor
-        {
-            get { return currentFloor; }
-            set { currentFloor = value; }
-        }
-
-        public Dungeon Dungeon
-        {
+        public Dungeon Dungeon {
             get { return dungeon; }
             set { dungeon = value; }
         }

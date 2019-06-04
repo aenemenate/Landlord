@@ -31,10 +31,8 @@ namespace Landlord
             fileName = player.Name;
             serializer.Serialize(player, $@"saves\data\{fileName}.lls");
 
-            worldMap.LocalTile.Loading = true;
             fileName = worldMap.Name;
             serializer.Serialize(worldMap, $@"saves\data\{fileName}.lls");
-            worldMap.LocalTile.Loading = false;
             fileName = "identification";
             serializer.Serialize(identification, $@"saves\data\{fileName}.lls");
             fileName = "time";
@@ -80,9 +78,7 @@ namespace Landlord
             player = (Player)serializer.Deserialize($@"saves\data\{playerName}.lls");
 
             serializer = new SharpSerializer(true);
-            worldMap.LocalTile.Loading = true;
             worldMap = (WorldMap)serializer.Deserialize($@"saves\data\{mapName}.lls");
-            worldMap.LocalTile.Loading = false;
             serializer = new SharpSerializer(true);
             identification = (Identification)serializer.Deserialize($@"saves\data\identification.lls");
             serializer = new SharpSerializer(true);

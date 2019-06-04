@@ -63,10 +63,14 @@ namespace Landlord
 
         public static List<Point> GetAdjacentWalkablePoints( this Point point )
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
             List<Point> adjacentPoints = new List<Point>();
-            for (int i = Math.Max( 0, point.X - 1 ); i <= Math.Min( Program.WorldMap.LocalTile.Width - 1, point.X + 1 ); i++)
-                for (int j = Math.Max( 0, point.Y - 1 ); j <= Math.Min( Program.WorldMap.LocalTile.Height - 1, point.Y + 1 ); j++)
-                    if (point.Equals( new Point( i, j ) ) == false && Program.WorldMap.LocalTile[i, j].Solid == false)
+            for (int i = Math.Max( 0, point.X - 1 ); i <= Math.Min( width - 1, point.X + 1 ); i++)
+                for (int j = Math.Max( 0, point.Y - 1 ); j <= Math.Min( height - 1, point.Y + 1 ); j++)
+                    if (point.Equals( new Point( i, j ) ) == false && blocks[i * width + j].Solid == false)
                         adjacentPoints.Add( new Point( i, j ) );
             return adjacentPoints;
         }

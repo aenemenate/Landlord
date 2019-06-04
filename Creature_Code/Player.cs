@@ -15,8 +15,8 @@ namespace Landlord
 
         // CONSTRUCTORS
 
-        public Player (Block[] map, Point position, int sightDist, string name, string gender, bool friendly, Class uclass, byte graphic = 1,
-            bool solid = true, bool opaque = true) : base (map, position, sightDist, graphic, name, gender, friendly, solid, opaque)
+        public Player (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, string name, string gender, bool friendly, Class uclass, byte graphic = 1,
+            bool solid = true, bool opaque = true) : base (map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, friendly, solid, opaque)
         {
             ForeColor = Color.AntiqueWhite;
 
@@ -47,31 +47,31 @@ namespace Landlord
         {
             localCreatures = new List<Creature>();
 
-            RayCaster.SetAllInvis(Position, SightDist + 5);
+            RayCaster.SetAllInvis(Position, SightDist + 5, WorldIndex, CurrentFloor);
 
+            Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
+            Tile[] tiles = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Floor : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Floor;
+            int width = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Width;
             int localDangerCount = 0;
-            foreach (Point point in VisiblePoints)
-            {
-                Program.WorldMap.LocalTile[point.X, point.Y].Visible = true;
-                Program.WorldMap.LocalTile[point.X, point.Y].Explored = true;
-                if (Program.WorldMap.LocalTile[point.X, point.Y].Opaque == false)
-                {
-                    Program.WorldMap.LocalTile.Floor[point.X * Program.WorldMap.LocalTile.Width + point.Y].Explored = true;
-                    Program.WorldMap.LocalTile.Floor[point.X * Program.WorldMap.LocalTile.Width + point.Y].Visible = true;
+            foreach (Point point in VisiblePoints) {
+                blocks[point.X * width + point.Y].Visible = true;
+                blocks[point.X * width + point.Y].Explored = true;
+                if (blocks[point.X * width + point.Y].Opaque == false) {
+                    tiles[point.X * width + point.Y].Explored = true;
+                    tiles[point.X * width + point.Y].Visible = true;
                 }
 
                 // add items to memory map, remove them if there is a mismatch between memory map and local map
-                if (Program.WorldMap.LocalTile[point.X, point.Y] is Item)
-                    Program.WorldMap.LocalTile.MemoryMap[point.X * Program.WorldMap.LocalTile.Width + point.Y] = Program.WorldMap.LocalTile[point.X, point.Y];
-                else if (Program.WorldMap.LocalTile.MemoryMap[point.X * Program.WorldMap.LocalTile.Width + point.Y] != null)
-                    Program.WorldMap.LocalTile.MemoryMap[point.X * Program.WorldMap.LocalTile.Width + point.Y] = null;
+                if (blocks[point.X * width + point.Y] is Item)
+                    Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = blocks[point.X * width + point.Y];
+                else if (Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] != null)
+                    Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = null;
                 
-                if (Program.WorldMap.LocalTile[point.X, point.Y] is Monster && ((Creature)Program.WorldMap.LocalTile[point.X, point.Y]).Friendly == false && ((Creature)Program.WorldMap.LocalTile[point.X, point.Y]).Alive)
+                if (blocks[point.X * width + point.Y] is Monster monster && (!monster.Friendly && monster.Alive))
                     localDangerCount++;
 
-                if (Program.WorldMap.LocalTile[point.X, point.Y] is Creature creature)
+                if (blocks[point.X * width + point.Y] is Creature creature)
                     localCreatures.Add( creature );
-
             }
 
             if (localDangerCount > 0)
@@ -94,10 +94,8 @@ namespace Landlord
 
             if (Program.CurrentState is Play play)
             {
-                if (play.PlayMode == PlayMode.Roguelike)
-                {
-                    if (Body.MainHand is BlueprintPouch)
-                    {
+                if (play.PlayMode == PlayMode.Roguelike) {
+                    if (Body.MainHand is BlueprintPouch) {
                         play.PlayMode = PlayMode.BuildMode;
                         BuildingManager.Paused = true;
                         Program.MsgConsole.WriteLine("You entered Build Mode!");
@@ -124,26 +122,21 @@ namespace Landlord
 
         public void SetPath(Point goal)
         {
-            try
-            {
-                path = Pathfinder.FindPath( Position, goal );
+            try {
+                path = Pathfinder.FindPath( WorldIndex, CurrentFloor, Position, goal );
             }
-            catch
-            {
+            catch {
                 Program.MsgConsole.WriteLine( "A path couldn't be found." );
             }
         }
 
         public void FollowPath()
         {
-            MapTile map = Program.WorldMap.LocalTile;
-
             if (path == null)
                 return;
 
-            if (path.Count != 0)
-            {
-                Move(path[0], map, true);
+            if (path.Count != 0) {
+                Move(path[0], true);
                 path.RemoveAt(0);
                 return;
             }

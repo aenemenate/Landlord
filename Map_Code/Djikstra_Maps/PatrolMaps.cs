@@ -44,7 +44,7 @@ namespace Landlord
                         for (int j = Math.Max(0, spot.Y - 1); j <= Math.Min(spot.Y + 1, height - 1); j++)
                         {
                             Point point = new Point(i, j);
-                            bool blockIsPassable = !(map.Blocks[i * Program.WorldMap.LocalTile.Width + j].Solid && map.Blocks[i * Program.WorldMap.LocalTile.Width + j].Type != BlockType.Door);
+                            bool blockIsPassable = !(map.Blocks[i * Program.WorldMap.TileWidth + j].Solid && map.Blocks[i * Program.WorldMap.TileWidth + j].Type != BlockType.Door);
                             if ((patrolGoals[currentPatrolMap][point.X * width + point.Y] > dist) && blockIsPassable)
                             {
                                 neighbors.Add(point);

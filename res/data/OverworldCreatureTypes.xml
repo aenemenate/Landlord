@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="us-ascii" ?>
+
+<!-- 
+DesireTypes: 
+  KillPlayer,
+  Treasure,
+  Flee,
+  Eat
+-->
+<!--
+DietTypes:
+  Herbivore,
+  Omnivore,
+  Carnivore
+-->
+
+<!--
+DropTypes:
+  Meat
+  Pelt
+  Bone
+  Eye
+-->
+
+<creature_types>
+
+  <creature name="rabbit" ascii_char="114" friendly="true" sight_dist="7">
+
+    <color r="240" g="246" b="218"/>
+
+    <weapon name="rabbit paw" type="mace" material="Bone" effect=""/>
+
+    <diet>Herbivore</diet>
+    
+    <base_desires>
+      <desire_type name="KillPlayer" value="0"/>
+      <desire_type name="Treasure" value="0"/>
+      <desire_type name="Flee" value="4"/>
+      <desire_type name="Eat" value="2"/>
+    </base_desires>
+    
+    <class>
+
+      <major_skills>
+        <skill>Unarmored</skill>
+        <skill>Sneak</skill>
+      </major_skills>
+
+      <minor_skills>
+        <skill>Acrobatics</skill>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Intelligence</attribute>
+      </major_attributes>
+
+    </class>
+
+  </creature>
+
+  <creature name="dog" ascii_char="82" friendly="true" sight_dist="9">
+
+    <color r="240" g="246" b="218"/>
+
+    <weapon name="dog tooth" type="dagger" material="Bone" effect=""/>
+
+    <diet>Carnivore</diet>
+
+    <base_desires>
+      <desire_type name="KillPlayer" value="0"/>
+      <desire_type name="Treasure" value="0"/>
+      <desire_type name="Flee" value="4"/>
+      <desire_type name="Eat" value="2"/>
+    </base_desires>
+
+    <class>
+
+      <major_skills>
+        <skill>Unarmored</skill>
+        <skill>ShortBlade</skill>
+      </major_skills>
+
+      <minor_skills>
+        <skill>Swimming</skill>
+      </minor_skills>
+
+      <major_attributes>
+        <attribute>Endurance</attribute>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+      </major_attributes>
+
+    </class>
+
+  </creature>
+  
+  
+  
+</creature_types>

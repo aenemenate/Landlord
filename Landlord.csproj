@@ -136,6 +136,7 @@
     <Compile Include="Item_Code\Tools\Building\Blueprints\WoodWallBlueprint.cs" />
     <Compile Include="Item_Code\Tools\RecipeComponent.cs" />
     <Compile Include="Item_Code\Weapons\Melee_Weapons\Axe.cs" />
+    <Compile Include="Map_Code\BlocksHelper.cs" />
     <Compile Include="Map_Code\Dungeon.cs" />
     <Compile Include="Map_Code\Proc_Gen\Dungeons\DungeonHandler.cs" />
     <Compile Include="Map_Code\Proc_Gen\Dungeons\DungeonHelper.cs" />

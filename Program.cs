@@ -70,13 +70,11 @@ namespace Landlord
             
             SadConsole.Game.Instance.Dispose();
         }
-
         private static void HookEvents ()
         {
             SadConsole.Game.OnInitialize = Init;
             SadConsole.Game.OnUpdate = Update;
         }
-        
         private static void Init()
         {
             currentState = new MainMenu();
@@ -104,7 +102,6 @@ namespace Landlord
             SadConsole.Global.CurrentScreen = console;
             ((SadConsole.Game)SadConsole.Game.Instance).WindowResized += window.ClientSizeChanged;
         }
-
         private static void Update(GameTime time)
         {
             Render();
@@ -112,12 +109,10 @@ namespace Landlord
             UserInterfaceInput.HandleKeys();
             musicHandler.Update();
         }
-
         private static void Render()
         {
             if (currentState is Play && 
-                !(Program.Console.Children.Contains(msgConsole.Console) && Program.Console.Children.Contains( GUI.Console ) ) )
-            {
+                !(Program.Console.Children.Contains(msgConsole.Console) && Program.Console.Children.Contains( GUI.Console ) ) ) {
                 Program.Console.Children.Remove( msgConsole.Console );
                 Program.Console.Children.Remove( GUI.Console );
                 Program.Console.Children.Add( msgConsole.Console );
@@ -125,8 +120,7 @@ namespace Landlord
             }
 
             currentState.Render();
-            if ((currentState is DialogWindow) == false)
-            {
+            if ((currentState is DialogWindow) == false) {
                 foreach (Animation anim in animations)
                     anim.Play();
                 foreach (Animation anim in finishedAnims)
@@ -138,80 +132,55 @@ namespace Landlord
 
         // PROPERTIES //
         
-        public static Console Console
-        {
+        public static Console Console {
             get { return console; }
             set { console = value; }
         }
-
-        public static ControlsConsole ControlsConsole
-        {
+        public static ControlsConsole ControlsConsole {
             get { return controlsConsole; }
             set { controlsConsole = value; }
         }
-
-        public static Window Window
-        {
+        public static Window Window {
             get { return window; }
             set { window = value; }
         }
-
-        public static MsgConsole MsgConsole
-        {
+        public static MsgConsole MsgConsole {
             get { return msgConsole; }
             set { msgConsole = value; }
         }
-
-        public static GameState CurrentState
-        {
+        public static GameState CurrentState {
             get { return currentState; }
             set { currentState = value; }
         }
-
-        public static WorldMap WorldMap
-        {
+        public static WorldMap WorldMap {
             get { return worldMap; }
             set { worldMap = value; }
         }
-        
-        public static Player Player
-        {
+        public static Player Player {
             get { return player; }
             set { player = value; }
         }
-
-        public static List<Animation> Animations
-        {
+        public static List<Animation> Animations {
             get { return animations; }
             set { animations = value; }
         }
-
-        public static List<Animation> FinishedAnims
-        {
+        public static List<Animation> FinishedAnims {
             get { return finishedAnims; }
             set { finishedAnims = value; }
         }
-
-        public static Identification Identification
-        {
+        public static Identification Identification {
             get { return identification; }
             set { identification = value; }
         }
-
-        public static TimeHandler TimeHandler
-        {
+        public static TimeHandler TimeHandler {
             get { return timeHandler; }
             set { timeHandler = value; }
         }
-
-        public static AudioPlaybackEngine AudioEngine
-        {
+        public static AudioPlaybackEngine AudioEngine {
             get { return audioEngine; }
             set { audioEngine = value; }
         }
-
-        public static Random RNG
-        {
+        public static Random RNG {
             get { return rng; }
             set { rng = value; }
         }

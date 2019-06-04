@@ -297,9 +297,6 @@ namespace Landlord
                         {
                             worldIndex = new Point(i / hectareWidth, j / hectareHeight);
                             Point localPos = new Point(i - (worldIndex.X * hectareWidth), j - (worldIndex.Y * hectareHeight));
-                            bool inDungeon = Program.WorldMap[worldIndex.X, worldIndex.Y].InDungeon;
-                            if (Program.WorldMap[worldIndex.X, worldIndex.Y].InDungeon)
-                                Program.WorldMap[worldIndex.X, worldIndex.Y].InDungeon = false;
 
                             switch (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Explored)
                             {
@@ -312,13 +309,12 @@ namespace Landlord
                             }
                             if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Name.Equals("stone wall"))
                                 mountains += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.LocalTile.Width + localPos.Y].Name.Equals("grass"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("grass"))
                                 plains += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.LocalTile.Width + localPos.Y].Name.Equals("dirt"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("dirt"))
                                 dirt += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.LocalTile.Width + localPos.Y].Name.Equals("water"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("water"))
                                 lakes += 1;
-                            Program.WorldMap[worldIndex.X, worldIndex.Y].InDungeon = inDungeon;
                         }
                     }
                     bool mountainous = false;
@@ -370,19 +366,18 @@ namespace Landlord
                         worldView[point.X, point.Y] = new Unexplored();
 
                 // set the player
-                if (!Program.WorldMap.LocalTile.InDungeon) // a player that is in a dungeon will be rendered over the dungeon spot
-                    worldView[(Program.Player.Position.X + (Program.WorldMap.WorldIndex.X * hectareWidth)) / granularity,
-                        (Program.Player.Position.Y + (Program.WorldMap.WorldIndex.Y * hectareHeight)) / granularity] = new PlayerWorld();
+                if (Program.Player.CurrentFloor == -1) // a player that is in a dungeon will be rendered over the dungeon spot
+                    worldView[(Program.Player.Position.X + (Program.Player.WorldIndex.X * hectareWidth)) / granularity,
+                        (Program.Player.Position.Y + (Program.Player.WorldIndex.Y * hectareHeight)) / granularity] = new PlayerWorld();
                 else
-                    worldView[(Program.WorldMap.LocalTile.DungeonEntrance.X + (Program.WorldMap.WorldIndex.X * hectareWidth)) / granularity,
-                        (Program.WorldMap.LocalTile.DungeonEntrance.Y + (Program.WorldMap.WorldIndex.Y * hectareHeight)) / granularity] = new PlayerWorld();
+                    worldView[(Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DungeonEntrance.X + (Program.Player.WorldIndex.X * hectareWidth)) / granularity,
+                        (Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DungeonEntrance.Y + (Program.Player.WorldIndex.Y * hectareHeight)) / granularity] = new PlayerWorld();
 
             }
 
             static public void View()
             {
-                void DrawTooltip(int exploredTiles, int unexploredTiles, Point mWorldIndex, Point mPos)
-                {
+                void DrawTooltip(int exploredTiles, int unexploredTiles, Point mWorldIndex, Point mPos) {
                     if (exploredTiles < (unexploredTiles / 2))
                         return;
                     MapTile currentMap = Program.WorldMap[mWorldIndex.X, mWorldIndex.Y];
@@ -417,7 +412,7 @@ namespace Landlord
                 if (Program.Console.Height <= 3)
                     return;
                 Point mouseWorldPos = new Point(mousePos.X - startPoint.X, mousePos.Y - startPoint.Y);
-                Point mouseWorldIndex = new Point((mouseWorldPos.X * Granularity) / Program.WorldMap.LocalTile.Height, (mouseWorldPos.Y * Granularity) / Program.WorldMap.LocalTile.Width);
+                Point mouseWorldIndex = new Point((mouseWorldPos.X * Granularity) / Program.WorldMap.TileHeight, (mouseWorldPos.Y * Granularity) / Program.WorldMap.TileWidth);
 
                 if (mousePos.X < startPoint.X)
                     mouseWorldIndex.X = -1;
@@ -434,7 +429,7 @@ namespace Landlord
                             Program.Console.SetGlyph(i, j, 178, Color.Gold, Color.Black);
                         else
                         {
-                            Point currentIndex = new Point((worldPos.X * Granularity) / Program.WorldMap.LocalTile.Height, (worldPos.Y * Granularity) / Program.WorldMap.LocalTile.Width);
+                            Point currentIndex = new Point((worldPos.X * Granularity) / Program.WorldMap.TileHeight, (worldPos.Y * Granularity) / Program.WorldMap.TileWidth);
                             MapTile currentMap = Program.WorldMap[currentIndex.X, currentIndex.Y];
 
                             bool mouseHovering = currentIndex.Equals(mouseWorldIndex);
@@ -686,10 +681,10 @@ namespace Landlord
                 {
                     Program.Console.Clear();
                     loading = true;
-                    DungeonHandler.CreateDungeon( Program.WorldMap.LocalTile );
-                    Program.WorldMap.LocalTile.Dungeon.OnFinishedGenerating += CloseGenerateDungeonScreen;
+                    DungeonHandler.CreateDungeon( Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y] );
+                    Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon.OnFinishedGenerating += CloseGenerateDungeonScreen;
                     loadThread =
-                        new System.Threading.Thread( new System.Threading.ThreadStart( Program.WorldMap.LocalTile.Dungeon.Init ) );
+                        new System.Threading.Thread( new System.Threading.ThreadStart( Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon.Init ) );
                     loadThread.Start();
                     Program.Animations = new List<Animation>() { new LoadingAnim( "Generating Dungeon" ) };
                 }

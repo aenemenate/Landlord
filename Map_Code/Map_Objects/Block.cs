@@ -404,20 +404,21 @@ namespace Landlord
                 user.ChopTree(this);
         }
 
-        public void DropLogs(Point pos)
+        public void DropLogs(Point pos, Creature user)
         {
-            for (int i = Math.Max(pos.X - 5, 0); i <= Math.Min(pos.X + 5, Program.WorldMap.LocalTile.Width - 1); i++)
-                for (int j = Math.Max(pos.Y - 5, 0); j <= Math.Min(pos.Y + 5, Program.WorldMap.LocalTile.Height - 1); j++)
+            Random rng = new Random();
+            for (int i = Math.Max(pos.X - 5, 0); i <= Math.Min(pos.X + 5, Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y].Width - 1); i++)
+                for (int j = Math.Max(pos.Y - 5, 0); j <= Math.Min(pos.Y + 5, Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y].Height - 1); j++)
                 {
-                    int treeRoll = Program.RNG.Next(1, 11), maxChance = 10;
+                    int treeRoll = rng.Next(1, 11), maxChance = 10;
                     double distFromTree = new Point(i, j).DistFrom(pos);
-                    bool pointCloserToTreeThanPlayer = new Point(i, j).DistFrom(Program.Player.Position) > distFromTree;
+                    bool pointCloserToTreeThanfeller = new Point(i, j).DistFrom(user.Position) > distFromTree;
 
-                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToTreeThanPlayer && Program.WorldMap.LocalTile[i, j] is Air)
-                        Program.WorldMap.LocalTile[i, j] = new Log(true);
+                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToTreeThanfeller && Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j] is Air)
+                        Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j] = new Log(true);
                 }
 
-            Program.WorldMap.LocalTile[pos.X, pos.Y] = new Log(true);
+            Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][pos.X, pos.Y] = new Log(true);
 
             Program.MsgConsole.WriteLine("The tree was felled!");
         }

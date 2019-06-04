@@ -8,16 +8,15 @@ namespace Landlord
 {
     static class Pathfinder
     {
-        public static List<Point> FindPath( Point start, Point end )
+        public static List<Point> FindPath( Point worldIndex, int currentFloor, Point start, Point end )
         {
             List<Point> path = new List<Point>();
-            if (!PointIsTraversable(end))
+            if (!PointIsTraversable(end, worldIndex, currentFloor))
                 return path;
             List<Node> openList = new List<Node>() { new Node( start, 0, 0 ) };
             List<Node> closedList = new List<Node>();
 
-            bool CheckOpenList( Node node )
-            {
+            bool CheckOpenList( Node node ) {
                 foreach (Node otherNode in openList)
                     if (otherNode.Pos.Equals( node.Pos ))
                         if (otherNode.F <= node.F)
@@ -25,8 +24,7 @@ namespace Landlord
                 return false;
             }
 
-            bool CheckClosedList( Node node )
-            {
+            bool CheckClosedList( Node node ) {
                 foreach (Node otherNode in closedList)
                     if (otherNode.Pos.Equals( node.Pos ))
                         if (otherNode.F <= node.F)
@@ -35,13 +33,12 @@ namespace Landlord
             }
 
             int count = 0;
-            while (openList.Count > 0 || count > 500)
-            {
+            while (openList.Count > 0 || count > 500) {
                 count++;
                 Node currentNode = GetSmallestNode( openList );
                 if (currentNode.Pos.Equals( new Point() ))
                     return path;
-                List<Node> adjacentNodes = GetAdjacentNodes( currentNode );
+                List<Node> adjacentNodes = GetAdjacentNodes( currentNode, worldIndex, currentFloor);
 
                 for (int i = adjacentNodes.Count - 1; i >= 0; i--)
                 {
@@ -87,23 +84,25 @@ namespace Landlord
             return smallestNode;
         }
 
-        private static List<Node> GetAdjacentNodes( Node node )
+        private static List<Node> GetAdjacentNodes( Node node, Point worldIndex, int currentFloor )
         {
             List<Node> adjacentNodes = new List<Node>();
 
-            for (int i = Math.Max( 0, node.Pos.X - 1 ); i <= Math.Min( node.Pos.X + 1, Program.WorldMap.LocalTile.Width - 1 ); i++)
-                for (int j = Math.Max( 0, node.Pos.Y - 1 ); j <= Math.Min( node.Pos.Y + 1, Program.WorldMap.LocalTile.Height - 1 ); j++)
+            for (int i = Math.Max( 0, node.Pos.X - 1 ); i <= Math.Min( node.Pos.X + 1, Program.WorldMap[worldIndex.X, worldIndex.Y].Width - 1 ); i++)
+                for (int j = Math.Max( 0, node.Pos.Y - 1 ); j <= Math.Min( node.Pos.Y + 1, Program.WorldMap[worldIndex.X, worldIndex.Y].Height - 1 ); j++)
                 {
-                    if (PointIsTraversable( new Point(i, j) ) && new Point[i, j].Equals( node.Pos ) == false)
+                    if (PointIsTraversable( new Point(i, j), worldIndex, currentFloor ) && new Point[i, j].Equals( node.Pos ) == false)
                         adjacentNodes.Add( new Node( new Point( i, j ), 0, 0, node ) );
                 }
 
             return adjacentNodes;
         }
 
-        private static bool DetermineIfCanReachEnd(Point end)
+        private static bool DetermineIfCanReachEnd(Point end, Point worldIndex, int currentFloor)
         {
-            if (!Program.WorldMap.LocalTile[end.X, end.Y].Solid)
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth;
+            if (!blocks[end.X * width + end.Y].Solid)
                 return true;
             else
             {
@@ -122,17 +121,17 @@ namespace Landlord
 
         }
 
-        private static bool PointIsTraversable( Point point )
-        {
-            return !Program.WorldMap.LocalTile[point.X, point.Y].Solid || Program.WorldMap.LocalTile[point.X, point.Y] is Chest || Program.WorldMap.LocalTile[point.X, point.Y] is Door;
+        private static bool PointIsTraversable( Point point, Point worldIndex, int currentFloor ) {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth;
+            return !blocks[point.X * width + point.Y].Solid || blocks[point.X * width + point.Y] is Chest || blocks[point.X * width + point.Y] is Door;
         }
     }
 
 
     static class Riverfinder
     {
-        public static List<Point> FindPath( Point start, Point end, float[,] heightMap )
-        {
+        public static List<Point> FindPath( Point start, Point end, float[,] heightMap ) {
             List<Point> path       = new List<Point>();
             List<Node>  openList   = new List<Node>() { new Node( start, 0, 0 ) };
             List<Node>  closedList = new List<Node>();

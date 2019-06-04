@@ -39,22 +39,22 @@ namespace Landlord
 
         }
 
-        public void Init(DungeonType dungeonType, List<string> monsterTypes, int floor)
+        public void Init(DungeonType dungeonType, List<string> monsterTypes, Point worldIndex, int floor)
         {
             RoomPlacementAlgorithm roomPlacementAlgo;
             switch (dungeonType)
             {
                 case (DungeonType.RoomPlacement_s):
                     roomPlacementAlgo = new RoomPlacementAlgorithm(this, monsterTypes);
-                    roomPlacementAlgo.GenerateDungeon(250, 15, floor);
+                    roomPlacementAlgo.GenerateDungeon(250, 15, floor, worldIndex);
                     break;
                 case (DungeonType.RoomPlacement_l):
                     roomPlacementAlgo = new RoomPlacementAlgorithm(this, monsterTypes );
-                    roomPlacementAlgo.GenerateDungeon(500, 40, floor);
+                    roomPlacementAlgo.GenerateDungeon(500, 40, floor, worldIndex);
                     break;
                 default:
                     roomPlacementAlgo = new RoomPlacementAlgorithm(this, monsterTypes );
-                    roomPlacementAlgo.GenerateDungeon(250, 15, floor);
+                    roomPlacementAlgo.GenerateDungeon(250, 15, floor, worldIndex);
                     break;
             }
             patrolMaps = new PatrolMaps(100, 100, patrolPoints, this);
@@ -77,13 +77,13 @@ namespace Landlord
         
         public bool AdjacentBlockEmpty(Point point)
         {
-            if (PointWithinBounds(new Point(point.X + 1, point.Y)) && !map[point.X + 1 * Program.WorldMap.LocalTile.Width + point.Y].Solid)
+            if (PointWithinBounds(new Point(point.X + 1, point.Y)) && !map[point.X + 1 * Program.WorldMap.TileWidth + point.Y].Solid)
                 return true;
-            if (PointWithinBounds(new Point(point.X - 1, point.Y)) && !map[point.X - 1 * Program.WorldMap.LocalTile.Width + point.Y].Solid)
+            if (PointWithinBounds(new Point(point.X - 1, point.Y)) && !map[point.X - 1 * Program.WorldMap.TileWidth + point.Y].Solid)
                 return true;
-            if (PointWithinBounds(new Point(point.X, point.Y + 1)) && !map[point.X * Program.WorldMap.LocalTile.Width + point.Y + 1].Solid)
+            if (PointWithinBounds(new Point(point.X, point.Y + 1)) && !map[point.X * Program.WorldMap.TileWidth + point.Y + 1].Solid)
                 return true;
-            if (PointWithinBounds(new Point(point.X, point.Y - 1)) && !map[point.X * Program.WorldMap.LocalTile.Width + point.Y - 1].Solid)
+            if (PointWithinBounds(new Point(point.X, point.Y - 1)) && !map[point.X * Program.WorldMap.TileWidth + point.Y - 1].Solid)
                 return true;
             return false;
         }
@@ -101,8 +101,8 @@ namespace Landlord
 
         public Block this[int x, int y]
         {
-            get { if (!new Point(x, y).Equals(new Point())) return map[x * Program.WorldMap.LocalTile.Width + y]; else return null; }
-            set { map[x * Program.WorldMap.LocalTile.Width + y] = value; }
+            get { if (!new Point(x, y).Equals(new Point())) return map[x * Program.WorldMap.TileWidth + y]; else return null; }
+            set { map[x * Program.WorldMap.TileWidth + y] = value; }
         }
 
         public Block[] Blocks

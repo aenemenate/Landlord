@@ -19,7 +19,7 @@ namespace Landlord
                 for (int j = 0; j < dungeonFloor.Height; j++)
                 {
                     dungeonFloor[i, j] = new Wall(Material.Stone);
-                    dungeonFloor.Floor[i * Program.WorldMap.LocalTile.Width + j] = new DirtFloor();
+                    dungeonFloor.Floor[i * Program.WorldMap.TileWidth + j] = new DirtFloor();
                 }
         }
         // the rest are self explanatory
@@ -53,7 +53,7 @@ namespace Landlord
             for (int i = 0; i < dungeonFloor.Width; i++)
                 for (int j = 0; j < dungeonFloor.Height; j++)
                     placementMap[i * dungeonFloor.Width + j] = new Point(i, j).Equals(upStairPos) ? 0 : 100000;
-            DijkstraMaps.DijkstraNeighbors(new HashSet<Point>(new Point[] { upStairPos }), 1, ref placementMap, dungeonFloor.Blocks, new Point(dungeonFloor.Width, dungeonFloor.Height));
+            DijkstraMaps.DijkstraNeighbors(new HashSet<Point>(new Point[] { upStairPos }), 1, ref placementMap);
 
             // Find out the value of the spot farthest from the player
             int maxValue = 0;
@@ -88,7 +88,7 @@ namespace Landlord
             }
         }
 
-        public static void PlaceCreatures(DungeonFloor dungeonFloor, Point upStairPos, List<string> monsterTypes)
+        public static void PlaceCreatures(DungeonFloor dungeonFloor, Point upStairPos, List<string> monsterTypes, Point worldIndex, int floor)
         {
             List<Point> creatureSpots = new List<Point>();
             for (int i = 1; i < dungeonFloor.Width - 1; i++)
@@ -101,13 +101,12 @@ namespace Landlord
 
             int creaturesSpawned = 0;
             int desiredcreatureCount = creatureSpots.Count / 150;
-            while (creaturesSpawned < desiredcreatureCount)
-            {
+            while (creaturesSpawned < desiredcreatureCount) {
                 int index = Program.RNG.Next(0, creatureSpots.Count);
                 Point next = creatureSpots[index];
-                Monster monster = DataReader.GetMonster( monsterTypes[Program.RNG.Next( 0, monsterTypes.Count )], dungeonFloor.Blocks, next );
+                Monster monster = DataReader.GetMonster( monsterTypes[Program.RNG.Next( 0, monsterTypes.Count )], dungeonFloor.Blocks, next, worldIndex, floor );
                 while (monster == null)
-                    monster = DataReader.GetMonster( monsterTypes[Program.RNG.Next( 0, monsterTypes.Count )], dungeonFloor.Blocks, next );
+                    monster = DataReader.GetMonster( monsterTypes[Program.RNG.Next( 0, monsterTypes.Count )], dungeonFloor.Blocks, next, worldIndex, floor);
                 dungeonFloor[next.X, next.Y] = monster;
                 creaturesSpawned++;
                 creatureSpots.RemoveAt(index);

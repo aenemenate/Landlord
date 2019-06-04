@@ -24,8 +24,8 @@ namespace Landlord
 
         // CONSTRUCTORS //
 
-        public Monster(Block[] map, Point position, Color? color, int sightDist, int persistence, Dictionary<DesireType, int> baseDesires, Class uclass, string name, string gender, bool friendly, byte graphic,
-            bool solid = true, bool opaque = true) : base(map, position, sightDist, graphic, name, gender, friendly, solid, opaque)
+        public Monster(Block[] map, Point position, Point worldIndex, int currentFloor, Color? color, int sightDist, int persistence, Dictionary<DesireType, int> baseDesires, Class uclass, string name, string gender, bool friendly, byte graphic,
+            bool solid = true, bool opaque = true) : base(map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, friendly, solid, opaque)
         {
             this.persistence = persistence;
             patrolling = true;
@@ -53,21 +53,18 @@ namespace Landlord
         public override void HandleVisibility()
         {
             turnsSinceAttentionCaught++;
-
-            if (turnsSinceAttentionCaught > persistence)
-            {
+            if (turnsSinceAttentionCaught > persistence) {
+                Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
+                int width = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Width;
                 patrolling = true;
 
-                foreach (Point point in VisiblePoints)
-                {
-                    if (point.Equals(Program.Player.Position))
-                    {
+                foreach (Point point in VisiblePoints) {
+                    if (point.Equals(Program.Player.Position)) {
                         turnsSinceAttentionCaught = 0;
                         patrolling = false;
                         break;
                     }
-                    if (Program.WorldMap.LocalTile[point.X, point.Y].Type == BlockType.Item)
-                    {
+                    if (blocks[point.X * width + point.Y].Type == BlockType.Item) {
                         turnsSinceAttentionCaught = persistence;
                         patrolling = false;
                         break;
@@ -82,26 +79,26 @@ namespace Landlord
             if (!Alive)
                 return;
 
-            MapTile map = Program.WorldMap.LocalTile;
-            
+            MapTile map = Program.WorldMap[WorldIndex.X, WorldIndex.Y];
+            Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
+            int width = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Width;
+
             Point movePos = GetNextPosition();
 
             if (patrolling && movePos.Equals( new Point()))
-                curPatrolDestIndex = Program.RNG.Next( 0, map.Dungeon.Floors[map.CurrentFloor].PatrolPoints.Count);
+                curPatrolDestIndex = Program.RNG.Next( 0, map.Dungeon.Floors[CurrentFloor].PatrolPoints.Count);
 
             List<Point> itemSpots = GetNearbyBlocksOfType(BlockType.Item);
             List<Point> doorSpots = GetNearbyBlocksOfType(BlockType.Door);
 
             bool nextToPlayer = PointNextToSelf(Program.Player.Position);
             bool wantToKillPlayer = CurrentDesires[DesireType.KillPlayer] > 0;
-            if (nextToPlayer && wantToKillPlayer)
-            {
+            if (nextToPlayer && wantToKillPlayer) {
                 LaunchAttack(Program.Player);
                 CreaturePlacementHelper.flag = true; // What's going on here?
             }
-            else if (itemSpots.Count > 0 && CurrentDesires[DesireType.Treasure] > 0)
-            {
-                if (CanCarryItem((Item)Program.WorldMap.LocalTile[itemSpots[0].X, itemSpots[0].Y]))
+            else if (itemSpots.Count > 0 && CurrentDesires[DesireType.Treasure] > 0) {
+                if (CanCarryItem((Item)blocks[itemSpots[0].X * width + itemSpots[0].Y]))
                     GetItem(itemSpots[0]);
                 else
                     CurrentDesires[DesireType.Treasure]--;
@@ -109,7 +106,7 @@ namespace Landlord
             else if (doorSpots.Count > 0 && map.Blocks[doorSpots[0].X * map.Width + doorSpots[0].Y].Solid)
                 map.Blocks[doorSpots[0].X * map.Width + doorSpots[0].Y].Activate(this);
             else if (movePos.Equals(Position) == false)
-                Move(movePos, Program.WorldMap.LocalTile);
+                Move(movePos);
             else
                 Wait();
             UpdateFOV();
@@ -123,33 +120,33 @@ namespace Landlord
         //get funcs
         private Point GetNextPosition()
         {
-            int mapWidth = Program.WorldMap.LocalTile.Width, mapHeight = Program.WorldMap.LocalTile.Height;
+            Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
+            int width = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Width, height = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Height;
 
-            int GetPosValue(Point pos)
-            {
-                return (Position.DistFrom(Program.Player.Position) <= SightDist ? Program.WorldMap.LocalTile.DijkstraMaps.DistToPlayerMap[pos.X * mapWidth + pos.Y] * CurrentDesires[DesireType.KillPlayer] : 0)
-                        + Program.WorldMap.LocalTile.DijkstraMaps.DistToItemsMap[pos.X * mapWidth + pos.Y] * CurrentDesires[DesireType.Treasure];
+            int GetPosValue(Point pos) {
+                bool playerIsNearby = WorldIndex.Equals(Program.Player.WorldIndex) && CurrentFloor == Program.Player.CurrentFloor && (Position.DistFrom(Program.Player.Position) <= SightDist);
+                return (playerIsNearby ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.DistToPlayerMap[pos.X * width + pos.Y] * CurrentDesires[DesireType.KillPlayer] : 0)
+                        + Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.DistToItemsMap[pos.X * width + pos.Y] * CurrentDesires[DesireType.Treasure];
             }
 
             int GetPatrolPosValue(Point pos)
             {
-                return Program.WorldMap.LocalTile.Dungeon.Floors[Program.WorldMap.LocalTile.CurrentFloor].PatrolMaps.PatrolGoals[curPatrolDestIndex][pos.X * mapWidth + pos.Y];
+                return Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].PatrolMaps.PatrolGoals[curPatrolDestIndex][pos.X * width + pos.Y];
             }
 
             List<Point> bestPositions = new List<Point>();
             int bestVal = !patrolling ? GetPosValue(Position) : GetPatrolPosValue(Position);
 
-            for (int i = Math.Max(0, Position.X - 1); i <= Math.Min(mapWidth - 1, Position.X + 1); i++)
-                for (int j = Math.Max(0, Position.Y - 1); j <= Math.Min(mapHeight - 1, Position.Y + 1); j++)
+            for (int i = Math.Max(0, Position.X - 1); i <= Math.Min(width - 1, Position.X + 1); i++)
+                for (int j = Math.Max(0, Position.Y - 1); j <= Math.Min(height - 1, Position.Y + 1); j++)
                 {
-                    if (Position.Equals( new Point( i, j ) ) || Program.WorldMap.LocalTile[i, j].Solid)
+                    if (Position.Equals( new Point( i, j ) ) || blocks[i * width + j].Solid)
                         continue;
 
                     int thisVal = !patrolling ? GetPosValue(new Point(i, j)) : GetPatrolPosValue(new Point(i, j));
                     
 
-                    if (thisVal <= bestVal)
-                    {
+                    if (thisVal <= bestVal) {
                         bestPositions.Add( new Point( i, j ) );
                         bestVal = thisVal;
                     }
@@ -170,31 +167,26 @@ namespace Landlord
             get { return curPatrolDestIndex; }
             set { curPatrolDestIndex = value; }
         }
-
         public int Persistence
         {
             get { return persistence; }
             set { persistence = value; }
         }
-
         public int TurnsSinceAttentionCaught
         {
             get { return turnsSinceAttentionCaught; }
             set { turnsSinceAttentionCaught = value; }
         }
-
         public bool Patrolling
         {
             get { return patrolling; }
             set { patrolling = value; }
         }
-
         public Dictionary<DesireType, int> BaseDesires
         {
             get { return baseDesires; }
             set { baseDesires = value; }
         }
-
         public Dictionary<DesireType, int> CurrentDesires
         {
             get { return currentDesires; }

@@ -94,22 +94,22 @@ namespace Landlord
         {
             int startX = 0, startY = 0;
             bool viewPastLeftMostPoint = Program.Player.Position.X - (width - (StatusPanel.Width)) / 2 < 0;
-            bool viewPastRightMostPoint = Program.Player.Position.X + (width - (StatusPanel.Width)) / 2 >= Program.WorldMap.LocalTile.Width;
+            bool viewPastRightMostPoint = Program.Player.Position.X + (width - (StatusPanel.Width)) / 2 >= Program.WorldMap.TileWidth;
             if (!viewPastLeftMostPoint && !viewPastRightMostPoint)
                 startX = Program.Player.Position.X - (GUI.MapWidth / 2);
             else if (viewPastLeftMostPoint)
                 startX = 0;
             else if (viewPastRightMostPoint)
-                startX = Program.WorldMap.LocalTile.Width - GUI.MapWidth;
+                startX = Program.WorldMap.TileWidth - GUI.MapWidth;
 
             bool viewPastTopMostPoint = Program.Player.Position.Y - height / 2 < 0;
-            bool viewPastBottomMostPoint = Program.Player.Position.Y + height / 2 >= Program.WorldMap.LocalTile.Height;
+            bool viewPastBottomMostPoint = Program.Player.Position.Y + height / 2 >= Program.WorldMap.TileHeight;
             if (!viewPastTopMostPoint && !viewPastBottomMostPoint)
                 startY = Program.Player.Position.Y - (height) / 2;
             else if (viewPastTopMostPoint)
                 startY = 0;
             else if (viewPastBottomMostPoint)
-                startY = Program.WorldMap.LocalTile.Height - height;
+                startY = Program.WorldMap.TileHeight - height;
             return new Point(startX, startY);
         }
 

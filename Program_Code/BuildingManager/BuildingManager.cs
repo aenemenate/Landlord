@@ -17,7 +17,7 @@ namespace Landlord
         private static bool paused = false;
         private static PlayerState playerState = PlayerState.Idle;
 
-        private static BuildingPlaceholder[,] constructionMap = new BuildingPlaceholder[Program.WorldMap.LocalTile.Width, Program.WorldMap.LocalTile.Height];
+        private static BuildingPlaceholder[,] constructionMap = new BuildingPlaceholder[Program.WorldMap.TileWidth, Program.WorldMap.TileHeight];
 
         private static Point currentConstructionPos = new Point();
         private static List<RecipeComponent> currentConstructRecipe = null;
@@ -109,18 +109,20 @@ namespace Landlord
                     recipe.Remove(itemC);
             }
 
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             // check map
-            for (int i = 0; i < Program.WorldMap.LocalTile.Width; i++)
-                for (int j = 0; j < Program.WorldMap.LocalTile.Height; j++)
-                {
-                    if (Program.WorldMap.LocalTile[i, j] is Item item)
-                    {
+            for (int i = 0; i < width; i++)
+                for (int j = 0; j < height; j++) {
+                    if (blocks[i * width + j] is Item item) {
                         RecipeComponent itemC = item.ToComponent();
                         if (recipe.Contains( itemC ))
                             recipe.Remove( itemC );
-                    } else if (Program.WorldMap.LocalTile[i, j] is Chest chest)
-                        foreach (Item cItem in chest.Inventory)
-                        {
+                    } else if (blocks[i * width + j] is Chest chest)
+                        foreach (Item cItem in chest.Inventory) {
                             RecipeComponent itemC = cItem.ToComponent();
                             if (recipe.Contains( itemC ))
                                 recipe.Remove( itemC );
@@ -130,18 +132,17 @@ namespace Landlord
 
 
             // check for other methods of resource aquisition
-            if (recipe.Count > 0)
-            {
+            if (recipe.Count > 0) {
                 if (recipe.Contains(RecipeComponent.Log)) // find a tree if the recipe calls for a log
-                    for (int i = 0; i < Program.WorldMap.LocalTile.Width; i++)
-                        for (int j = 0; j < Program.WorldMap.LocalTile.Height; j++)
-                            if (Program.WorldMap.LocalTile[i, j] is Tree)
+                    for (int i = 0; i < width; i++)
+                        for (int j = 0; j < height; j++)
+                            if (blocks[i * width + j] is Tree)
                                 recipe.RemoveAll(rc => rc == RecipeComponent.Log);
 
                 if (recipe.Contains(RecipeComponent.Plank)) // find a tree or a log if the recipe calls for a plank
-                    for (int i = 0; i < Program.WorldMap.LocalTile.Width; i++)
-                        for (int j = 0; j < Program.WorldMap.LocalTile.Height; j++)
-                            if (Program.WorldMap.LocalTile[i, j] is Tree || Program.WorldMap.LocalTile[i, j] is Log)
+                    for (int i = 0; i < width; i++)
+                        for (int j = 0; j < height; j++)
+                            if (blocks[i * width + j] is Tree || blocks[i * width + j] is Log)
                                 recipe.RemoveAll(rc => rc == RecipeComponent.Plank);
             }
 
@@ -153,10 +154,14 @@ namespace Landlord
 
         internal static Point GetClosestMaterialPos(RecipeComponent recipe, bool checkInventory)
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             // check player inventory
             if (checkInventory) {
-                foreach (Item item in Program.Player.Inventory)
-                {
+                foreach (Item item in Program.Player.Inventory) {
                     RecipeComponent itemC = item.ToComponent();
                     if (recipe.Equals(itemC))
                         return new Point();
@@ -164,17 +169,15 @@ namespace Landlord
             }
 
             // check map
-            for (int i = 0; i < Program.WorldMap.LocalTile.Width; i++)
-                for (int j = 0; j < Program.WorldMap.LocalTile.Height; j++)
-                {
-                    if (Program.WorldMap.LocalTile[i, j] is Item item)
-                    {
+            for (int i = 0; i < width; i++)
+                for (int j = 0; j < height; j++) {
+                    if (blocks[i * width + j] is Item item) {
                         RecipeComponent itemC = item.ToComponent();
                         if (recipe.Equals( itemC ))
                             return new Point( i, j );
-                    } else if (Program.WorldMap.LocalTile[i, j] is Chest chest)
-                        foreach (Item cItem in chest.Inventory)
-                        {
+                    }
+                    else if (blocks[i * width + j] is Chest chest)
+                        foreach (Item cItem in chest.Inventory) {
                             RecipeComponent itemC = cItem.ToComponent();
                             if (recipe.Equals( itemC ))
                                 return new Point( i, j );
@@ -201,8 +204,7 @@ namespace Landlord
 
                 if (currentConstructRecipe.Count > getIndex)
                     nextComponent = currentConstructRecipe[getIndex];
-                else
-                {
+                else {
                     Program.Player.Path = null;
                     playerState = PlayerState.PlaceMaterials;
                 }
@@ -215,8 +217,7 @@ namespace Landlord
                 else if (playerState == PlayerState.PlaceMaterials)
                     HandlePlaceMaterials(nextComponent);
             }
-            else // there is no pending construction
-            {
+            else /* there is no pending construction */ {
                 playerState = PlayerState.Idle;
                 paused = true;
             }
@@ -226,11 +227,16 @@ namespace Landlord
 
         private static void PathToPoint(Point pos)
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             if (pos.Equals(new Point()) == true)
                 throw new Exception();
             if (Program.Player.Path == null)
             {
-                List<Point> freeSpots = Program.WorldMap.LocalTile.GetEmptyAdjacentBlocks(pos);
+                List<Point> freeSpots = blocks.GetEmptyAdjacentBlocks(new Point(width, height), pos);
                 Point nextPos = freeSpots.Count > 0 ? freeSpots[Program.RNG.Next(0, freeSpots.Count)] : new Point();
                 if (!nextPos.Equals(new Point()))
                     Program.Player.SetPath( nextPos );
@@ -297,19 +303,19 @@ namespace Landlord
             if (hasItem == false || Program.Player.CanCarryItem(nextComponent.ToItem()) == true)
             {
                 bool nextToItem = Program.Player.PointNextToSelf(nextPos);
-                if (nextToItem)
-                {
-                    if ( Program.WorldMap.LocalTile[nextPos.X, nextPos.Y] is Chest chest )
-                    {
-                        for (int i = chest.Inventory.Count - 1; i >= 0; i--)
-                        {
-                            if (chest.Inventory[i].ToComponent() == nextComponent)
-                            {
+                int currentFloor = Program.Player.CurrentFloor;
+                Point worldIndex = Program.Player.WorldIndex;
+                Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+                int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+                if (nextToItem) {
+                    if ( blocks[nextPos.X * width + nextPos.Y] is Chest chest ) {
+                        for (int i = chest.Inventory.Count - 1; i >= 0; i--) {
+                            if (chest.Inventory[i].ToComponent() == nextComponent) {
                                 bool itemAdded = Program.Player.AddItem( chest.Inventory[i] );
                                 if (itemAdded)
                                     chest.Inventory.RemoveAt( i );
-                                else if (DropUnnecessaryItems(nextComponent))
-                                {
+                                else if (DropUnnecessaryItems(nextComponent)) {
                                     itemAdded = Program.Player.AddItem( chest.Inventory[i] );
                                     if (itemAdded)
                                         chest.Inventory.RemoveAt( i );
@@ -320,14 +326,13 @@ namespace Landlord
                                     playerState = PlayerState.PlaceMaterials;
                             }
                         }
-                    } else
-                    {
-                        if (Program.Player.CanCarryItem( (Item)Program.WorldMap.LocalTile[nextPos.X, nextPos.Y] ))
-                        {
+                    }
+                    else {
+                        if (Program.Player.CanCarryItem( (Item)blocks[nextPos.X * width + nextPos.Y] )) {
                             Program.Player.GetItem( nextPos );
                             getIndex++;
-                        } else
-                        {
+                        }
+                        else {
                             bool droppedItems = DropUnnecessaryItems(nextComponent);
                             if (droppedItems == false)
                                 playerState = PlayerState.PlaceMaterials;
@@ -337,8 +342,7 @@ namespace Landlord
                 else if (Program.Player.Path == null)
                     Program.Player.SetPath(nextPos);
             }
-            else
-            {
+            else {
                 Program.Player.Path = null;
                 playerState = PlayerState.PlaceMaterials;
             }
@@ -346,45 +350,48 @@ namespace Landlord
 
         private static void HandleChopTree()
         {
-            Point closestTree = Program.WorldMap.LocalTile.GetClosestOfBlockTypeToPos( Program.Player.Position, BlockType.Tree);
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+            Point closestTree = blocks.GetClosestOfBlockTypeToPos( Program.Player.Position, new Point(width, height), BlockType.Tree);
             bool nextToTree = Program.Player.PointNextToSelf(closestTree);
             if (!nextToTree)
-            {
                 PathToPoint(closestTree);
-            }
-            else
-            {
-                for (int i = 0; i < Program.Player.Inventory.Count; i++)
-                {
+            else {
+                for (int i = 0; i < Program.Player.Inventory.Count; i++) {
                     Item I = Program.Player.Inventory[i];
                     if (I is Axe || I is Sword)
                         Program.Player.Wield(i, true);
                 }
-                Program.Player.ChopTree((Tree)Program.WorldMap.LocalTile[closestTree.X, closestTree.Y]);
+                Program.Player.ChopTree((Tree)blocks[closestTree.X * width + closestTree.Y]);
             }
 
         }
 
         private static void HandleMineRock()
         {
-            Point closestStoneWall = Program.WorldMap.LocalTile.GetClosestOfBlockTypeToPos( Program.Player.Position, BlockType.Wall, Material.Stone );
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+            Point closestStoneWall = blocks.GetClosestOfBlockTypeToPos( Program.Player.Position, new Point(width, height), BlockType.Wall, Material.Stone );
             bool nextToStoneWall = Program.Player.PointNextToSelf( closestStoneWall );
-            if (!nextToStoneWall)
-            {
+            if (!nextToStoneWall) {
                 PathToPoint( closestStoneWall );
-            } else
-            {
-                for (int i = 0; i < Program.Player.Inventory.Count; i++)
-                {
+            }
+            else {
+                for (int i = 0; i < Program.Player.Inventory.Count; i++) {
                     Item I = Program.Player.Inventory[i];
                     if (I is Axe axe && axe.Name == "pickaxe")
                         Program.Player.Wield( i, true );
                 }
                 if (Program.Player.Body.MainHand is MeleeWeapon mWeapon && ( mWeapon is Axe || mWeapon is Sword ))
-                    Program.Player.PickWall( ( Wall) Program.WorldMap.LocalTile[closestStoneWall.X, closestStoneWall.Y] );
-                else
-                {
-                    Program.MsgConsole.WriteLine( $"{Program.Player.Name} can't chop down a tree because they have no axe or sword in their inventory!" );
+                    Program.Player.PickWall( ( Wall)blocks[closestStoneWall.X * width + closestStoneWall.Y] );
+                else {
+                    Program.MsgConsole.WriteLine( $"{Program.Player.Name} can't mine a stone because they don't have a pickaxe!" );
                     paused = true;
                 }
             }
@@ -394,13 +401,13 @@ namespace Landlord
         {
             CraftingManager.CraftingRecipe = currentCraftingRecipe;
 
-            Scheduler.HandleCraftingScheduling(Program.WorldMap.LocalTile, currentCraftingRecipe.CraftTime);
+            Point worldIndex = Program.Player.WorldIndex;
+            Scheduler.HandleCraftingScheduling(currentCraftingRecipe.CraftTime);
 
             foreach (RecipeComponent rc in currentCraftingRecipe.Recipe)
                 Program.Player.Inventory.RemoveAt( Program.Player.Inventory.FindIndex( i => i.ToComponent() == rc ) );
 
-            foreach (Item i in currentCraftingRecipe.CraftingTarget)
-            {
+            foreach (Item i in currentCraftingRecipe.CraftingTarget) {
                 Program.Player.Inventory.Add( i );
                 Program.Player.Stats.LvlSkill( Skill.Crafting, i.ToComponent().ToSkillValue(), Program.Player );
             }
@@ -415,14 +422,11 @@ namespace Landlord
             
             if (nextToConstruction == false)
                 PathToPoint(currentConstructionPos);
-            else
-            {
-                for (int i = Program.Player.Inventory.Count - 1; i >= 0 ; i--)
-                {
+            else {
+                for (int i = Program.Player.Inventory.Count - 1; i >= 0 ; i--) {
                     Item item = Program.Player.Inventory[i];
                     RecipeComponent itemC = item.ToComponent();
-                    if (currentConstructRecipe.Contains(itemC))
-                    {
+                    if (currentConstructRecipe.Contains(itemC)) {
                         Program.Player.Inventory.Remove(item);
                         constructionMap[currentConstructionPos.X, currentConstructionPos.Y].HeldComponents.Add(nextComponent.ToItem());
                         currentConstructRecipe.Remove(itemC);
@@ -433,25 +437,24 @@ namespace Landlord
                 getIndex = 0;
 
                 if (currentConstructRecipe.Count == 0)
-                {
                     FinishConstruction();
-                }
             }
         }
 
         private static bool DropUnnecessaryItems( RecipeComponent nextComponent )
         {
             bool droppedItems = false;
-            for (int i = Program.Player.Inventory.Count - 1; i >= 0; i--)
-            {
+            for (int i = Program.Player.Inventory.Count - 1; i >= 0; i--) {
                 Item I = Program.Player.Inventory[i];
-
-                if (I is MeleeWeapon == false && I is RecipePouch == false && I is Potion == false && I is BlueprintPouch == false && !I.ToComponent().Equals(nextComponent))
-                {
+                if (I is MeleeWeapon == false && I is RecipePouch == false && I is Potion == false && I is BlueprintPouch == false && !I.ToComponent().Equals(nextComponent)) {
                     List<Point> nearbyChests = Program.Player.GetNearbyBlocksOfType( BlockType.Chest );
-                    if (nearbyChests.Count > 0)
-                    {
-                        Chest chest = (Chest)Program.WorldMap.LocalTile[nearbyChests[0].X, nearbyChests[0].Y];
+                    if (nearbyChests.Count > 0) {
+                        int currentFloor = Program.Player.CurrentFloor;
+                        Point worldIndex = Program.Player.WorldIndex;
+                        Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+                        int width = Program.WorldMap.TileWidth;
+
+                        Chest chest = (Chest)blocks[nearbyChests[0].X * width + nearbyChests[0].Y];
                         chest.Inventory.Add( I );
                         Program.Player.Inventory.RemoveAt(i);
                     }
@@ -464,9 +467,14 @@ namespace Landlord
 
         private static void FinishConstruction()
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth;
+
             Block building = constructionMap[currentConstructionPos.X, currentConstructionPos.Y].BuildTarget;
             if (!currentConstructionPos.Equals(Program.Player.Position))
-                Program.WorldMap.LocalTile[currentConstructionPos.X, currentConstructionPos.Y] = building.Copy();
+                blocks[currentConstructionPos.X * width + currentConstructionPos.Y] = building.Copy();
             else
                 Program.Player.CurrentBlock = building.Copy();
 
@@ -513,19 +521,16 @@ namespace Landlord
             get { return inputHandler; }
             set { inputHandler = value; }
         }
-
         public static bool Paused
         {
             get { return paused; }
             set { paused = value; }
         }
-
         public static BuildingPlaceholder[,] ConstructionMap
         {
             get { return constructionMap; }
             set { constructionMap = value; }
         }
-
         public static Point CurrentConstructionPos
         {
             get { return currentConstructionPos; }

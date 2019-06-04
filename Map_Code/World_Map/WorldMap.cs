@@ -11,9 +11,8 @@ namespace Landlord
     {
         public event EventHandler<EventArgs> OnFinishedGenerating;
 
-        private int width, height;
+        private int tileWidth, tileHeight;
         private MapTile[,] worldMap;
-        private Point worldIndex;
         private float[,] heightMap;
         private int seed;
         private string name;
@@ -29,8 +28,8 @@ namespace Landlord
             else
                 this.seed = seed;
 
-            this.width = width;
-            this.height = height;
+            this.tileWidth = width;
+            this.tileHeight = height;
             this.name = name;
 
             //GenerateWorldMap(width, height, name);
@@ -46,37 +45,33 @@ namespace Landlord
         public void GenerateWorldMap()
         {
             worldMap = new MapTile[5, 5];
-            worldIndex = new Point(0, 0);
 
             Random rng = new Random(seed);
             SimplexNoise.Seed = this.seed;
             float scale = .005f;
 
-            heightMap = SimplexNoise.Calc2D(width * 5, height * 5, scale);
+            heightMap = SimplexNoise.Calc2D(tileWidth * 5, tileHeight * 5, scale);
             List<Point> potentialDungeons = new List<Point>();
             List<Point> dungeons = new List<Point>();
             bool dungeon = false;
 
-            WorldMapGeneration.GenerateRivers( rng, width, height, heightMap );
+            WorldMapGeneration.GenerateRivers( rng, tileWidth, tileHeight, heightMap );
 
             for (int i = 0; i < 5; i++)
                 for (int j = 0; j < 5; j++)
                     potentialDungeons.Add(new Point(i, j));
-            for (int c = 0; c < 10; c++)
-            {
+            for (int c = 0; c < 10; c++) {
                 int index = rng.Next(0, potentialDungeons.Count);
                 dungeons.Add(potentialDungeons[index]);
                 potentialDungeons.RemoveAt(index);
             }
 
-            for (int i = 0; i < 5; i++)
-            {
-                for (int j = 0; j < 5; j++)
-                {
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
                     foreach (Point point in dungeons)
                         if (point.X == i && point.Y == j)
                             dungeon = true;
-                    worldMap[i, j] = new MapTile(new Point(width, height), new Point(i, j), heightMap, dungeon);
+                    worldMap[i, j] = new MapTile(new Point(tileWidth, tileHeight), new Point(i, j), heightMap, dungeon);
                     dungeon = false;
                 }
             }
@@ -97,37 +92,24 @@ namespace Landlord
             get { return worldMap[x,y]; }
             set { worldMap[x,y] = value; }
         }
-
-        public MapTile[,] World
-        {
+        public MapTile[,] WorldTiles { // DO NOT DELETE! Used for SERIALIZATION.
             get { return worldMap; }
             set { worldMap = value; }
         }
-
-        public Point WorldIndex
-        {
-            get { return worldIndex; }
-            set { worldIndex = value; }
+        public int TileWidth {
+            get { return tileWidth; }
+            set { tileWidth = value; }
         }
-
-        public MapTile LocalTile
+        public int TileHeight
         {
-            get { return worldMap[worldIndex.X, worldIndex.Y]; }
-            set { worldMap[worldIndex.X, worldIndex.Y] = value; }
+            get { return tileHeight; }
+            set { tileHeight = value; }
         }
-
         public float[,] HeightMap
         {
             get { return heightMap; }
             set { heightMap = value; }
         }
-
-        public int Seed
-        {
-            get { return seed; }
-            set { seed = value; }
-        }
-
         public string Name
         {
             get { return name; ; }

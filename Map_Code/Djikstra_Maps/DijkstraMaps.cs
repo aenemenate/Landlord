@@ -41,9 +41,9 @@ namespace Landlord
         {
             int maxDist = 40;
 
-            MapTile map = Program.WorldMap.LocalTile;
+            MapTile map = Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y];
 
-            if (map.CurrentFloor == -1)
+            if (Program.Player.CurrentFloor == -1)
                 return;
             
             for (int i = Math.Max(0, Program.Player.Position.X - maxDist); i <= Math.Min(width - 1, Program.Player.Position.X + maxDist); i++)
@@ -51,24 +51,25 @@ namespace Landlord
                     distToPlayerMap[i * width + j] = dijkstraDefaultVal;
             distToPlayerMap[Program.Player.Position.X * width + Program.Player.Position.Y] = 0;
 
-            DijkstraNeighbors(new HashSet<Point>( new Point[] { Program.Player.Position } ), 1, ref distToPlayerMap, Program.WorldMap.LocalTile.Blocks, new Point(width, height), maxDist);
+            DijkstraNeighbors(new HashSet<Point>( new Point[] { Program.Player.Position } ), 1, ref distToPlayerMap, maxDist);
         }
 
         public void UpdateDistToItemsMap(object sender, EventArgs e)
         {
-            MapTile map = Program.WorldMap.LocalTile;
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
-            if ( map.CurrentFloor == -1 )
+            if ( Program.Player.CurrentFloor == -1 )
                 return;
             
 
             HashSet<Point> itemSpots = new HashSet<Point>();
 
             for (int i = 0; i < width; i++)
-                for (int j = 0; j < height; j++)
-                {
-                    if (map.Blocks[i * Program.WorldMap.LocalTile.Width + j].Type == BlockType.Item)
-                    {
+                for (int j = 0; j < height; j++) {
+                    if (blocks[i * Program.WorldMap.TileWidth + j].Type == BlockType.Item) {
                         itemSpots.Add(new Point(i, j));
                         distToItemsMap[i * width + j] = 0;
                     }
@@ -76,31 +77,32 @@ namespace Landlord
                         distToItemsMap[i * width + j] = dijkstraDefaultVal;
                 }
             
-            DijkstraNeighbors(itemSpots, 1, ref distToItemsMap, Program.WorldMap.LocalTile.Blocks, new Point(width, height));
+            DijkstraNeighbors(itemSpots, 1, ref distToItemsMap);
         }
 
-        public static void DijkstraNeighbors(HashSet<Point> spots, int dist, ref int[] dijkstraMap, Block[] map, Point size, int maxDist = dijkstraDefaultVal)
+        public static void DijkstraNeighbors(HashSet<Point> spots, int dist, ref int[] dijkstraMap, int maxDist = dijkstraDefaultVal)
         {
-            int width = size.X, height = size.Y;
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             if (dist > maxDist)
                 return;
             HashSet<Point> neighbors = new HashSet<Point>();
-            foreach (Point spot in spots)
-            {
+            foreach (Point spot in spots) {
                 for (int i = Math.Max(0, spot.X - 1); i <= Math.Min(spot.X + 1, width - 1); i++)
-                    for (int j = Math.Max(0, spot.Y - 1); j <= Math.Min(spot.Y + 1, height - 1); j++)
-                    {
+                    for (int j = Math.Max(0, spot.Y - 1); j <= Math.Min(spot.Y + 1, height - 1); j++) {
                         Point point = new Point(i, j);
-                        bool blockIsPassable = !(map[i * width + j].Solid && map[i * width + j].Type != BlockType.Door);
-                        if ((dijkstraMap[point.X * width + point.Y] > dist) && blockIsPassable)
-                        {
+                        bool blockIsPassable = !(blocks[i * width + j].Solid && blocks[i * width + j].Type != BlockType.Door);
+                        if ((dijkstraMap[point.X * width + point.Y] > dist) && blockIsPassable) {
                             neighbors.Add(point);
                             dijkstraMap[point.X * width + point.Y] = dist;
                         }
                     }
             }
             if (neighbors.Count > 0)
-                DijkstraNeighbors(neighbors, dist + 1, ref dijkstraMap, map, new Point(width, height), maxDist);
+                DijkstraNeighbors(neighbors, dist + 1, ref dijkstraMap, maxDist);
         }
 
 
@@ -131,20 +133,23 @@ namespace Landlord
 
         public Point GetLowestValNeighbor(Point position, int[] dijkstraMap)
         {
-            MapTile map = Program.WorldMap.LocalTile;
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             int lowestVal = dijkstraMap[position.X * width + position.Y];
             List<Point> neighbors = new List<Point>();
             List<Point> lowestPoints = new List<Point>();
             for (int i = position.X - 1; i <= position.X + 1; i++)
                 for (int j = position.Y - 1; j <= position.Y + 1; j++)
-                    if (new Point(i, j).Equals(position) == false && (dijkstraMap[i * width + j] <= lowestVal))
-                    {
+                    if (new Point(i, j).Equals(position) == false && (dijkstraMap[i * width + j] <= lowestVal)) {
                         lowestVal = dijkstraMap[i * width + j];
                         neighbors.Add(new Point(i, j));
                     }
 
             foreach (Point point in neighbors)
-                if (dijkstraMap[point.X * width + point.Y] == lowestVal && map.Blocks[point.X * Program.WorldMap.LocalTile.Width + point.Y] is Monster == false)
+                if (dijkstraMap[point.X * width + point.Y] == lowestVal && blocks[point.X * width + point.Y] is Monster == false)
                     lowestPoints.Add(point);
 
             if (lowestPoints.Count != 0)

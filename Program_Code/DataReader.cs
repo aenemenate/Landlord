@@ -13,7 +13,7 @@ namespace Landlord
         
         // FUNCTIONS //
 
-        public static Monster GetMonster( string name, Block[] map, Point position ) {
+        public static Monster GetMonster( string name, Block[] map, Point position, Point worldIndex, int currentFloor ) {
             XElement monsterData = null;
 
             // load all the effects
@@ -74,7 +74,7 @@ namespace Landlord
                 baseDesires.Add( desireType, System.Convert.ToInt32( ReadAttribute( desireTypeE.LastAttribute ) ) );
             } // translate IEnumerable to List
 
-            return new Monster( map, position, color, sightDist, 3, baseDesires, uClass, name, "male", friendly, graphic );
+            return new Monster( map, position, worldIndex, currentFloor, color, sightDist, 3, baseDesires, uClass, name, "male", friendly, graphic );
         }
 
         public static string GetNextTip()

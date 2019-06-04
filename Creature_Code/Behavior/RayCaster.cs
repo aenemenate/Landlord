@@ -18,25 +18,31 @@ namespace Landlord
             {
                 x1 = Math.Cos((double)i * 0.01745f);
                 y1 = Math.Sin((double)i * 0.01745f);
-                CheckLineOfSight(x1, y1, creature.Position, radius, ref visiblePoints);
+                CheckLineOfSight(x1, y1, creature.Position, creature.WorldIndex, creature.CurrentFloor, radius, ref visiblePoints);
             }
             return visiblePoints;
         }
 
-        static public void SetAllInvis(Point position, int radius)
+        static public void SetAllInvis(Point position, int radius, Point worldIndex, int currentFloor)
         {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
+            int width = Program.WorldMap.TileWidth;
+
             int radPlus2 = radius + 2;
             for (int i = position.X - radPlus2; i < position.X + radPlus2; i++)
                 for (int j = position.Y - radPlus2; j < position.Y + radPlus2; j++)
-                    if (Program.WorldMap.LocalTile.PointWithinBounds(new Point(i, j)))
-                    {
-                        Program.WorldMap.LocalTile[i, j].Visible = false;
-                        Program.WorldMap.LocalTile.Floor[i * Program.WorldMap.LocalTile.Width + j].Visible = false;
+                    if (Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(new Point(i, j))) {
+                        blocks[i * Program.WorldMap.TileWidth + j].Visible = false;
+                        tiles[i * Program.WorldMap.TileWidth + j].Visible = false;
                     }
         }
 
-        static private void CheckLineOfSight(double x1, double y1, Point pos, int radius, ref HashSet<Point> visiblePoints)
+        static private void CheckLineOfSight(double x1, double y1, Point pos, Point worldIndex, int currentFloor, int radius, ref HashSet<Point> visiblePoints)
         {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth;
+
             int i;
             double cx, cy;
             cx = pos.X + 0.5f;
@@ -44,10 +50,10 @@ namespace Landlord
             for (i = 0; i < radius; i++)
             {
                 Point spot = new Point((int)cx, (int)cy);
-                if (!Program.WorldMap.LocalTile.PointWithinBounds( spot))
+                if (!Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds( spot ))
                     continue;
                 visiblePoints.Add( new Point( (int)cx, (int)cy));
-                if (Program.WorldMap.LocalTile[(int)cx, (int)cy].Opaque == true && !((int)cx == pos.X && (int)cy == pos.Y))
+                if (blocks[(int)cx * width + (int)cy].Opaque == true && !((int)cx == pos.X && (int)cy == pos.Y))
                     break;
                 cx += x1;
                 cy += y1;

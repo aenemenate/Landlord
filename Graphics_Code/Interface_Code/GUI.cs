@@ -911,7 +911,8 @@ namespace Landlord
 
                 void PrintLookFunc()
                 {
-                    Point mapPos = Program.WorldMap.LocalTile.GetMousePos(mousePos);
+                    Point worldIndex = Program.Player.WorldIndex;
+                    Point mapPos = Program.WorldMap[worldIndex.X, worldIndex.Y].GetMousePos(mousePos);
 
                     bool mouseIsOnMap = !(mousePos.X < 0 || mousePos.X >= Program.Console.Width - StatusPanel.Width);
 
@@ -919,21 +920,20 @@ namespace Landlord
                     Program.Window.Print(StartX + 1, Program.Window.Height - 2, "                  ", 18);
                     Program.Window.Print(StartX + 1, Program.Window.Height - 1, "                  ", 18);
 
-                    if (Program.CurrentState is Play && Program.WorldMap.LocalTile.PointWithinBounds(mapPos) && mouseIsOnMap && Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Explored)
-                    {
-                        if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Type != BlockType.Empty)
-                        {
-                            if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is Item item)
-                            {
+                    int currentFloor = Program.Player.CurrentFloor;
+                    Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+                    Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
+                    int width = Program.WorldMap.TileWidth;
+                    if (Program.CurrentState is Play && Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos) && mouseIsOnMap && blocks[mapPos.X * width + mapPos.Y].Explored) {
+                        if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty) {
+                            if (blocks[mapPos.X * width + mapPos.Y] is Item item) {
                                 Program.Window.Print(StartX + 1, Program.Window.Height - 3, item.Name, 18);
                                 Tuple<byte, Color> comparisonArrow = GetItemArrow(item);
                                 if (comparisonArrow.Item1 != 0)
                                     Program.Console.SetGlyph(StartX + 1 + item.Name.Length, Program.Window.Height - 3, comparisonArrow.Item1, comparisonArrow.Item2);
                             }
-                            else if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is Creature creature)
-                            {
-                                if (creature is Player == false)
-                                {
+                            else if (blocks[mapPos.X * width + mapPos.Y] is Creature creature) {
+                                if (creature is Player == false) {
                                     if (creature.CurrentBlock.Visible == true)
                                         Program.Window.Print(StartX + 1, Program.Window.Height - 3, creature.Name
                                             + $"({creature.Stats.Resources[Resource.HP]}/{creature.Stats.Resources[Resource.MaxHP]})", 18);
@@ -944,10 +944,10 @@ namespace Landlord
                                     Program.Window.Print(StartX + 1, Program.Window.Height - 3, creature.Name, 18);
                             }
                             else
-                                Program.Window.Print( StartX + 1, Program.Window.Height - 3, Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Name, 18);
+                                Program.Window.Print( StartX + 1, Program.Window.Height - 3, blocks[mapPos.X * width + mapPos.Y].Name, 18);
                         }
                         else
-                            Program.Window.Print( StartX + 1, Program.Window.Height - 3, Program.WorldMap.LocalTile.Floor[mapPos.X * Program.WorldMap.LocalTile.Width + mapPos.Y].Name, 18);
+                            Program.Window.Print( StartX + 1, Program.Window.Height - 3, tiles[mapPos.X * width + mapPos.Y].Name, 18);
                     }
                 }
 
@@ -1363,17 +1363,17 @@ namespace Landlord
                    SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y);
             Point mapPos = new Point(mapStart.X + ( mousePos.X ), mapStart.Y + mousePos.Y);
 
-            if ((mousePos.X < InventoryPanel.Width || mousePos.X > windowWidth - StatusPanel.Width - 1) || !SadConsole.Global.MouseState.IsOnScreen || Program.Player.InputModule.CancelMove)
-            {
+            if ((mousePos.X < InventoryPanel.Width || mousePos.X > windowWidth - StatusPanel.Width - 1) || !SadConsole.Global.MouseState.IsOnScreen || Program.Player.InputModule.CancelMove) {
                 path = null;
                 return path;
             }
-
-            if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Explored)
-            {
-                if (prevMapPos != mapPos)
-                {
-                    path = Pathfinder.FindPath( Program.Player.Position, mapPos );
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap[worldIndex.X, worldIndex.Y].Width;
+            if (blocks[mapPos.X * width + mapPos.Y].Explored) {
+                if (prevMapPos != mapPos) {
+                    path = Pathfinder.FindPath( worldIndex, currentFloor, Program.Player.Position, mapPos );
 
                     prevMapPos = mapPos;
                     if (path.Count >= windowWidth)

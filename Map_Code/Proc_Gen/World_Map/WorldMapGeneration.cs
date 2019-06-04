@@ -18,26 +18,24 @@ namespace Landlord
             for (int i = 0; i < map.Width; i++)
                 for (int j = 0; j < map.Height; j++)
                 {
-                    if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= StoneCutoff)
-                    {
+                    if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= StoneCutoff) {
                         map.Blocks[i * map.Width + j] = new Wall(Material.Stone);
                         map.Floor[i * map.Width + j] = new DirtFloor();
-                    } else if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= WaterCutoff + 6f)
-                    {
+                    }
+                    else if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= WaterCutoff + 6f) {
                         map.Blocks[i * map.Width + j] = new Air();
                         map.Floor[i * map.Width + j] = new Grass();
-                    } else if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= WaterCutoff)
-                    {
+                    }
+                    else if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= WaterCutoff) {
                         map.Blocks[i * map.Width + j] = new Air();
                         map.Floor[i * map.Width + j] = new Sand();
                     }
-                    else
-                    {
+                    else {
                         map.Blocks[i * map.Width + j] = new Air();
                         map.Floor[i * map.Width + j] = new Water();
                     }
                 }
-            GenerateTrees(rng, map, 5, 17);
+            GenerateTrees(rng, map, 7, 18);
             GenerateOre( map, rng, 0.025f );
         }
 
@@ -57,7 +55,7 @@ namespace Landlord
                 while (nextSpot == null && count < availableSpots.Count) {
                     count++;
                     potentialSpot = availableSpots[rng.Next(0, availableSpots.Count)];
-                    if (potentialSpot.DistFrom(map.GetClosestOfTileTypeToPos(potentialSpot, new Water())) <= 8) {
+                    if (potentialSpot.DistFrom(map.GetClosestOfTileTypeToPos(potentialSpot, new Water())) <= 16) {
                         nextSpot = potentialSpot;
                     }
                 }
@@ -70,25 +68,21 @@ namespace Landlord
             }
 
             // run growth algorithm
-            for (int i = 0; i < growthGenerations; i++)
-            {
+            for (int i = 0; i < growthGenerations; i++) {
                 int treesThisGen = treeSpots.Count;
-                for (int j = 0; j < treesThisGen; j++)
-                {
+                for (int j = 0; j < treesThisGen; j++) {
                     Point currentTree = treeSpots[j];
                     nextSpot = new Point(rng.Next(Math.Max(currentTree.X - 8, 0), Math.Min(currentTree.X + 8, map.Width - 1)), rng.Next(Math.Max(currentTree.Y - 8, 0), Math.Min(currentTree.Y + 8, map.Height - 1)));
                     int count = 0;
-                    do
-                    {
+                    do {
                         count++;
                         nextSpot = new Point(rng.Next(Math.Max(currentTree.X - 8, 0), Math.Min(currentTree.X + 8, map.Width - 1)), rng.Next(Math.Max(currentTree.Y - 8, 0), Math.Min(currentTree.Y + 8, map.Height - 1)));
                         for (int x = Math.Max(nextSpot.X - 3, 0); x <= Math.Min(nextSpot.X + 3, map.Width - 1); x++)
                             for (int y = Math.Max(nextSpot.Y - 3, 0); y <= Math.Min(nextSpot.Y + 3, map.Height - 1); y++)
                                 if (map[x, y] is Tree)
                                     availableSpots.Remove(nextSpot);
-                    } while ((map.GetEmptyAdjacentBlocks(nextSpot).Count != 8 || availableSpots.Contains(nextSpot) == false) && count <= 5);
-                    if (count <= 5)
-                    {
+                    } while ((map.Blocks.GetEmptyAdjacentBlocks(new Point(map.Width, map.Height), nextSpot).Count != 8 || availableSpots.Contains(nextSpot) == false) && count <= 7);
+                    if (count <= 7) {
                         treeSpots.Add(nextSpot);
                         map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = new Tree(Material.Wood);
                     }
@@ -165,8 +159,7 @@ namespace Landlord
                 if (heightMap[i, j] < WorldMapGeneration.WaterCutoff)
                 {
                     for (int k = i - 1; k <= i + 1; k++)
-                        for (int m = j - 1; m <= j + 1; m++)
-                        {
+                        for (int m = j - 1; m <= j + 1; m++) {
                             if (heightMap[k, m] < heightMap[i, j])
                                 return false;
                         }

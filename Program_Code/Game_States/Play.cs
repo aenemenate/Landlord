@@ -21,14 +21,15 @@ namespace Landlord
 
         public override void Update()
         {
+            Point worldIndex = Program.Player.WorldIndex;
             if (playMode == PlayMode.Roguelike)
             {
-                Scheduler.HandleRoguelikeScheduling(Program.WorldMap.LocalTile);
+                Scheduler.HandleRoguelikeScheduling();
                 StatusPanel.HandleStatus();
             }
             else
             {
-                Scheduler.HandleBuildModeScheduling(Program.WorldMap.LocalTile);
+                Scheduler.HandleBuildModeScheduling();
                 GUI.BuildPanel.HandleBuildPanel();
                 BuildingManager.HandleInput();
             }
@@ -48,10 +49,11 @@ namespace Landlord
 
         public static void RenderMap()
         {
+            Point worldIndex = Program.Player.WorldIndex;
             Point startPoint = Program.Window.CalculateMapStartPoint();
             for (int i = startPoint.X; i - startPoint.X < GUI.MapWidth; i++)
                 for (int j = startPoint.Y; j - startPoint.Y < Program.Window.Height; j++)
-                    Program.WorldMap.LocalTile.DrawCell(i, j);
+                    Program.WorldMap[worldIndex.X, worldIndex.Y].DrawCell(i, j);
         }
 
         public override void ClientSizeChanged()
@@ -77,6 +79,11 @@ namespace Landlord
 
         private void RenderInteractivity()
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             Color interactiveColor = Color.RoyalBlue;
 
             Point mousePos = new Point(SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
@@ -85,22 +92,27 @@ namespace Landlord
             Point mapPos = new Point(startPoint.X + (mousePos.X), startPoint.Y + mousePos.Y);
 
 
-            if (!Program.WorldMap.LocalTile.PointWithinBounds(mapPos))
+            if (!Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos))
                 return;
 
-            if (Program.Player.PointNextToSelf(mapPos))
-            {
-                if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Interactive && !mapPos.Equals(Program.Player.Position))
-                    Program.Console.SetGlyph(mousePos.X, mousePos.Y, Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Graphic,
-                                Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].ForeColor, interactiveColor);
+            if (Program.Player.PointNextToSelf(mapPos)) {
+                if (blocks[mapPos.X * width + mapPos.Y].Interactive && !mapPos.Equals(Program.Player.Position))
+                    Program.Console.SetGlyph(mousePos.X, mousePos.Y, blocks[mapPos.X * width + mapPos.Y].Graphic,
+                                blocks[mapPos.X * width + mapPos.Y].ForeColor, interactiveColor);
                 else if (Program.Player.CurrentBlock.Enterable && mapPos.Equals(Program.Player.Position))
-                    Program.Console.SetGlyph(mousePos.X, mousePos.Y, Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Graphic,
-                            Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].ForeColor, interactiveColor);
+                    Program.Console.SetGlyph(mousePos.X, mousePos.Y, blocks[mapPos.X * width + mapPos.Y].Graphic,
+                            blocks[mapPos.X * width + mapPos.Y].ForeColor, interactiveColor);
             }
         }
 
         private void RenderPath()
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             List<Point> guiPath = null;
             Point startPoint = Program.Window.CalculateMapStartPoint();
             guiPath = GUI.CalculatePath(startPoint, Program.Window.Width);
@@ -116,15 +128,14 @@ namespace Landlord
                     if (pointOutsideMapViewer)
                         continue;
 
-                    if (Program.WorldMap.LocalTile[point.X, point.Y] is Air)
-                    {
-                        Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, Program.WorldMap.LocalTile.Floor[point.X * Program.WorldMap.LocalTile.Width + point.Y].Graphic,
-                            Program.WorldMap.LocalTile.Floor[point.X * Program.WorldMap.LocalTile.Width + point.Y].ForeColor, Color.RoyalBlue);
+                    if (blocks[point.X * width + point.Y] is Air) {
+                        Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, tiles[point.X * width + point.Y].Graphic,
+                            tiles[point.X * width + point.Y].ForeColor, Color.RoyalBlue);
                         continue;
                     }
 
-                    Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, Program.WorldMap.LocalTile[point.X, point.Y].Graphic,
-                            Program.WorldMap.LocalTile[point.X, point.Y].ForeColor, Color.CornflowerBlue);
+                    Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, blocks[point.X * width + point.Y].Graphic,
+                            blocks[point.X * width + point.Y].ForeColor, Color.CornflowerBlue);
                 }
             }
         }

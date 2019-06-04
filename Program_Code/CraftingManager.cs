@@ -34,7 +34,7 @@ namespace Landlord
         public static void ContinueCrafting()
         {
             Item i = craftingRecipe.CraftingTarget[currentOutput];
-            Scheduler.HandleCraftingScheduling( Program.WorldMap.LocalTile, ( craftingRecipe.CraftTime ) / craftingRecipe.CraftingTarget.Count );
+            Scheduler.HandleCraftingScheduling( ( craftingRecipe.CraftTime ) / craftingRecipe.CraftingTarget.Count );
             Program.Player.Inventory.Add( i );
             Program.Player.Stats.LvlSkill(Skill.Crafting, craftingRecipe.CraftingTarget[currentOutput].ToComponent().ToSkillValue(), Program.Player);
             currentOutput++;

@@ -79,35 +79,39 @@ namespace Landlord
 
             void PrintLookFunc()
             {
-                Point mapPos = Program.WorldMap.LocalTile.GetMousePos( mousePos );
+                Point worldIndex = Program.Player.WorldIndex;
+                int currentFloor = Program.Player.CurrentFloor;
+                Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+                Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
+                int width = Program.WorldMap[worldIndex.X, worldIndex.Y].Width;
+                Point mapPos = Program.WorldMap[worldIndex.X, worldIndex.Y].GetMousePos(mousePos);
 
-                bool mouseIsOnMap = !( mousePos.X < 0 || mousePos.X >= Program.Console.Width - StatusPanel.Width );
+                bool mouseIsOnMap = !(mousePos.X < 0 || mousePos.X >= Program.Console.Width - StatusPanel.Width);
 
-                Program.Window.Print( StartX + 1, Program.Window.Height - 3, "                  ", 18 );
+                Program.Window.Print(StartX + 1, Program.Window.Height - 3, "                  ", 18);
+                Program.Window.Print(StartX + 1, Program.Window.Height - 2, "                  ", 18);
+                Program.Window.Print(StartX + 1, Program.Window.Height - 1, "                  ", 18);
 
-                if (Program.CurrentState is Play && Program.WorldMap.LocalTile.PointWithinBounds( mapPos ) && mouseIsOnMap && Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Explored)
-                {
-                    if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Type != BlockType.Empty)
-                    {
-                        if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is Item item)
-                        {
-                            Program.Window.Print( StartX + 1, Program.Window.Height - 3, item.Name, 20 );
-                            Tuple<byte, Color> comparisonArrow = GUI.GetItemArrow( item );
-                            int arrowX = StartX + 1 + ( item.Name.Length > 20 ? item.Name.Length % 20 : item.Name.Length ) + 1,
-                                arrowY = Program.Window.Height - ( 3 - item.Name.Length / 20 );
-                            if (comparisonArrow.Item1 != 0)
-                                Program.Console.SetGlyph( arrowX, arrowY, comparisonArrow.Item1, comparisonArrow.Item2 );
-                        } else if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is Creature creature)
-                        {
-                            if (creature is Player == false)
-                                Program.Window.Print( StartX + 1, Program.Window.Height - 3, creature.Name
-                                    + $" ({creature.Stats.Resources[Resource.HP]}/{creature.Stats.Resources[Resource.MaxHP]} hp)", 20 );
+                if (Program.CurrentState is Play && Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos) && mouseIsOnMap && blocks[mapPos.X * width + mapPos.Y].Explored) {
+                    if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty) {
+                        if (blocks[mapPos.X * width + mapPos.Y] is Item item)
+                            Program.Window.Print(StartX + 1, Program.Window.Height - 2, item.Name, 18);
+                        else if (blocks[mapPos.X * width + mapPos.Y] is Creature creature) {
+                            if (creature is Player == false) {
+                                if (creature.CurrentBlock.Visible == true)
+                                    Program.Window.Print(StartX + 1, Program.Window.Height - 3, creature.Name
+                                        + $"({creature.Stats.Resources[Resource.HP]}/{creature.Stats.Resources[Resource.MaxHP]})", 18);
+                                else
+                                    Program.Window.Print(StartX + 1, Program.Window.Height - 3, creature.CurrentBlock.Name, 18);
+                            }
                             else
-                                Program.Window.Print( StartX + 1, Program.Window.Height - 3, $"You, on {Program.Player.CurrentBlock.Name}.", 20 );
-                        } else
-                            Program.Window.Print( StartX + 1, Program.Window.Height - 3, Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Name, 20 );
-                    } else
-                        Program.Window.Print( StartX + 1, Program.Window.Height - 3, Program.WorldMap.LocalTile.Floor[mapPos.X * Program.WorldMap.LocalTile.Width + mapPos.Y].Name, 20 );
+                                Program.Window.Print(StartX + 1, Program.Window.Height - 3, creature.Name, 18);
+                        }
+                        else
+                            Program.Window.Print(StartX + 1, Program.Window.Height - 3, blocks[mapPos.X * width + mapPos.Y].Name, 18);
+                    }
+                    else
+                        Program.Window.Print(StartX + 1, Program.Window.Height - 3, tiles[mapPos.X * width + mapPos.Y].Name, 18);
                 }
             }
 
@@ -254,16 +258,14 @@ namespace Landlord
                         DrawResourceBar(curY, creature.Stats.Resources[Resource.HP], creature.Stats.Resources[Resource.MaxHP], 20, new Color(45, 51, 122));
                         curY++;
                         // for each stat, draw if appropriate
-                        if (creature is Player)
-                        {
+                        if (creature is Player) {
                             DrawResourceBar( curY, creature.Stats.Resources[Resource.MP], creature.Stats.Resources[Resource.MaxMP], 20, new Color( 45, 122, 116 ) );
                             curY++;
                             DrawResourceBar( curY, creature.Stats.Resources[Resource.SP], creature.Stats.Resources[Resource.MaxSP], 20, new Color( 122, 116, 45 ) );
                             curY++;
                         }
                         // draw status effects
-                        foreach (Effect effect in creature.Effects)
-                        {
+                        foreach (Effect effect in creature.Effects) {
                             DrawResourceBar( curY, effect.Turns, effect.TotalTurns, 20, new Color( 122, 45, 90 ), effect.Name );
                             curY++;
                         }

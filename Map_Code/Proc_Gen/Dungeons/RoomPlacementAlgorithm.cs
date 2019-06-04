@@ -55,12 +55,12 @@ namespace Landlord
 
         // FUNCTIONS
 
-        public void GenerateDungeon(int placementAttempts, int maxRoomCount, int floor)
+        public void GenerateDungeon(int placementAttempts, int maxRoomCount, int floor, Point worldIndex)
         {
             DungeonHelper.InitializeMap(dungeonFloor);
             Block[,] room;
 
-            firstRoomPos = floor > 0 ? Program.WorldMap.LocalTile.Dungeon.Floors[floor - 1].GetDownStairPos() : Program.Player.Position;
+            firstRoomPos = floor > 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[floor - 1].GetDownStairPos() : Program.Player.Position;
 
             for (int c = 0; c < placementAttempts; c++) // create all rooms
             {
@@ -73,12 +73,14 @@ namespace Landlord
 
             DungeonHelper.PlaceStairs(dungeonFloor, firstRoomPos);
             DungeonHelper.PlaceItemsAndChests(dungeonFloor, firstRoomPos);
-            DungeonHelper.PlaceCreatures(dungeonFloor, firstRoomPos, monsterTypes);
+            DungeonHelper.PlaceCreatures(dungeonFloor, firstRoomPos, monsterTypes, worldIndex, floor);
 
             for (int i = 0; i < dungeonFloor.Width; i++)
-                for (int j = 0; j < dungeonFloor.Height; j++)
+                for (int j = 0; j < dungeonFloor.Height; j++) {
                     if (dungeonFloor.Blocks[i * dungeonFloor.Width + j] == null)
                         dungeonFloor.Blocks[i * dungeonFloor.Width + j] = new Air();
+                    dungeonFloor.Blocks[i * dungeonFloor.Width + j].Explored = true;
+                }
         }
         
         private void PlaceRoom(Block[,] room)

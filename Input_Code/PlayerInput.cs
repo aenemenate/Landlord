@@ -42,7 +42,10 @@ namespace Landlord
 
             List<Point> interactiveSpots = GetNearbyInteractiveBlocks(Program.Player.Position);
 
-
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
             if (actionPressed && !selectingActDir) // if you pressed action
             {
@@ -59,15 +62,13 @@ namespace Landlord
 
 
                 // if there's only one nearby object
-                if (!multipleNearbyObjs && !noNearbyObj)
-                {
-                    if (!(Program.WorldMap.LocalTile[interactiveSpots[0].X, interactiveSpots[0].Y] is Item))
-                        Program.WorldMap.LocalTile[interactiveSpots[0].X, interactiveSpots[0].Y].Activate(Program.Player);
+                if (!multipleNearbyObjs && !noNearbyObj) {
+                    if (!(blocks[interactiveSpots[0].X * width + interactiveSpots[0].Y] is Item))
+                        blocks[interactiveSpots[0].X * width + interactiveSpots[0].Y].Activate(Program.Player);
                     else
                         Program.Player.GetItem(interactiveSpots[0]);
                 }
-                else if (multipleNearbyObjs)
-                {
+                else if (multipleNearbyObjs) {
                     Program.MsgConsole.Clear();
                     Program.MsgConsole.WriteLine("Select a direction (5 for current position)");
                     selectingActDir = true;
@@ -106,35 +107,31 @@ namespace Landlord
                 bool movementCooldownReached; // the cooldown is basically a time buffer in between input handles.
 
                 if (SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl))
-                {
                     movementCooldownReached = DateTime.Now - lastMovement > new TimeSpan(TimeSpan.TicksPerSecond / 24);
-                }
                 else
                     movementCooldownReached = DateTime.Now - lastMovement > new TimeSpan(TimeSpan.TicksPerSecond / 6);
 
 
-                if (selectingActDir)
-                {
+                if (selectingActDir) {
                     if (nextPos.Equals(Program.Player.Position) && Program.Player.CurrentBlock.Enterable == true)
                         Program.Player.CurrentBlock.Activate(Program.Player);
                     else if (interactiveSpots.Contains(nextPos))
                     {
-                        if (!(Program.WorldMap.LocalTile[nextPos.X, nextPos.Y] is Item))
-                            Program.WorldMap.LocalTile[nextPos.X, nextPos.Y].Activate(Program.Player);
+                        if (!(blocks[nextPos.X * width + nextPos.Y] is Item))
+                            blocks[nextPos.X * width + nextPos.Y].Activate(Program.Player);
                         else
                             Program.Player.GetItem(nextPos);
                     }
                     selectingActDir = false;
                     lastMovement = DateTime.Now;
                 }
-                else if (movementCooldownReached)
-                {
-                    if (nextPos.X == Program.WorldMap.LocalTile.Width || nextPos.X == -1 || nextPos.Y == Program.WorldMap.LocalTile.Height || nextPos.Y == -1)
+                else if (movementCooldownReached) {
+                    if (nextPos.X == width || nextPos.X == -1 || nextPos.Y == height || nextPos.Y == -1)
                         CreaturePlacementHelper.HandleMapSwitching(Program.Player);
-                    else if (Program.WorldMap.LocalTile[nextPos.X, nextPos.Y] is Creature && ((Creature)Program.WorldMap.LocalTile[nextPos.X, nextPos.Y]).Alive)
-                        Program.WorldMap.LocalTile.GetCreatureAtPosition(nextPos).Activate(Program.Player);
+                    else if (blocks[nextPos.X * width + nextPos.Y] is Creature creature && creature.Alive)
+                        blocks.GetCreatureAtPosition(Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures, nextPos).Activate(Program.Player);
                     else
-                        Program.Player.Move(nextPos, Program.WorldMap.LocalTile);
+                        Program.Player.Move(nextPos);
                     lastMovement = DateTime.Now;
                 }
             }
@@ -142,12 +139,13 @@ namespace Landlord
 
         public void HandleMouse()
         {
+            Point worldIndex = Program.Player.WorldIndex;
             Point mousePos = new Point(SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
                 SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y);
-            Point mapPos = Program.WorldMap.LocalTile.GetMousePos(mousePos);
+            Point mapPos = Program.WorldMap[worldIndex.X, worldIndex.Y].GetMousePos(mousePos);
             bool mouseIsOnMap = !(mousePos.X < InventoryPanel.Width || mousePos.X >= Program.Console.Width - StatusPanel.Width);
 
-            if (!SadConsole.Global.MouseState.IsOnScreen || !(DateTime.Now - lastMovement > new TimeSpan( TimeSpan.TicksPerSecond / 6 )))
+            if (!SadConsole.Global.MouseState.IsOnScreen || !(DateTime.Now - lastMovement > new TimeSpan( TimeSpan.TicksPerSecond / 3 )))
                 return;
 
             if (SadConsole.Global.MouseState.LeftButtonDown)
@@ -158,28 +156,29 @@ namespace Landlord
 
         private void HandleLeftClicked(Point mapPos, bool mouseIsOnMap)
         {
-            if (!cancelMove && mouseIsOnMap)
-            {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+            if (!cancelMove && mouseIsOnMap) {
                 if (Menus.ClickedDialog)
                     Menus.ClickedDialog = false;
                 else if (SadConsole.Global.MouseState.RightButtonDown)
                     cancelMove = true;
                 else if (Program.Player.Path != null)
                     Program.Player.Path = null;
-                else
-                {
-                    if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is Player)
-                    {
+                else {
+                    if (blocks[mapPos.X * width + mapPos.Y] is Player) {
                         bool movedMaps = CreaturePlacementHelper.HandleMapSwitching(Program.Player);
                         if (movedMaps == false && Program.Player.CurrentBlock.Enterable)
                             Program.Player.CurrentBlock.Activate(Program.Player);
                     }
-                    else if (Program.Player.PointNextToSelf(mapPos) && Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Interactive)
-                    {
-                        if (!(Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is Item )) {
-                            if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is Chest || Program.WorldMap.LocalTile[mapPos.X, mapPos.Y] is CraftingTable)
+                    else if (Program.Player.PointNextToSelf(mapPos) && blocks[mapPos.X * width + mapPos.Y].Interactive) {
+                        if (!(blocks[mapPos.X * width + mapPos.Y] is Item )) {
+                            if (blocks[mapPos.X * width + mapPos.Y] is Chest || blocks[mapPos.X * width + mapPos.Y] is CraftingTable)
                                 GUI.LootMenu.ClickedContainer = true;
-                            Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Activate( Program.Player );
+                            blocks[mapPos.X * width + mapPos.Y].Activate( Program.Player );
                         }
                         else
                             Program.Player.GetItem(mapPos);
@@ -191,10 +190,15 @@ namespace Landlord
 
         private void HandleRightClicked(Point mapPos, bool mouseIsOnMap)
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             if (cancelMove)
                 cancelMove = false;
             else if (mouseIsOnMap)
-                if (Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Explored && Program.WorldMap.LocalTile[mapPos.X, mapPos.Y].Solid == false && mapPos.Y < 100)
+                if (blocks[mapPos.X * width + mapPos.Y].Explored && blocks[mapPos.X * width + mapPos.Y].Solid == false && mapPos.Y < 100)
                     Program.Player.SetPath(mapPos);
         }
 
@@ -203,20 +207,21 @@ namespace Landlord
         
         public List<Point> GetNearbyInteractiveBlocks(Point position)
         {
+            int currentFloor = Program.Player.CurrentFloor;
+            Point worldIndex = Program.Player.WorldIndex;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
             List<Point> interactivePoints = new List<Point>();
-            for (int i = Math.Max(0, position.X - 1); i <= Math.Min(Program.WorldMap.LocalTile.Width - 1, position.X + 1); i++)
-                for (int j = Math.Max(0, position.Y - 1); j <= Math.Min(Program.WorldMap.LocalTile.Height - 1, position.Y + 1); j++)
-                    if (Program.WorldMap.LocalTile[i, j].Interactive && !position.Equals(new Point(i, j)))
+            for (int i = Math.Max(0, position.X - 1); i <= Math.Min(width - 1, position.X + 1); i++)
+                for (int j = Math.Max(0, position.Y - 1); j <= Math.Min(height - 1, position.Y + 1); j++)
+                    if (blocks[i * width + j].Interactive && !position.Equals(new Point(i, j)))
                         interactivePoints.Add(new Point(i, j));
             return interactivePoints;
         }
 
 
-        public bool SelectingActionDir
-        {
-            get { return selectingActDir; }
-            set { selectingActDir = value; }
-        }
+        // PROPERTIES //
 
         public bool CancelMove
         {

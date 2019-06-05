@@ -5,12 +5,19 @@ using System.Linq;
 
 namespace Landlord
 {
+    public enum DietType
+    {
+        Herbivore,
+        Carnivore,
+        Omnivore
+    }
     abstract class Creature : Block , IComparable<Creature>, IEquatable<Creature>
     {
         private Point position;
         private Block currentBlock;
         private Point worldIndex;
         private int currentFloor;
+        private string faction;
         private UInt64 id;
 
         private int sightDist;
@@ -19,20 +26,20 @@ namespace Landlord
         private float gold;
         private List<Item> inventory;
         private string gender;
+        private DietType diet;
         private Body body;
         private bool alive;
         private Stats stats;
         private Class uclass;
         private List<Effect> effects;
 
-        private string faction;
-
         private Time nextActionTime;
+        
 
 
         // CONSTRUCTORS //
 
-        public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, string faction,
+        public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, DietType diet, string faction,
             bool solid, bool opaque, BlockType type = BlockType.Creature, bool interactive = true, bool enterable = false) 
                 : base (graphic, name, type, solid, opaque, interactive, enterable) {
             id = (UInt64)((DateTime.Now - new DateTime(year: 2019, month: 5, day: 15)).TotalSeconds * 100);
@@ -51,6 +58,7 @@ namespace Landlord
             this.currentFloor = currentFloor;
             this.sightDist = sightDist;
             this.gender = gender;
+            this.diet = diet;
             this.faction = faction;
         }
 
@@ -945,6 +953,10 @@ namespace Landlord
             get { return position; }
             set { position = value; }
         }
+        public Block CurrentBlock {
+            get { return currentBlock; }
+            set { currentBlock = value; }
+        }
         public Point WorldIndex {
             get { return worldIndex; }
             set { worldIndex = value; }
@@ -953,17 +965,46 @@ namespace Landlord
             get { return currentFloor; }
             set { currentFloor = value; }
         }
-        public int SightDist {
-            get { return sightDist; }
-            set { sightDist = value; }
+        public string Faction {
+            get { return faction; }
+            set { faction = value; }
         }
         public UInt64 ID {
             get { return id; }
             set { id = value; }
         }
+
+        public int SightDist {
+            get { return sightDist; }
+            set { sightDist = value; }
+        }
+        public List<Point> VisiblePoints {
+            get { return visiblePoints; }
+            set { visiblePoints = value; }
+        }
         public float Gold {
             get { return gold; }
             set { gold = value; }
+        }
+        public List<Item> Inventory {
+            get { return inventory; }
+            set { inventory = value; }
+        }
+        public string Gender {
+            get { return gender; }
+            set { gender = value; }
+        }
+        public DietType Diet {
+            get { return diet; }
+            set { diet = value; }
+        }
+        public Body Body {
+            get { return body; }
+            set { body = value; }
+        }
+        public bool Alive {
+            get { return alive; }
+            set { alive = value; }
         }
         public Stats Stats {
             get { return stats; }
@@ -977,37 +1018,10 @@ namespace Landlord
             get { return effects; }
             set { effects = value; }
         }
-        public Block CurrentBlock {
-            get { return currentBlock; }
-            set { currentBlock = value;}
-        }
-        public string Gender {
-            get { return gender; }
-            set { gender = value; }
-        }
-        public string Faction {
-            get { return faction; }
-            set { faction = value; }
-        }
-        public bool Alive {
-            get { return alive; }
-            set { alive = value; }
-        }
         public Time NextActionTime {
             get { return nextActionTime; }
             set { nextActionTime = value; }
         }
-        public List<Item> Inventory {
-            get { return inventory; }
-            set { inventory = value; }
-        }
-        public List<Point> VisiblePoints {
-            get { return visiblePoints; }
-            set { visiblePoints = value; }
-        }
-        public Body Body {
-            get { return body; }
-            set { body = value; }
-        }
+
     }
 }

@@ -15,8 +15,8 @@ namespace Landlord
 
         // CONSTRUCTORS
 
-        public Player (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, string name, string gender, string faction, Class uclass, byte graphic = 1,
-            bool solid = true, bool opaque = true) : base (map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, faction, solid, opaque)
+        public Player (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, string name, string gender, DietType diet, string faction, Class uclass, byte graphic = 1,
+            bool solid = true, bool opaque = true) : base (map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, diet, faction, solid, opaque)
         {
             ForeColor = Color.AntiqueWhite;
 

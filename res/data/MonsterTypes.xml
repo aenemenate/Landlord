@@ -2,14 +2,13 @@
 
 <!-- 
 DesireTypes: 
-  KillPlayer,
   Treasure,
   Flee,
   Eat
 -->
 <monster_types>
 
-  <monster name="rat" ascii_char="114" friendly="true" sight_dist="6">
+  <monster name="rat" ascii_char="114" faction="rats" sight_dist="6">
 
     <color r="118" g="81" b="35"/>
 
@@ -43,7 +42,7 @@ DesireTypes:
 
   </monster>
 
-  <monster name="cave_spider" ascii_char="115" friendly="false" sight_dist="4">
+  <monster name="cave_spider" ascii_char="115" faction="null" sight_dist="4">
     
     <color r="148" g="108" b="15"/>
     
@@ -77,7 +76,7 @@ DesireTypes:
 
   </monster>
 
-  <monster name="bat" ascii_char="98" friendly="false" sight_dist="10">
+  <monster name="bat" ascii_char="98" faction="bats" sight_dist="10">
 
     <color r="115" g="126" b="158"/>
 
@@ -109,7 +108,7 @@ DesireTypes:
     </class>
   </monster>
   
-  <monster name="snake" ascii_char="73" friendly="false" sight_dist="5">
+  <monster name="snake" ascii_char="73" faction="snakes" sight_dist="5">
 
     <color r="30" g="115" b="82"/>
 
@@ -142,7 +141,7 @@ DesireTypes:
     </class>
   </monster>
 
-  <monster name="grootslang" ascii_char="126" friendly="false" sight_dist="5">
+  <monster name="grootslang" ascii_char="126" faction="snakes" sight_dist="5">
 
     <color r="89" g="152" b="47"/>
 
@@ -177,7 +176,7 @@ DesireTypes:
     </class>
   </monster>
 
-  <monster name="scorpion" ascii_char="116" friendly="false" sight_dist="7">
+  <monster name="scorpion" ascii_char="116" faction="scorpion" sight_dist="7">
 
     <color r="116" g="105" b="109"/>
 
@@ -210,7 +209,7 @@ DesireTypes:
     </class>
   </monster>
 
-  <monster name="soldier-ant" ascii_char="97" friendly="false" sight_dist="6">
+  <monster name="soldier-ant" ascii_char="97" faction="ants" sight_dist="6">
 
     <color r="157" g="21" b="44"/>
 
@@ -243,7 +242,7 @@ DesireTypes:
     </class>
   </monster>
 
-  <monster name="cave-lizard" ascii_char="108" friendly="true" sight_dist="5">
+  <monster name="cave-lizard" ascii_char="108" faction="null" sight_dist="5">
 
     <color r="34" g="139" b="34"/>
 
@@ -275,7 +274,7 @@ DesireTypes:
     </class>
   </monster>
 
-  <monster name="kobold" ascii_char="107" friendly="false" sight_dist="8">
+  <monster name="kobold" ascii_char="107" faction="demons" sight_dist="8">
 
     <color r="65" g="146" b="75"/>
     

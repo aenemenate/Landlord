@@ -1332,8 +1332,7 @@ namespace Landlord
                 int i = 0;
                 Point mousePos = Program.Window.MousePos;
                 Attribute mouseOnAttribute = Attribute.Luck;
-                foreach (KeyValuePair<Attribute, int> attVal in character.Stats.Attributes)
-                {
+                foreach (KeyValuePair<Attribute, int> attVal in character.Stats.Attributes) {
                     if (attVal.Key == Attribute.Luck)
                         continue;
                     string text = attVal.Key.ToString();

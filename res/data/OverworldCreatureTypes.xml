@@ -8,12 +8,6 @@ DesireTypes:
   Eat
 -->
 <!--
-DietTypes:
-  Herbivore,
-  Omnivore,
-  Carnivore
--->
-<!--
 Wildlife factions:
   prey
   predators
@@ -30,17 +24,9 @@ SpawnZones:
   Rivers
 -->
 
-<!--
-DropTypes:
-  Meat
-  Pelt
-  Bone
-  Eye
--->
-
 <creature_types>
 
-  <creature name="rabbit" ascii_char="114" faction="prey" sight_dist="7">
+  <creature name="rabbit" ascii_char="114" faction="rabbits" sight_dist="6">
 
     <color r="240" g="246" b="218"/>
 
@@ -72,7 +58,7 @@ DropTypes:
 
   </creature>
 
-  <creature name="wolf" ascii_char="82" faction="predators" sight_dist="9">
+  <creature name="wolf" ascii_char="119" faction="wolves" sight_dist="8">
 
     <color r="240" g="246" b="218"/>
 
@@ -81,7 +67,6 @@ DropTypes:
     <diet>Carnivore</diet>
 
     <base_desires>
-      <desire_type name="KillPlayer" value="1"/>
       <desire_type name="Treasure" value="0"/>
       <desire_type name="Flee" value="2"/>
       <desire_type name="Eat" value="2"/>
@@ -104,7 +89,7 @@ DropTypes:
 
   </creature>
 
-  <creature name="elk" ascii_char="83" faction="prey" sight_dist="8">
+  <creature name="elk" ascii_char="101" faction="null" sight_dist="8">
 
     <color r="240" g="246" b="218"/>
 
@@ -113,7 +98,6 @@ DropTypes:
     <diet>Herbivore</diet>
 
     <base_desires>
-      <desire_type name="KillPlayer" value="2"/>
       <desire_type name="Treasure" value="0"/>
       <desire_type name="Flee" value="1"/>
       <desire_type name="Eat" value="3"/>
@@ -135,7 +119,7 @@ DropTypes:
 
   </creature>
 
-  <creature name="bear" ascii_char="80" friendly="predators" sight_dist="7">
+  <creature name="bear" ascii_char="80" faction="null" sight_dist="9">
 
     <color r="240" g="246" b="218"/>
 
@@ -144,7 +128,6 @@ DropTypes:
     <diet>Omnivore</diet>
 
     <base_desires>
-      <desire_type name="KillPlayer" value="2"/>
       <desire_type name="Treasure" value="0"/>
       <desire_type name="Flee" value="1"/>
       <desire_type name="Eat" value="3"/>
@@ -167,16 +150,13 @@ DropTypes:
 
   </creature>
 
-  <creature name="salmon" ascii_char="114" faction="fish" sight_dist="3">
+  <creature name="salmon" ascii_char="114" faction="fish" sight_dist="4">
 
     <color r="240" g="246" b="218"/>
-
-    <weapon name="rabbit paw" type="mace" material="Bone" effect=""/>
 
     <diet>Carnivore</diet>
 
     <base_desires>
-      <desire_type name="KillPlayer" value="0"/>
       <desire_type name="Treasure" value="0"/>
       <desire_type name="Flee" value="4"/>
       <desire_type name="Eat" value="2"/>
@@ -185,15 +165,15 @@ DropTypes:
     <class>
       <major_skills>
         <skill>Unarmored</skill>
-        <skill>Sneak</skill>
+        <skill>Swimming</skill>
+        <skill>Brawling</skill>
       </major_skills>
       <minor_skills>
-        <skill>Acrobatics</skill>
       </minor_skills>
       <major_attributes>
         <attribute>Agility</attribute>
         <attribute>Dexterity</attribute>
-        <attribute>Intelligence</attribute>
+        <attribute>Endurance</attribute>
       </major_attributes>
     </class>
 
@@ -202,11 +182,12 @@ DropTypes:
   <creature name="cod" ascii_char="114" faction="fish" sight_dist="4">
 
     <color r="240" g="246" b="218"/>
-    
+
+    <weapon name="rabbit paw" type="mace" material="Bone" effect=""/>
+
     <diet>Carnivore</diet>
 
     <base_desires>
-      <desire_type name="KillPlayer" value="0"/>
       <desire_type name="Treasure" value="0"/>
       <desire_type name="Flee" value="4"/>
       <desire_type name="Eat" value="2"/>
@@ -215,15 +196,15 @@ DropTypes:
     <class>
       <major_skills>
         <skill>Unarmored</skill>
-        <skill>Brawling</skill>
         <skill>Swimming</skill>
+        <skill>Brawling</skill>
       </major_skills>
       <minor_skills>
       </minor_skills>
       <major_attributes>
         <attribute>Agility</attribute>
         <attribute>Dexterity</attribute>
-        <attribute>Intelligence</attribute>
+        <attribute>Endurance</attribute>
       </major_attributes>
     </class>
 

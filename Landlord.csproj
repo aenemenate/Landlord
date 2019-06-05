@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Creature_Code\Effect.cs" />
+    <Compile Include="Creature_Code\Npcs\Animal.cs" />
     <Compile Include="Creature_Code\RPG_Stuff\Level.cs" />
     <Compile Include="Graphics_Code\Animation.cs" />
     <Compile Include="Graphics_Code\Interface_Code\Panels\InventoryPanel.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Program_Code\BuildingManager\BuildingManager.cs" />
     <Compile Include="Program_Code\CraftingManager.cs" />
     <Compile Include="Program_Code\DataReader.cs" />
+    <Compile Include="Program_Code\Factions\Faction.cs" />
     <Compile Include="Program_Code\Game_States\Menus\CharacterSheet.cs" />
     <Compile Include="Program_Code\Game_States\Menus\CraftMenu.cs" />
     <Compile Include="Program_Code\Game_States\Screens\ChooseSkills.cs" />

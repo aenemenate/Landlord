@@ -15,8 +15,8 @@ namespace Landlord
 
         // CONSTRUCTORS
 
-        public Player (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, string name, string gender, bool friendly, Class uclass, byte graphic = 1,
-            bool solid = true, bool opaque = true) : base (map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, friendly, solid, opaque)
+        public Player (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, string name, string gender, string faction, Class uclass, byte graphic = 1,
+            bool solid = true, bool opaque = true) : base (map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, faction, solid, opaque)
         {
             ForeColor = Color.AntiqueWhite;
 
@@ -67,7 +67,7 @@ namespace Landlord
                 else if (Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] != null)
                     Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = null;
                 
-                if (blocks[point.X * width + point.Y] is Monster monster && (!monster.Friendly && monster.Alive))
+                if (blocks[point.X * width + point.Y] is Monster monster && (monster.Faction.Equals(Faction) == false && monster.Alive))
                     localDangerCount++;
 
                 if (blocks[point.X * width + point.Y] is Creature creature)

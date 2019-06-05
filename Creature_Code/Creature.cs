@@ -13,26 +13,26 @@ namespace Landlord
         private int currentFloor;
         private UInt64 id;
 
-        private List<Item> inventory;
         private int sightDist;
         private List<Point> visiblePoints;
-        
-        private string gender;
+
         private float gold;
+        private List<Item> inventory;
+        private string gender;
         private Body body;
+        private bool alive;
         private Stats stats;
         private Class uclass;
         private List<Effect> effects;
 
-        private bool friendly;
-        private bool alive = true;
+        private string faction;
 
         private Time nextActionTime;
 
 
         // CONSTRUCTORS //
 
-        public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, bool friendly,
+        public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, string faction,
             bool solid, bool opaque, BlockType type = BlockType.Creature, bool interactive = true, bool enterable = false) 
                 : base (graphic, name, type, solid, opaque, interactive, enterable) {
             id = (UInt64)((DateTime.Now - new DateTime(year: 2019, month: 5, day: 15)).TotalSeconds * 100);
@@ -44,13 +44,14 @@ namespace Landlord
             nextActionTime = new Time(Program.TimeHandler.CurrentTime);
             effects = new List<Effect>();
             gold = 0F;
+            alive = true;
 
             this.position = position;
             this.worldIndex = worldIndex;
             this.currentFloor = currentFloor;
             this.sightDist = sightDist;
             this.gender = gender;
-            this.friendly = friendly;
+            this.faction = faction;
         }
 
         public Creature() : base()
@@ -70,7 +71,7 @@ namespace Landlord
         public override void Activate(Creature user)
         {
             if (alive) {
-                if (friendly == false)
+                if (faction.Equals(user.Faction) == false)
                     user.LaunchAttack(this);
                 else
                     user.StartDialog(this);
@@ -984,9 +985,9 @@ namespace Landlord
             get { return gender; }
             set { gender = value; }
         }
-        public bool Friendly {
-            get { return friendly; }
-            set { friendly = value; }
+        public string Faction {
+            get { return faction; }
+            set { faction = value; }
         }
         public bool Alive {
             get { return alive; }

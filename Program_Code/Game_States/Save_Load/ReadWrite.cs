@@ -1,6 +1,7 @@
 ﻿using Polenter.Serialization;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Landlord
 {
@@ -10,6 +11,7 @@ namespace Landlord
         private static WorldMap worldMap;
         private static Identification identification;
         private static TimeHandler timeHandler;
+        private static List<Faction> factions;
         public static event EventHandler<EventArgs> OnFinishedLoading;
         
         public static void LoadObjHoldersFromProgram()
@@ -18,8 +20,16 @@ namespace Landlord
             worldMap = Program.WorldMap;
             identification = Program.Identification;
             timeHandler = Program.TimeHandler;
+            factions = Program.Factions;
         }
-
+        public static void SetObjHoldersToProgram()
+        {
+            Program.Player = player;
+            Program.WorldMap = worldMap;
+            Program.Identification = identification;
+            Program.TimeHandler = timeHandler;
+            Program.Factions = factions;
+        }
         public static void SaveGame()
         {
             string text = worldMap.Name + ';';
@@ -33,21 +43,11 @@ namespace Landlord
 
             fileName = worldMap.Name;
             serializer.Serialize(worldMap, $@"saves\data\{fileName}.lls");
-            fileName = "identification";
-            serializer.Serialize(identification, $@"saves\data\{fileName}.lls");
-            fileName = "time";
-            serializer.Serialize(timeHandler, $@"saves\data\{fileName}.lls");
+            serializer.Serialize(identification, $@"saves\data\identification.lls");
+            serializer.Serialize(timeHandler, $@"saves\data\time.lls");
+            serializer.Serialize(factions, $@"saves\data\factions.lls");
             OnFinishedLoading(typeof(ReadWrite), EventArgs.Empty);
         }
-
-        public static void SetObjHoldersToProgram()
-        {
-            Program.Player = player;
-            Program.WorldMap = worldMap;
-            Program.Identification = identification;
-            Program.TimeHandler = timeHandler;
-        }
-
         public static void LoadGame()
         {
             player = new Player();
@@ -58,8 +58,7 @@ namespace Landlord
             string filename = "";
             filename += Files[0].Name;
             string playerName = "";
-            foreach (char c in filename)
-            {
+            foreach (char c in filename) {
                 if (c == '.')
                     break;
                 else
@@ -83,9 +82,10 @@ namespace Landlord
             identification = (Identification)serializer.Deserialize($@"saves\data\identification.lls");
             serializer = new SharpSerializer(true);
             timeHandler = (TimeHandler)serializer.Deserialize($@"saves\data\time.lls");
+            serializer = new SharpSerializer(true);
+            factions = (List<Faction>)serializer.Deserialize($@"saves\data\factions.lls");
             OnFinishedLoading(typeof(ReadWrite), EventArgs.Empty);
         }
-
         public static void DeleteSave()
         {
             System.IO.DirectoryInfo di = new DirectoryInfo($@"saves\");

@@ -24,8 +24,8 @@ namespace Landlord
 
         // CONSTRUCTORS //
 
-        public Monster(Block[] map, Point position, Point worldIndex, int currentFloor, Color? color, int sightDist, int persistence, Dictionary<DesireType, int> baseDesires, Class uclass, string name, string gender, bool friendly, byte graphic,
-            bool solid = true, bool opaque = true) : base(map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, friendly, solid, opaque)
+        public Monster(Block[] map, Point position, Point worldIndex, int currentFloor, Color? color, int sightDist, int persistence, Dictionary<DesireType, int> baseDesires, Class uclass, string name, string gender, string faction, byte graphic,
+            bool solid = true, bool opaque = true) : base(map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, faction, solid, opaque)
         {
             this.persistence = persistence;
             patrolling = true;

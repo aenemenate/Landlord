@@ -1262,35 +1262,33 @@ namespace Landlord
                 int third = sortedSkillList.Count / 3;
                 Color numbersColor = new Color( Color.Gray, 0.98F );
                 // print major skills
-                for (i = 0, index= 0; i < sortedSkillList.Count; i++)
-                {
+                for (i = 0, index= 0; i < sortedSkillList.Count; i++) {
                     Color skillColor = new Color( Color.AntiqueWhite, 0.98F );
                     string skillName = sortedSkillList[i];
                     Enum.TryParse( skillName, out Skill currentSkill );
 
-                    if (!( Program.Player.Class.MajorSkills.Contains( currentSkill ) || Program.Player.Class.MinorSkills.Contains( currentSkill ) ))
+                    if (!( @class.MajorSkills.Contains( currentSkill ) || @class.MinorSkills.Contains( currentSkill ) ))
                         continue;
-                    if (Program.Player.Class.MajorSkills.Contains( currentSkill ))
+                    if (@class.MajorSkills.Contains( currentSkill ))
                         skillColor = new Color( Color.RoyalBlue, 0.99F );
-                    else if (Program.Player.Class.MinorSkills.Contains( currentSkill ))
+                    else if (@class.MinorSkills.Contains( currentSkill ))
                         skillColor = new Color( Color.LimeGreen, 0.99F );
 
                     int yVal = ( index < third ) ? index : ( index % third );
                     int curColumn = ( index < third ) ? 0 : ( ( index < (third * 2) ) ? 1 : 2 );
                     GUI.Console.Print( startX + curColumn * xIncrement, skillsStartY + yVal, skillName, skillColor );
-                    GUI.Console.Print( startX + curColumn * xIncrement + xIncrement - 2, skillsStartY + yVal, $"{Program.Player.Stats.Skills[currentSkill]}", numbersColor );
+                    GUI.Console.Print( startX + curColumn * xIncrement + xIncrement - 2, skillsStartY + yVal, $"{skills[currentSkill]}", numbersColor );
                     index++;
                 }
-                for (i = 0; i < sortedSkillList.Count; i++)
-                {
+                for (i = 0; i < sortedSkillList.Count; i++) {
                     string skillName = sortedSkillList[i];
                     Enum.TryParse( skillName, out Skill currentSkill );
-                    if (Program.Player.Class.MajorSkills.Contains( currentSkill ) || Program.Player.Class.MinorSkills.Contains( currentSkill ))
+                    if (@class.MajorSkills.Contains( currentSkill ) || @class.MinorSkills.Contains( currentSkill ))
                         continue;
                     int yVal = ( index < third ) ? index : ( index % third );
                     int curColumn = ( index < third ) ? 0 : ( ( index < ( third * 2 ) ) ? 1 : 2 );
                     GUI.Console.Print( startX + curColumn * xIncrement, skillsStartY + yVal, skillName, textColor );
-                    GUI.Console.Print( startX + curColumn * xIncrement + xIncrement - 2, skillsStartY + yVal, $"{Program.Player.Stats.Skills[currentSkill]}", numbersColor );
+                    GUI.Console.Print( startX + curColumn * xIncrement + xIncrement - 2, skillsStartY + yVal, $"{skills[currentSkill]}", numbersColor );
                     index++;
                 }
             }
@@ -1298,16 +1296,15 @@ namespace Landlord
             public static void HandleLevelUp ( Attribute selectedAttribute )
             {
                 Point mousePos = Program.Window.MousePos;
-                if (SadConsole.Global.MouseState.LeftClicked && selectedAttribute != Attribute.Luck)
-                {
-                    if (selectedAttributes.Contains( selectedAttribute ) == false)
-                    {
+                if (SadConsole.Global.MouseState.LeftClicked && selectedAttribute != Attribute.Luck) {
+                    if (selectedAttributes.Contains( selectedAttribute ) == false) {
                         if (selectedAttributes.Count < 3)
                             selectedAttributes.Add( selectedAttribute );
-                    } else
+                    }
+                    else
                         selectedAttributes.Remove( selectedAttribute );
-                } else if (SadConsole.Global.MouseState.LeftClicked && mousePos.Y == StartY + Height - 2 && mousePos.X >= StartX + Width / 2 - 11 / 2 && mousePos.X < StartX + Width / 2 + 11 / 2)
-                {
+                }
+                else if (SadConsole.Global.MouseState.LeftClicked && mousePos.Y == StartY + Height - 2 && mousePos.X >= StartX + Width / 2 - 11 / 2 && mousePos.X < StartX + Width / 2 + 11 / 2) {
                     LevelUp currentState = (LevelUp)Program.CurrentState;
                     currentState.FinalizeLevelUp( selectedAttributes );
                 }

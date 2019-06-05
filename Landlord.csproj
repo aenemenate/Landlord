@@ -228,6 +228,7 @@
     <Content Include="res\data\EffectTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="res\data\OverworldCreatureTypes.xml" />
     <Content Include="res\data\Settings.xml" />
     <Content Include="res\data\WeaponEnchantTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

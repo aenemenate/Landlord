@@ -15,7 +15,6 @@ namespace Landlord
 
         private static Microsoft.Xna.Framework.Input.Keys esc = Microsoft.Xna.Framework.Input.Keys.Escape;
         private static Microsoft.Xna.Framework.Input.Keys devFunc1 = Microsoft.Xna.Framework.Input.Keys.F1;
-        private static Microsoft.Xna.Framework.Input.Keys fullScreen = Microsoft.Xna.Framework.Input.Keys.F5;
 
         public static void HandleKeys()
         {
@@ -81,8 +80,6 @@ namespace Landlord
                     }
                 }
             }
-            else if (KeyboardState.IsKeyReleased(fullScreen))
-                SadConsole.Settings.ToggleFullScreen();
         }
     }
 }

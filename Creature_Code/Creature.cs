@@ -69,15 +69,13 @@ namespace Landlord
 
         public override void Activate(Creature user)
         {
-            if (alive)
-            {
+            if (alive) {
                 if (friendly == false)
                     user.LaunchAttack(this);
                 else
                     user.StartDialog(this);
             }
-            else
-            {
+            else {
                 Program.Animations.Add(new OpenLootView());
                 Program.CurrentState = new ViewLoot(inventory, Name);
             }
@@ -90,6 +88,8 @@ namespace Landlord
         
         public void DetermineEquipment()
         {
+            Random rng = new Random();
+
             if (Class.MajorSkills.Contains(Skill.HeavyWeapons))
                 Body.MainHand = new Axe(true);
             else if (Class.MajorSkills.Contains(Skill.LongBlades))
@@ -98,7 +98,6 @@ namespace Landlord
                 Body.MainHand = new Dagger(true);
             else if (Class.MajorSkills.Contains(Skill.Spear))
                 Body.MainHand = new Spear(true);
-
             if (Class.MajorSkills.Contains(Skill.Block) || Class.MinorSkills.Contains(Skill.Block))
                 Body.OffHand = new Shield(true);
 
@@ -118,12 +117,12 @@ namespace Landlord
                 validMaterials = Physics.GetArmorSkillMaterials(armorSkill);
 
             // create the armor with chosen materials
-            if (Program.RNG.Next(0, 100) < 50)
+            if (rng.Next(0, 100) < 50)
             do { Body.Helmet = new Helmet(true); } while (validMaterials.Contains(Body.Helmet.Material) == false);
-            if (Program.RNG.Next(0, 100) < 50)
+            if (rng.Next(0, 100) < 50)
                 do { Body.ChestPiece = new ChestPiece(true); } while (validMaterials.Contains(Body.ChestPiece.Material) == false);
             do { Body.Shirt = new Shirt(true); } while (validMaterials.Contains(Body.Shirt.Material) == false);
-            if (Program.RNG.Next(0, 100) < 50)
+            if (rng.Next(0, 100) < 50)
                 do { Body.Gauntlets = new Gauntlets(true); } while (validMaterials.Contains(Body.Gauntlets.Material) == false);
             do { Body.Leggings = new Leggings(true); } while (validMaterials.Contains(Body.Leggings.Material) == false);
             do { Body.Boots = new Boots(true); } while (validMaterials.Contains(Body.Boots.Material) == false);
@@ -423,6 +422,7 @@ namespace Landlord
         // combat
         public void LaunchAttack(Creature defender)
         {
+            Random rng = new Random();
             if (defender.Alive == false)
                 return;
             
@@ -437,28 +437,26 @@ namespace Landlord
             bool DetermineIfAttackLanded()
             {
                 double attackersHitRate =
-                (GetWeaponSkill(this.Body.MainHand) + (this.Stats.Attributes[Attribute.Dexterity] / 2.5) + (Program.RNG.Next(0, this.Stats.Attributes[Attribute.Luck]) / 10))
+                (GetWeaponSkill(this.Body.MainHand) + (this.Stats.Attributes[Attribute.Dexterity] / 2.5) + (rng.Next(0, this.Stats.Attributes[Attribute.Luck]) / 10))
                     * (0.75 + 0.5 * this.Stats.Resources[Resource.SP] / this.Stats.Resources[Resource.MaxSP]);
 
                 double defendersEvasion =
-                    ((defender.Stats.Attributes[Attribute.Agility] / 5) + (Program.RNG.Next(0, defender.Stats.Attributes[Attribute.Luck]) / 10))
+                    ((defender.Stats.Attributes[Attribute.Agility] / 5) + (rng.Next(0, defender.Stats.Attributes[Attribute.Luck]) / 10))
                         * (0.75 + 0.5 * defender.Stats.Resources[Resource.SP] / defender.Stats.Resources[Resource.MaxSP]);
 
                 double maxMissChance = 150;
                 double chanceToMiss = maxMissChance - attackersHitRate;
                 double chanceToDodge = attackersHitRate - (attackersHitRate - defendersEvasion);
 
-                int diceRoll = Program.RNG.Next( 0, (int)maxMissChance );
-                if (diceRoll <= chanceToMiss)
-                {
+                int diceRoll = rng.Next( 0, (int)maxMissChance );
+                if (diceRoll <= chanceToMiss) {
                     Program.MsgConsole.WriteLine($"{Name}'s attack missed.");
                     LvlWeaponSkill(weapon, 5);
                     return false;
                 }
 
-                diceRoll = Program.RNG.Next(0, (int)attackersHitRate + 2);
-                if (diceRoll <= chanceToDodge)
-                {
+                diceRoll = rng.Next(0, (int)attackersHitRate + 2);
+                if (diceRoll <= chanceToDodge) {
                     Program.MsgConsole.WriteLine($"{defender.Name} evaded {Name}'s attack.");
                     LvlWeaponSkill(weapon, 10);
                     return false;
@@ -476,8 +474,7 @@ namespace Landlord
             ApplyActionCost(GetWeaponCost(weapon));
 
             bool attackLanded = DetermineIfAttackLanded();
-            if (attackLanded)
-            {
+            if (attackLanded) {
                 int damage = GetWepDmg(weapon);
 
                 DamageType dmgType = GetWepDmgType(weapon);
@@ -539,7 +536,7 @@ namespace Landlord
         public int DefendAgainstDmg( DamageType dmgType, int dmg )
         {
             // Note: this function will return a negative value if the defender blocked. This is for message handling.
-
+            Random rng = new Random();
             int armorVal = GetDefenseValue(dmgType);
             
             double finalDmg = Math.Max(dmg - armorVal, 1);
@@ -548,7 +545,7 @@ namespace Landlord
             if ( Body.OffHand is Shield && (dmgType == DamageType.Blunt || dmgType == DamageType.Shear) )
             {
                 int blockChance = 10 + ( Stats.Skills[Skill.Block] / 5 );
-                if (Program.RNG.Next(0, 101) <= blockChance)
+                if (rng.Next(0, 101) <= blockChance)
                 {
                     finalDmg /= -((double)2 + ((Stats.Attributes[Attribute.Strength] + Stats.Attributes[Attribute.Strength]) / 400));
                     Program.MsgConsole.WriteLine($"{Name} blocked the attack, taking {Math.Abs((int)finalDmg)} damage.");
@@ -698,13 +695,14 @@ namespace Landlord
 
         public void PickWall( Wall wall )
         {
+            Random rng = new Random();
             if ( !(wall.Material == Material.Stone || wall.Material == Material.Coal) )
                 return;
             if (Body.MainHand is Axe axe && axe.WeaponName == "pickaxe")
             {
                 Program.MsgConsole.WriteLine( $"{Name} struck the {wall.Name}" );
                 ApplyActionCost( GetWeaponCost( axe ) );
-                if (Program.RNG.Next( 0, 100 ) < 10)
+                if (rng.Next( 0, 100 ) < 10)
                     LvlWeaponSkill( axe, 5 );
                 ChangeResource( Resource.SP, -(int)( axe.Weight * 2 ) );
                 wall.HP -= (int)Physics.ImpactYields[axe.Material] - (int)Physics.ImpactYields[Material.Stone];

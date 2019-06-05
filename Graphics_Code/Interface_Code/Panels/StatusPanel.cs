@@ -12,35 +12,27 @@ namespace Landlord
 
         static private int tabStartY = 6; // tab innards start at statusStartX, 6. They end at statusStartX, console.Height - 3;
         static private int selectedTab = 0; // 0 == locals, 1 == skills, 2 == quests
+        static private Creature curCreature;
 
         static private int previousHP = Program.Player.Stats.Resources[Resource.HP], previousMP = Program.Player.Stats.Resources[Resource.MP], previousSP = Program.Player.Stats.Resources[Resource.SP];
         static private Color statusColorLighter = new Color( 161, 97, 102 ), statusColor = new Color( 136, 71, 76 ), statusColorDarker = new Color( 122, 45, 51 );
 
         // FUNCTIONS
 
-        public static bool HandleStatus()
+        public static void HandleStatus()
         {
             Point mousePos = new Point( SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
                 SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y );
 
-            bool DetermineCurrentItem( bool itemSelected )
-            {
-                // determine if a creature, status effect, or quest is selected
-                return false;
-            }
-
-            // item selection logic
-            bool itemHoveredOver = RenderStatus();
+            RenderStatus();
             bool leftClicked = SadConsole.Global.MouseState.LeftClicked;
             bool shiftPressed = leftClicked && Global.KeyboardState.IsKeyDown( Microsoft.Xna.Framework.Input.Keys.LeftShift );
 
-            if (leftClicked && Program.CurrentState is Play)
-            {
-                bool determined = DetermineCurrentItem( itemHoveredOver );
-                if (determined)
-                {
-                } else
-                {
+            if (leftClicked && Program.CurrentState is Play) {
+                if (curCreature != null) {
+                    Program.CurrentState = new CharacterSheet(curCreature);
+                }
+                else {
                     bool mouseOverSkillsButton = mousePos.X >= StartX + 1 && mousePos.X <= StartX + 8 && mousePos.Y == 11;
                     bool mouseOverStatsButton = mousePos.Y == 11 && mousePos.X >= Program.Console.Width - 1 - "[STATS]".Length && mousePos.X <= Program.Console.Width - 2;
                     bool mouseOverTabs = mousePos.Y >= tabStartY - 3 && mousePos.Y <= tabStartY - 1;
@@ -63,12 +55,10 @@ namespace Landlord
                     }
                 }
             }
-
-            return itemHoveredOver;
+            curCreature = null;
         }
-
         // returns true if an entry in a displayed list is being highlighted
-        public static bool RenderStatus()
+        public static void RenderStatus()
         {
             Color textColor = Color.AntiqueWhite, highlightedColor = Color.OrangeRed, bgColor = statusColorDarker;
 
@@ -88,9 +78,9 @@ namespace Landlord
 
                 bool mouseIsOnMap = !(mousePos.X < 0 || mousePos.X >= Program.Console.Width - StatusPanel.Width);
 
+                Program.Window.Print(StartX + 1, Program.Window.Height - 4, "                  ", 18);
                 Program.Window.Print(StartX + 1, Program.Window.Height - 3, "                  ", 18);
                 Program.Window.Print(StartX + 1, Program.Window.Height - 2, "                  ", 18);
-                Program.Window.Print(StartX + 1, Program.Window.Height - 1, "                  ", 18);
 
                 if (Program.CurrentState is Play && Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos) && mouseIsOnMap && blocks[mapPos.X * width + mapPos.Y].Explored) {
                     if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty) {
@@ -99,19 +89,19 @@ namespace Landlord
                         else if (blocks[mapPos.X * width + mapPos.Y] is Creature creature) {
                             if (creature is Player == false) {
                                 if (creature.CurrentBlock.Visible == true)
-                                    Program.Window.Print(StartX + 1, Program.Window.Height - 3, creature.Name
+                                    Program.Window.Print(StartX + 1, Program.Window.Height - 4, creature.Name
                                         + $"({creature.Stats.Resources[Resource.HP]}/{creature.Stats.Resources[Resource.MaxHP]})", 18);
                                 else
-                                    Program.Window.Print(StartX + 1, Program.Window.Height - 3, creature.CurrentBlock.Name, 18);
+                                    Program.Window.Print(StartX + 1, Program.Window.Height - 4, creature.CurrentBlock.Name, 18);
                             }
                             else
-                                Program.Window.Print(StartX + 1, Program.Window.Height - 3, creature.Name, 18);
+                                Program.Window.Print(StartX + 1, Program.Window.Height - 4, creature.Name, 18);
                         }
                         else
-                            Program.Window.Print(StartX + 1, Program.Window.Height - 3, blocks[mapPos.X * width + mapPos.Y].Name, 18);
+                            Program.Window.Print(StartX + 1, Program.Window.Height - 4, blocks[mapPos.X * width + mapPos.Y].Name, 18);
                     }
                     else
-                        Program.Window.Print(StartX + 1, Program.Window.Height - 3, tiles[mapPos.X * width + mapPos.Y].Name, 18);
+                        Program.Window.Print(StartX + 1, Program.Window.Height - 4, tiles[mapPos.X * width + mapPos.Y].Name, 18);
                 }
             }
 
@@ -161,7 +151,7 @@ namespace Landlord
                 Program.Console.Print( StartX + ( width / 2 - time.Length / 2 ), tabStartY - 4, time, textColor );
             }
 
-            bool PrintTabs()
+            void PrintTabs()
             {
                 Color borderColor = textColor * 0.95F;
 
@@ -225,35 +215,41 @@ namespace Landlord
                 for (int j = tabStartY; j < Program.Window.Height - 1; j++)
                     Program.Console.Print( StartX + 1, j, "                    ", statusColorDarker, statusColorDarker );
 
-                switch (selectedTab)
-                {
+                switch (selectedTab) {
                     case 0: // locals
-                        return PrintLocals();
+                        PrintLocals();
+                        return;
                     case 1: // skills
-                        return PrintSkills();
+                        PrintSkills();
+                        return;
                     case 2: // quests
-                        return PrintQuests();
+                        PrintQuests();
+                        return;
                 }
-                return false;
             }
 
-            bool PrintLocals()
+            void PrintLocals()
             {
                 List<Creature> locals = Program.Player.LocalCreatures;
                 locals.Sort( ( x, y ) => x.Position.DistFrom(Program.Player.Position).CompareTo( y.Position.DistFrom( Program.Player.Position ) ) );
                 int heightofDisplay = Program.Console.Height - 3 - tabStartY;
 
-                float bgAlpha = 0.99F, fgAlpha = 0.99F;
+                //float bgAlpha = 0.99F, fgAlpha = 0.99F; //might use these at some point
                 
-                bool PrintCreatures ()
+                void PrintCreatures ()
                 {
                     int padding = 0;
                     for (int i = 1, index = 0; i < heightofDisplay && index < locals.Count; i += padding, index++)
                     {
                         int curY = i + tabStartY;
+                        Color tempBG = bgColor;
                         Creature creature = locals[index];
+                        if (mousePos.Y >= curY && mousePos.Y <= curY + 1 & mousePos.X > StartX + 1 && mousePos.X < Program.Window.Width - 1) {
+                            tempBG = bgColor * 1.3F;
+                            curCreature = creature;
+                        }
                         // draw creature name
-                        curY += Program.Window.Print( StartX + 1, curY, creature.Name + " / LVL " + creature.Stats.Level.Lvl, 20, textColor, bgColor * 0.98F );
+                        curY += Program.Window.Print( StartX + 1, curY, creature.Name + " / LVL " + creature.Stats.Level.Lvl, 20, textColor, tempBG);
                         // draw creature hp
                         DrawResourceBar(curY, creature.Stats.Resources[Resource.HP], creature.Stats.Resources[Resource.MaxHP], 20, new Color(45, 51, 122));
                         curY++;
@@ -273,11 +269,9 @@ namespace Landlord
 
                         padding = 1 + curY - i - tabStartY;
                     }
-
-                    return false;
                 }
 
-                return PrintCreatures();
+                PrintCreatures();
             }
 
             bool PrintSkills()
@@ -295,11 +289,9 @@ namespace Landlord
             // START //
             PrintBgColor();
             PrintTime();
-            bool trueIfMouseOverItem = PrintTabs();
+            PrintTabs();
             PrintLookFunc();
-            return trueIfMouseOverItem;
         }
-
 
         public static void HandleSkillsView()
         {
@@ -315,7 +307,6 @@ namespace Landlord
             if (SadConsole.Global.MouseState.LeftClicked && ( clickedOutsideOfItemWindow ))
                 Program.Animations.Add( new CloseStatusView() );
         }
-
         public static void RenderSkillsView()
         {
             int viewStartX = StartX - 20;
@@ -377,7 +368,6 @@ namespace Landlord
             if (SadConsole.Global.MouseState.LeftClicked && ( clickedOutsideOfItemWindow ))
                 Program.Animations.Add( new CloseStatusView() );
         }
-
         public static void RenderAttributesView()
         {
             int viewStartX = StartX - 20;
@@ -401,7 +391,6 @@ namespace Landlord
         {
             get { return width; }
         }
-
         static public int StartX
         {
             get { return Program.Window.Width - width; }

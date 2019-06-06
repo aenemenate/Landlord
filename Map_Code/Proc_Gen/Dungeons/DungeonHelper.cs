@@ -16,8 +16,7 @@ namespace Landlord
         {
             // fill the map with dirt
             for (int i = 0; i < dungeonFloor.Width; i++)
-                for (int j = 0; j < dungeonFloor.Height; j++)
-                {
+                for (int j = 0; j < dungeonFloor.Height; j++) {
                     dungeonFloor[i, j] = new Wall(Material.Stone);
                     dungeonFloor.Floor[i * Program.WorldMap.TileWidth + j] = new DirtFloor();
                 }

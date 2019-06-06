@@ -26,7 +26,7 @@ SpawnZones:
 
 <creature_types>
 
-  <creature name="rabbit" ascii_char="114" faction="rabbits" sight_dist="6">
+  <creature name="rabbit" ascii_char="114" faction="rabbits" sight_dist="5">
 
     <color r="240" g="246" b="218"/>
 
@@ -35,7 +35,6 @@ SpawnZones:
     <diet>Herbivore</diet>
     
     <base_desires>
-      <desire_type name="KillPlayer" value="0"/>
       <desire_type name="Treasure" value="0"/>
       <desire_type name="Flee" value="4"/>
       <desire_type name="Eat" value="2"/>
@@ -58,7 +57,7 @@ SpawnZones:
 
   </creature>
 
-  <creature name="wolf" ascii_char="119" faction="wolves" sight_dist="8">
+  <creature name="wolf" ascii_char="119" faction="wolves" sight_dist="7">
 
     <color r="240" g="246" b="218"/>
 
@@ -89,7 +88,7 @@ SpawnZones:
 
   </creature>
 
-  <creature name="elk" ascii_char="101" faction="null" sight_dist="8">
+  <creature name="elk" ascii_char="101" faction="null" sight_dist="7">
 
     <color r="240" g="246" b="218"/>
 
@@ -119,7 +118,7 @@ SpawnZones:
 
   </creature>
 
-  <creature name="bear" ascii_char="80" faction="null" sight_dist="9">
+  <creature name="bear" ascii_char="80" faction="null" sight_dist="7">
 
     <color r="240" g="246" b="218"/>
 
@@ -150,7 +149,7 @@ SpawnZones:
 
   </creature>
 
-  <creature name="salmon" ascii_char="114" faction="fish" sight_dist="4">
+  <creature name="salmon" ascii_char="114" faction="fish" sight_dist="3">
 
     <color r="240" g="246" b="218"/>
 
@@ -179,11 +178,9 @@ SpawnZones:
 
   </creature>
 
-  <creature name="cod" ascii_char="114" faction="fish" sight_dist="4">
+  <creature name="cod" ascii_char="114" faction="fish" sight_dist="3">
 
     <color r="240" g="246" b="218"/>
-
-    <weapon name="rabbit paw" type="mace" material="Bone" effect=""/>
 
     <diet>Carnivore</diet>
 

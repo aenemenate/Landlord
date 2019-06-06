@@ -22,10 +22,9 @@ namespace Landlord
 
             return emptyBlocks;
         }
-        internal static Creature GetCreatureAtPosition(this Block[] blocks, List<Creature> creatures, Point position)
+        internal static Creature GetCreatureAtPosition(this List<Creature> creatures, Point position)
         {
-            // Program.Player is the actual player, this is just a placeholder
-            if (Program.Player.Position.Equals(position))
+            if (Program.Player.Position.Equals(position) && creatures.Exists(c => c.ID == Program.Player.ID))
                 return Program.Player;
 
             foreach (Creature creature in creatures)
@@ -48,5 +47,14 @@ namespace Landlord
             return closestPoint;
         }
 
+        internal static List<Point> GetAllTraversablePoints(this Block[] blocks, Point size)
+        {
+            List<Point> availablePoints = new List<Point>();
+            for (int i = 0; i < size.X; i++)
+                for (int j = 0; j < size.Y; j++)
+                    if (blocks[i * size.X + j].Solid == false)
+                        availablePoints.Add(new Point(i, j));
+            return availablePoints;
+        }
     }
 }

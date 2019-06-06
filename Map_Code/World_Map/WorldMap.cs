@@ -33,8 +33,6 @@ namespace Landlord
             this.tileHeight = height;
             this.name = name;
 
-            creatureTypes = DataReader.GetOverworldCreatureList();
-
             //GenerateWorldMap(width, height, name);
         }
 
@@ -48,6 +46,7 @@ namespace Landlord
         public void GenerateWorldMap()
         {
             worldMap = new MapTile[5, 5];
+            creatureTypes = DataReader.GetOverworldCreatureList();
 
             Random rng = new Random(seed);
             SimplexNoise.Seed = this.seed;
@@ -74,13 +73,12 @@ namespace Landlord
                     foreach (Point point in dungeons)
                         if (point.X == i && point.Y == j)
                             dungeon = true;
-                    worldMap[i, j] = new MapTile(new Point(tileWidth, tileHeight), new Point(i, j), heightMap, dungeon);
+                    worldMap[i, j] = new MapTile(new Point(tileWidth, tileHeight), new Point(i, j), heightMap, creatureTypes, dungeon);
                     dungeon = false;
                 }
             }
             //for (int i = 1; i < 499; i++)
-            //    for (int j = 1; j < 499; j++)
-            //    {
+            //    for (int j = 1; j < 499; j++) {
             //        Point worldIndex = new Point( i / 100, j / 100 ), tilePosition = new Point( i % 100, j % 100 );
             //        worldMap[worldIndex.X, worldIndex.Y].Floor[tilePosition.X * 100 + tilePosition.Y].Explored = true;
             //        worldMap[worldIndex.X, worldIndex.Y].Blocks[tilePosition.X * 100 + tilePosition.Y].Explored = true;

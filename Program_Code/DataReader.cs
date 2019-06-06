@@ -49,7 +49,7 @@ namespace Landlord
             // load
             XElement root = XElement.Load("res/data/OverworldCreatureTypes.xml");
             IEnumerable<XElement> creatures =
-                from el in root.Elements("creatures")
+                from el in root.Elements("creature")
                 select el;
 
             foreach (XElement c in creatures) {
@@ -130,7 +130,7 @@ namespace Landlord
 
             return dungeon;
         }
-        public static Monster GetMonster( string name, Block[] map, Point position, Point worldIndex, int currentFloor )
+        public static Monster GetMonster(string name, Block[] map, Point position, Point worldIndex, int currentFloor)
         {
             XElement monsterData = null;
 
@@ -156,6 +156,8 @@ namespace Landlord
                  g = System.Convert.ToByte( ReadAttribute( monsterData.Element( "color" ).Attribute( "g" ) ) ),
                  b = System.Convert.ToByte( ReadAttribute( monsterData.Element( "color" ).Attribute( "b" ) ) );
             Color? color = new Color( r, g, b );
+
+            Enum.TryParse(ReadElement(monsterData.Element("diet")), out DietType diet);
 
             IEnumerable<XElement> majorAttData = from el in monsterData.Element( "class" ).Element( "major_attributes" ).Elements( "attribute" )
                                                  select el;
@@ -191,74 +193,72 @@ namespace Landlord
                 baseDesires.Add( desireType, System.Convert.ToInt32( ReadAttribute( desireTypeE.LastAttribute ) ) );
             } // translate IEnumerable to List
 
-            return new Monster( map, position, worldIndex, currentFloor, color, sightDist, 3, baseDesires, uClass, name, "male", DietType.Carnivore, faction, graphic );
+            return new Monster( map, position, worldIndex, currentFloor, color, sightDist, 3, baseDesires, uClass, name, "male", diet, faction, graphic );
         }
-        public static Monster GetAnimal(string name, Block[] map, Point position, Point worldIndex, int currentFloor)
+        public static Animal GetAnimal(string name, Block[] map, Point position, Point worldIndex, int currentFloor)
         {
-            XElement monsterData = null;
+            XElement creatureData = null;
 
-            // load all the effects
-            XElement root = XElement.Load("res/data/MonsterTypes.xml");
-            IEnumerable<XElement> monsters =
-                from el in root.Elements("monster")
+            // load all the creatures
+            XElement root = XElement.Load("res/data/OverworldCreatureTypes.xml");
+            IEnumerable<XElement> creatures =
+                from el in root.Elements("creature")
                 select el;
 
-            // choose the right effect
-            foreach (XElement m in monsters)
-                if (ReadAttribute(m.FirstAttribute) == name)
-                    monsterData = m;
+            // choose the right creature
+            foreach (XElement c in creatures)
+                if (ReadAttribute(c.FirstAttribute).Equals(name))
+                    creatureData = c;
 
-            if (monsterData == null)
+            if (creatureData == null)
                 return null;
 
-            byte graphic = System.Convert.ToByte(ReadAttribute(monsterData.Attribute("ascii_char")));
-            string faction = System.Convert.ToString(ReadAttribute(monsterData.Attribute("faction")));
-            int sightDist = System.Convert.ToInt32(ReadAttribute(monsterData.Attribute("sight_dist")));
+            byte graphic = System.Convert.ToByte(ReadAttribute(creatureData.Attribute("ascii_char")));
+            string faction = System.Convert.ToString(ReadAttribute(creatureData.Attribute("faction")));
+            int sightDist = System.Convert.ToInt32(ReadAttribute(creatureData.Attribute("sight_dist")));
 
-            byte r = System.Convert.ToByte(ReadAttribute(monsterData.Element("color").Attribute("r"))),
-                 g = System.Convert.ToByte(ReadAttribute(monsterData.Element("color").Attribute("g"))),
-                 b = System.Convert.ToByte(ReadAttribute(monsterData.Element("color").Attribute("b")));
+            byte r = System.Convert.ToByte(ReadAttribute(creatureData.Element("color").Attribute("r"))),
+                 g = System.Convert.ToByte(ReadAttribute(creatureData.Element("color").Attribute("g"))),
+                 b = System.Convert.ToByte(ReadAttribute(creatureData.Element("color").Attribute("b")));
             Color? color = new Color(r, g, b);
 
-            IEnumerable<XElement> majorAttData = from el in monsterData.Element("class").Element("major_attributes").Elements("attribute")
+            Enum.TryParse(ReadElement(creatureData.Element("diet")), out DietType diet);
+
+            IEnumerable<XElement> majorAttData = from el in creatureData.Element("class").Element("major_attributes").Elements("attribute")
                                                  select el;
             List<Attribute> majorAtt = new List<Attribute>();
-            foreach (XElement attE in majorAttData)
-            {
+            foreach (XElement attE in majorAttData) {
                 Enum.TryParse(ReadElement(attE), out Attribute att);
                 majorAtt.Add(att);
-            } // translate IEnumerable to List
+            }
 
-            IEnumerable<XElement> majorSkillsData = from el in monsterData.Element("class").Element("major_skills").Elements("skill")
+            IEnumerable<XElement> majorSkillsData = from el in creatureData.Element("class").Element("major_skills").Elements("skill")
                                                     select el;
             List<Skill> majorSkills = new List<Skill>();
-            foreach (XElement skillE in majorSkillsData)
-            {
+            foreach (XElement skillE in majorSkillsData) {
                 Enum.TryParse(ReadElement(skillE), out Skill skill);
                 majorSkills.Add(skill);
-            } // translate IEnumerable to List
+            }
 
-            IEnumerable<XElement> minorSkillsData = from el in monsterData.Element("class").Element("minor_skills").Elements("skill")
+            IEnumerable<XElement> minorSkillsData = from el in creatureData.Element("class").Element("minor_skills").Elements("skill")
                                                     select el;
             List<Skill> minorSkills = new List<Skill>();
-            foreach (XElement skillE in minorSkillsData)
-            {
+            foreach (XElement skillE in minorSkillsData) {
                 Enum.TryParse(ReadElement(skillE), out Skill skill);
                 minorSkills.Add(skill);
-            } // translate IEnumerable to List
+            }
 
             Class uClass = new Class(majorAtt, majorSkills, minorSkills);
 
-            IEnumerable<XElement> baseDesiresData = from el in monsterData.Element("base_desires").Elements("desire_type")
+            IEnumerable<XElement> baseDesiresData = from el in creatureData.Element("base_desires").Elements("desire_type")
                                                     select el;
             Dictionary<DesireType, int> baseDesires = new Dictionary<DesireType, int>();
-            foreach (XElement desireTypeE in baseDesiresData)
-            {
+            foreach (XElement desireTypeE in baseDesiresData) {
                 Enum.TryParse(ReadAttribute(desireTypeE.FirstAttribute), out DesireType desireType);
                 baseDesires.Add(desireType, System.Convert.ToInt32(ReadAttribute(desireTypeE.LastAttribute)));
-            } // translate IEnumerable to List
+            }
 
-            return new Monster(map, position, worldIndex, currentFloor, color, sightDist, 3, baseDesires, uClass, name, "male", DietType.Carnivore, faction, graphic);
+            return new Animal(map, position, worldIndex, currentFloor, color, sightDist, 3, baseDesires, uClass, name, "male", diet, faction, graphic);
         }
         public static WeaponEnchantment GetNextWeaponEnchantment()
         {

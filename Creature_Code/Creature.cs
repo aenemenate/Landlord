@@ -163,6 +163,9 @@ namespace Landlord
             Program.WorldMap[worldIndex.X - xDir, worldIndex.Y - yDir].Creatures.Remove(this);
             Program.WorldMap[worldIndex.X, worldIndex.Y][to.X, to.Y] = this;
 
+            if (this is Player)
+                Scheduler.InitCreatureListScheduling(Program.WorldMap[worldIndex.X, worldIndex.Y]);
+
             ApplyActionCost(8);
             return true;
         }
@@ -202,9 +205,9 @@ namespace Landlord
             if (this is Player) {
                 Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
                 Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallPlayerMoved(this);
+                Scheduler.InitCreatureListScheduling(Program.WorldMap[worldIndex.X, worldIndex.Y]);
             }
             
-            Scheduler.InitCreatureListScheduling(Program.WorldMap[WorldIndex.X, WorldIndex.Y], currentFloor);
         }
 
         public void TakeStairsUp()
@@ -223,10 +226,10 @@ namespace Landlord
             currentBlock = blocks[Position.X * Program.WorldMap.TileWidth + Position.Y];
             blocks[Position.X * Program.WorldMap.TileWidth + Position.Y] = this;
 
-            if (this is Player)
+            if (this is Player) {
                 Program.WorldMap[worldIndex.X, worldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
-
-            Scheduler.InitCreatureListScheduling( Program.WorldMap[worldIndex.X, worldIndex.Y], currentFloor );
+                Scheduler.InitCreatureListScheduling(Program.WorldMap[worldIndex.X, worldIndex.Y]);
+            }
         }
 
         

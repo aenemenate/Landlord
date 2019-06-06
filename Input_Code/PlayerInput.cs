@@ -45,6 +45,7 @@ namespace Landlord
             int currentFloor = Program.Player.CurrentFloor;
             Point worldIndex = Program.Player.WorldIndex;
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
             if (actionPressed && !selectingActDir) // if you pressed action
@@ -54,8 +55,7 @@ namespace Landlord
 
                 // first check if the current block is enterable (you cannot pick up items the player is standing on)
                 if (Program.Player.CurrentBlock.Enterable == true)
-                    switch (noNearbyObj)
-                    {
+                    switch (noNearbyObj) {
                         case true: { Program.Player.CurrentBlock.Activate(Program.Player); } break;
                         case false: { multipleNearbyObjs = true; } break;
                     }
@@ -92,8 +92,7 @@ namespace Landlord
                 nextPos = new Point(Program.Player.Position.X - 1, Program.Player.Position.Y);
             else if (upLeftPressed)
                 nextPos = new Point(Program.Player.Position.X - 1, Program.Player.Position.Y - 1);
-            else if (waitPressed)
-            {
+            else if (waitPressed) {
                 if (!selectingActDir)
                     Program.Player.Wait();
                 else
@@ -102,8 +101,7 @@ namespace Landlord
 
 
             // Choose how to handle the next position input, if there is one
-            if (!nextPos.Equals(new Point()))
-            {
+            if (!nextPos.Equals(new Point())) {
                 bool movementCooldownReached; // the cooldown is basically a time buffer in between input handles.
 
                 if (SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl))
@@ -115,8 +113,7 @@ namespace Landlord
                 if (selectingActDir) {
                     if (nextPos.Equals(Program.Player.Position) && Program.Player.CurrentBlock.Enterable == true)
                         Program.Player.CurrentBlock.Activate(Program.Player);
-                    else if (interactiveSpots.Contains(nextPos))
-                    {
+                    else if (interactiveSpots.Contains(nextPos)) {
                         if (!(blocks[nextPos.X * width + nextPos.Y] is Item))
                             blocks[nextPos.X * width + nextPos.Y].Activate(Program.Player);
                         else
@@ -129,7 +126,7 @@ namespace Landlord
                     if (nextPos.X == width || nextPos.X == -1 || nextPos.Y == height || nextPos.Y == -1)
                         CreaturePlacementHelper.HandleMapSwitching(Program.Player);
                     else if (blocks[nextPos.X * width + nextPos.Y] is Creature creature && creature.Alive)
-                        blocks.GetCreatureAtPosition(Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures, nextPos).Activate(Program.Player);
+                        creatures.GetCreatureAtPosition(nextPos).Activate(Program.Player);
                     else
                         Program.Player.Move(nextPos);
                     lastMovement = DateTime.Now;

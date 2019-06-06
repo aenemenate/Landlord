@@ -57,11 +57,10 @@ namespace Landlord
             UpdateFOV();
             HandleVisibility();
 
-            MapTile map = Program.WorldMap[WorldIndex.X, WorldIndex.Y];
-            Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
-            int width = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Width;
-
-
+            //MapTile map = Program.WorldMap[WorldIndex.X, WorldIndex.Y];
+            //Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
+            
+            MoveSomewhere();
         }
 
         public void MoveSomewhere()
@@ -89,8 +88,9 @@ namespace Landlord
                 }
             }
             else {
-                int x = Program.RNG.Next(Position.X - 1, Position.X + 2);
-                int y = Program.RNG.Next(Position.Y - 1, Position.Y + 2);
+                int width = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Width, height = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Height;
+                int x = Math.Min(Math.Max(0, Program.RNG.Next(Position.X - 1, Position.X + 2)), width - 1);
+                int y = Math.Min(Math.Max(0, Program.RNG.Next(Position.Y - 1, Position.Y + 2)), height - 1);
                 Move(new Point(x, y));
             }
         }

@@ -13,11 +13,10 @@ namespace Landlord
 
         // funcs that work on individual tiles
 
-        public static void GenerateForestMap(Random rng, MapTile map, Point worldIndex, float[,] heightMap)
+        public static void GenerateForestMap(Random rng, MapTile map, List<string> creatureTypes, Point worldIndex, float[,] heightMap)
         {
             for (int i = 0; i < map.Width; i++)
-                for (int j = 0; j < map.Height; j++)
-                {
+                for (int j = 0; j < map.Height; j++) {
                     if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= StoneCutoff) {
                         map.Blocks[i * map.Width + j] = new Wall(Material.Stone);
                         map.Floor[i * map.Width + j] = new DirtFloor();
@@ -35,11 +34,11 @@ namespace Landlord
                         map.Floor[i * map.Width + j] = new Water();
                     }
                 }
-            GenerateTrees(rng, map, 7, 18);
-            GenerateOre( map, rng, 0.025f );
+            GenerateTrees(map, rng, 7, 18);
+            GenerateOre(map, rng, 0.025f);
+            GenerateCreatures(map, rng, creatureTypes);
         }
-
-        public static void GenerateTrees(Random rng, MapTile map, int numOfSeedTrees, int growthGenerations)
+        public static void GenerateTrees(MapTile map, Random rng, int numOfSeedTrees, int growthGenerations)
         {
             // place seed trees
             List<Point> availableSpots = map.GetAllGrassTiles();
@@ -89,7 +88,6 @@ namespace Landlord
                 }
             }
         }
-
         private static void GenerateOre( MapTile map, Random rng, float scale )
         {
             float[,] coalMap = SimplexNoise.Calc2D( map.Width, map.Height, scale );
@@ -102,6 +100,22 @@ namespace Landlord
                         map[i, j] = new OreWall(Material.Coal);
                     }
                 }
+        }
+        private static void GenerateCreatures( MapTile map, Random rng, List<string> creatureTypes )
+        {
+            List<Point> availableSpots = map.Blocks.GetAllTraversablePoints(new Point(map.Width, map.Height));
+            int desiredCreatureCount = availableSpots.Count / 750, placedCreatures = 0;
+
+            while (placedCreatures < desiredCreatureCount) {
+                Point nextPoint = availableSpots[rng.Next(0, availableSpots.Count)];
+                if (map[nextPoint.X, nextPoint.Y].Solid == false) {
+                    Animal a = DataReader.GetAnimal(creatureTypes[rng.Next(0, creatureTypes.Count)], map.Blocks, nextPoint, map.WorldIndex, -1);
+                    if (a != null) {
+                        map[nextPoint.X, nextPoint.Y] = a;
+                        placedCreatures++;
+                    }
+                }
+            }
         }
 
         public static void GenerateDungeonEntrance(MapTile map)

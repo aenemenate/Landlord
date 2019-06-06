@@ -60,7 +60,6 @@ namespace Landlord
             return Math.Sqrt( deltaX * deltaX + deltaY * deltaY );
         }
 
-
         public static List<Point> GetAdjacentWalkablePoints( this Point point )
         {
             int currentFloor = Program.Player.CurrentFloor;

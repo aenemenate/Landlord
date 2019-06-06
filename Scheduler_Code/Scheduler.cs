@@ -19,11 +19,9 @@ namespace Landlord
             UpdateCreatureList(Program.WorldMap[worldIndex.X, worldIndex.Y]);
 
             List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
-            int width = Program.WorldMap.TileWidth;
             creatures.Sort();
 
-            for (int i = 0; i < creatures.Count; i++)
-            {
+            for (int i = 0; i < creatures.Count; i++) {
                 if (creatures[i] is Player) {
                     Program.Player.DetermineAction();
                     for (i = 0; i < creatures.Count; i++)
@@ -119,21 +117,29 @@ namespace Landlord
             if (map.Dungeon != null)
                 for (int i = 0; i < map.Dungeon.Floors.GetLength(0); i++) {
                     map.Dungeon.Floors[i].Creatures = new List<Creature>();
-
                     for (int j = map.Dungeon.Floors[i].Blocks.GetLength(0) - 1; j > 0; j--)
                         if (map.Dungeon.Floors[i].Blocks[j] is Creature creature)
                             map.Dungeon.Floors[i].Creatures.Add(creature);
                 }
         }
 
-        public static void InitCreatureListScheduling(MapTile map, int floor)
+        public static void InitCreatureListScheduling(MapTile map)
         {
             UpdateCreatureList(map);
-            // set the action times of each entity on this floor to equal the current time
+
             int creatureListLength = map.Creatures.Count;
             if (creatureListLength > 1)
                 for (int i = 0; i < creatureListLength; i++)
-                    map.Dungeon.Floors[floor].Creatures[i].NextActionTime = new Time( Program.TimeHandler.CurrentTime );
+                    map.Creatures[i].NextActionTime = new Time(Program.TimeHandler.CurrentTime);
+
+            if (map.Dungeon != null)
+                for (int i = 0; i < map.Dungeon.Floors.GetLength(0); i++) {
+                    creatureListLength = map.Dungeon.Floors[i].Creatures.Count;
+                    if (creatureListLength > 1)
+                        for (int j = 0; i < creatureListLength; j++)
+                            map.Dungeon.Floors[i].Creatures[j].NextActionTime = new Time(Program.TimeHandler.CurrentTime);
+                }
+
         }
 
 

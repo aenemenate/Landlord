@@ -12,6 +12,7 @@ namespace Landlord
         public event EventHandler<EventArgs> OnFinishedGenerating;
 
         private int tileWidth, tileHeight;
+        private List<string> creatureTypes;
         private MapTile[,] worldMap;
         private float[,] heightMap;
         private int seed;
@@ -31,6 +32,8 @@ namespace Landlord
             this.tileWidth = width;
             this.tileHeight = height;
             this.name = name;
+
+            creatureTypes = DataReader.GetOverworldCreatureList();
 
             //GenerateWorldMap(width, height, name);
         }
@@ -87,8 +90,7 @@ namespace Landlord
 
         // PROPERTIES //
 
-        public MapTile this[int x, int y]
-        {
+        public MapTile this[int x, int y] {
             get { return worldMap[x,y]; }
             set { worldMap[x,y] = value; }
         }
@@ -100,18 +102,23 @@ namespace Landlord
             get { return tileWidth; }
             set { tileWidth = value; }
         }
-        public int TileHeight
-        {
+        public int TileHeight {
             get { return tileHeight; }
             set { tileHeight = value; }
         }
-        public float[,] HeightMap
-        {
+        public List<string> CreatureTypes {
+            get { return creatureTypes; }
+            set { creatureTypes = value; }
+        }
+        public float[,] HeightMap {
             get { return heightMap; }
             set { heightMap = value; }
         }
-        public string Name
-        {
+        public int Seed {
+            get { return seed; }
+            set { seed = value; }
+        }
+        public string Name {
             get { return name; ; }
             set { name = value; }
         }

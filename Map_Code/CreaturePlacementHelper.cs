@@ -63,7 +63,7 @@ namespace Landlord
             playerPos = new Point(playerPos.X - (worldIndex.X * Program.WorldMap.TileWidth), playerPos.Y - (worldIndex.Y * Program.WorldMap.TileHeight));
 
             // place the player
-            Program.Player = new Player(Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks, playerPos, worldIndex, -1, 20, name, gender, Program.WorldMap.Name, uclass);
+            Program.Player = new Player(Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks, playerPos, worldIndex, -1, 20, name, gender, DietType.Omnivore, Program.WorldMap.Name, uclass);
             Program.WorldMap[worldIndex.X, worldIndex.Y][playerPos.X, playerPos.Y] = Program.Player;
         }
     }

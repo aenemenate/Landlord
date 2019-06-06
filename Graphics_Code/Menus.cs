@@ -678,7 +678,7 @@ namespace Landlord
                 if (!loading) {
                     Program.Console.Clear();
                     loading = true;
-                    DungeonHandler.CreateDungeon( Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y] );
+                    Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon = DataReader.GetNextDungeon(Program.Player.Stats.Level.Lvl);
                     Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon.OnFinishedGenerating += CloseGenerateDungeonScreen;
                     loadThread =
                         new System.Threading.Thread( new System.Threading.ThreadStart( Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon.Init ) );

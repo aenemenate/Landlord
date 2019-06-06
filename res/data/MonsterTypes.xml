@@ -42,7 +42,7 @@ DesireTypes:
 
   </monster>
 
-  <monster name="cave_spider" ascii_char="115" faction="null" sight_dist="4">
+  <monster name="cave-spider" ascii_char="115" faction="null" sight_dist="4">
     
     <color r="148" g="108" b="15"/>
     

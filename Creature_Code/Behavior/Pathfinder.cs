@@ -106,7 +106,7 @@ namespace Landlord
                 return true;
             else
             {
-                List<Point> adjacentPoints = end.GetAdjacentWalkablePoints();
+                List<Point> adjacentPoints = end.GetAdjacentWalkablePoints(worldIndex, currentFloor);
                 if (adjacentPoints.Count > 0)
                 {
                     Point closestPoint = new Point();

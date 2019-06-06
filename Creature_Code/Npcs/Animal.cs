@@ -37,14 +37,12 @@ namespace Landlord
         //abstract/override
         public override void HandleVisibility()
         {
-            Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
-            int width = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Width;
-
+            List<Creature> creatures = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Creatures : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Creatures;
+            
             visibleCreatures = new List<Creature>();
-            foreach (Point point in VisiblePoints) {
-                if (blocks[point.X * width + point.Y] is Creature c) {
+            foreach (Creature c in creatures) {
+                if (VisiblePoints.Exists(p => p.Equals(c.Position))) {
                     visibleCreatures.Add(c);
-                    return;
                 }
             }
         }
@@ -70,20 +68,21 @@ namespace Landlord
                 if (!c.Faction.Equals(Faction))
                     cFocus = c;
 
+
             if (cFocus != null) {
                 switch (Diet) {
                     case DietType.Carnivore:
-                        Move(Position.GetClosestNearbyWalkablePos(cFocus.Position));
+                        Move(Position.GetClosestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
                         return;
                     case DietType.Herbivore:
                         if (cFocus.Diet != DietType.Herbivore)
-                            Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position));
+                            Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
                         return;
                     case DietType.Omnivore:
                         if (cFocus.Diet == DietType.Carnivore)
-                            Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position));
+                            Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
                         if (cFocus.Diet == DietType.Herbivore)
-                            Move(Position.GetClosestNearbyWalkablePos(cFocus.Position));
+                            Move(Position.GetClosestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
                         return;
                 }
             }

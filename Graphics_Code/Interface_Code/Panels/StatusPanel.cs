@@ -78,30 +78,14 @@ namespace Landlord
 
                 bool mouseIsOnMap = !(mousePos.X < 0 || mousePos.X >= Program.Console.Width - StatusPanel.Width);
 
-                Program.Window.Print(StartX + 1, Program.Window.Height - 4, "                  ", 18);
                 Program.Window.Print(StartX + 1, Program.Window.Height - 3, "                  ", 18);
                 Program.Window.Print(StartX + 1, Program.Window.Height - 2, "                  ", 18);
 
                 if (Program.CurrentState is Play && Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos) && mouseIsOnMap && blocks[mapPos.X * width + mapPos.Y].Explored) {
-                    if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty) {
-                        if (blocks[mapPos.X * width + mapPos.Y] is Item item)
-                            Program.Window.Print(StartX + 1, Program.Window.Height - 2, item.Name, 18);
-                        else if (blocks[mapPos.X * width + mapPos.Y] is Creature creature) {
-                            if (creature is Player == false) {
-                                if (creature.CurrentBlock.Visible == true)
-                                    Program.Window.Print(StartX + 1, Program.Window.Height - 4, creature.Name
-                                        + $"({creature.Stats.Resources[Resource.HP]}/{creature.Stats.Resources[Resource.MaxHP]})", 18);
-                                else
-                                    Program.Window.Print(StartX + 1, Program.Window.Height - 4, creature.CurrentBlock.Name, 18);
-                            }
-                            else
-                                Program.Window.Print(StartX + 1, Program.Window.Height - 4, creature.Name, 18);
-                        }
-                        else
-                            Program.Window.Print(StartX + 1, Program.Window.Height - 4, blocks[mapPos.X * width + mapPos.Y].Name, 18);
-                    }
+                    if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty)
+                        Program.Window.Print(StartX + 1, Program.Window.Height - 3, blocks[mapPos.X * width + mapPos.Y].Name, 18);
                     else
-                        Program.Window.Print(StartX + 1, Program.Window.Height - 4, tiles[mapPos.X * width + mapPos.Y].Name, 18);
+                        Program.Window.Print(StartX + 1, Program.Window.Height - 3, tiles[mapPos.X * width + mapPos.Y].Name, 18);
                 }
             }
 

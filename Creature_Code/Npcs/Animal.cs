@@ -72,17 +72,11 @@ namespace Landlord
             if (cFocus != null) {
                 switch (Diet) {
                     case DietType.Carnivore:
+                    case DietType.Omnivore:
                         Move(Position.GetClosestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
                         return;
                     case DietType.Herbivore:
-                        if (cFocus.Diet != DietType.Herbivore)
-                            Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
-                        return;
-                    case DietType.Omnivore:
-                        if (cFocus.Diet == DietType.Carnivore)
-                            Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
-                        if (cFocus.Diet == DietType.Herbivore)
-                            Move(Position.GetClosestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
+                        Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
                         return;
                 }
             }

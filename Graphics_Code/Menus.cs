@@ -307,13 +307,13 @@ namespace Landlord
                                     unexplored += 1;
                                     break;
                             }
-                            if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Name.Equals("stone wall"))
+                            if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Type == BlockType.Wall)
                                 mountains += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("grass"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Type == BlockType.Plant)
                                 plains += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("dirt"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y] is DirtFloor)
                                 dirt += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("water"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y] is Water)
                                 lakes += 1;
                         }
                     }
@@ -321,7 +321,7 @@ namespace Landlord
                     if (lakes >= plains && lakes >= mountains && lakes >= dirt)
                         worldView[x, y] = new Water();
                     else if (plains >= lakes && plains >= mountains && plains >= dirt)
-                        worldView[x, y] = new Grass();
+                        worldView[x, y] = new Grass(true);
                     else if (mountains >= plains && mountains >= lakes && mountains >= dirt)
                     {
                         mountainous = true;

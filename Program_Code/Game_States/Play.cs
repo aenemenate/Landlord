@@ -22,13 +22,11 @@ namespace Landlord
         public override void Update()
         {
             Point worldIndex = Program.Player.WorldIndex;
-            if (playMode == PlayMode.Roguelike)
-            {
+            if (playMode == PlayMode.Roguelike) {
                 Scheduler.HandleRoguelikeScheduling();
                 StatusPanel.HandleStatus();
             }
-            else
-            {
+            else {
                 Scheduler.HandleBuildModeScheduling();
                 GUI.BuildPanel.HandleBuildPanel();
                 BuildingManager.HandleInput();

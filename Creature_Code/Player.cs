@@ -57,8 +57,8 @@ namespace Landlord
                 blocks[point.X * width + point.Y].Visible = true;
                 blocks[point.X * width + point.Y].Explored = true;
                 if (blocks[point.X * width + point.Y].Opaque == false) {
-                    tiles[point.X * width + point.Y].Explored = true;
                     tiles[point.X * width + point.Y].Visible = true;
+                    tiles[point.X * width + point.Y].Explored = true;
                 }
 
                 // add items to memory map, remove them if there is a mismatch between memory map and local map
@@ -74,8 +74,7 @@ namespace Landlord
                     localCreatures.Add( creature );
             }
 
-            if (localDangerCount > 0)
-            {
+            if (localDangerCount > 0) {
                 if (dangerCount < localDangerCount)
                     Program.Player.Path = null;
                 dangerCount = localDangerCount;
@@ -92,8 +91,7 @@ namespace Landlord
                 return;
             }
 
-            if (Program.CurrentState is Play play)
-            {
+            if (Program.CurrentState is Play play) {
                 if (play.PlayMode == PlayMode.Roguelike) {
                     if (Body.MainHand is BlueprintPouch) {
                         play.PlayMode = PlayMode.BuildMode;
@@ -102,8 +100,7 @@ namespace Landlord
                     }
                     else if (Body.MainHand is RecipePouch)
                         Program.CurrentState = new CraftMenu();
-                    else
-                    {
+                    else {
                         pausePathing = inputModule.HandleInput(true, true);
 
                         if (!pausePathing)
@@ -148,25 +145,19 @@ namespace Landlord
 
         // PROPERTIES
 
-        public List<Point> Path
-        {
+        public List<Point> Path {
             get { return path; }
             set { path = value; }
         }
-
         public int DangerCount
         {
             get { return dangerCount; }
             set { dangerCount = value; }
         }
-
-        public PlayerInput InputModule
-        {
+        public PlayerInput InputModule {
             get { return inputModule; }
         }
-
-        public List<Creature> LocalCreatures
-        {
+        public List<Creature> LocalCreatures {
             get { return localCreatures; }
             set { localCreatures = value; }
         }

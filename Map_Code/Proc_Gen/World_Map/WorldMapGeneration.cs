@@ -22,8 +22,8 @@ namespace Landlord
                         map.Floor[i * map.Width + j] = new DirtFloor();
                     }
                     else if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= WaterCutoff + 6f) {
-                        map.Blocks[i * map.Width + j] = new Air();
-                        map.Floor[i * map.Width + j] = new Grass();
+                        map.Blocks[i * map.Width + j] = new Grass(true);
+                        map.Floor[i * map.Width + j] = new DirtFloor();
                     }
                     else if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= WaterCutoff) {
                         map.Blocks[i * map.Width + j] = new Air();
@@ -41,7 +41,7 @@ namespace Landlord
         public static void GenerateTrees(MapTile map, Random rng, int numOfSeedTrees, int growthGenerations)
         {
             // place seed trees
-            List<Point> availableSpots = map.GetAllGrassTiles();
+            List<Point> availableSpots = map.GetAllDirtTiles();
             List<Point> treeSpots = new List<Point>();
             Point nextSpot = null;
             int placedTrees = 0;

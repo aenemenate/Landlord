@@ -269,7 +269,10 @@ namespace Landlord
 
         public void ApplyActionCost( int maxNumOfSeconds ) {
             double granularity = stats.Attributes[Attribute.Agility] / 300;
-            nextActionTime.AddTime( (int)( maxNumOfSeconds * ( 1 - granularity ) ) );
+            int timeToAdd = (int)(maxNumOfSeconds * (1 - granularity));
+            nextActionTime.AddTime(timeToAdd);
+            if (new Random().Next(0, 20) < 4)
+                ChangeResource(Resource.HV, -(timeToAdd / 4));
         }
 
 

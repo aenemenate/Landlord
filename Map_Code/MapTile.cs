@@ -238,13 +238,13 @@ namespace Landlord
             return closestPoint;
         }
 
-        internal List<Point> GetAllGrassTiles()
+        internal List<Point> GetAllDirtTiles()
         {
             List<Point> grassTiles = new List<Point>();
             for (int i = 0; i < Width; i++)
                 for (int j = 0; j < Height; j++)
                 {
-                    if (Floor[i * width + j] is Grass)
+                    if (Floor[i * width + j] is DirtFloor)
                         grassTiles.Add(new Point(i, j));
                 }
             return grassTiles;

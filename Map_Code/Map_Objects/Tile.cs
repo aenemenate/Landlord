@@ -35,18 +35,6 @@ namespace Landlord
         }
     }
     
-    class Grass : Tile
-    {
-        public Grass() : base()
-        {
-            Graphic = 34;
-            Name = "grass";
-            ForeColor = Color.LawnGreen;
-            BackColor = new Color(87, 59, 12);
-            Harmful = false;
-        }
-    }
-    
     class Water : Tile
     {
         public Water() : base()

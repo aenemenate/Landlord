@@ -137,8 +137,23 @@
     <Compile Include="Item_Code\Tools\Building\Blueprints\WoodWallBlueprint.cs" />
     <Compile Include="Item_Code\Tools\RecipeComponent.cs" />
     <Compile Include="Item_Code\Weapons\Melee_Weapons\Axe.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Air.cs" />
     <Compile Include="Map_Code\Map_Objects\BlocksHelper.cs" />
     <Compile Include="Map_Code\Dungeon.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Cart.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Chest.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\CraftingTable.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Door.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\DownStair.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Floor.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\OreWall.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Plants\Grass.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Plants\Plant.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\StoneMill.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Plants\Tree.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\UpStair.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Wall.cs" />
+    <Compile Include="Map_Code\Map_Objects\Blocks\Corridor.cs" />
     <Compile Include="Map_Code\Proc_Gen\Dungeons\DungeonHelper.cs" />
     <Compile Include="Audio_Code\MusicHandler.cs" />
     <Compile Include="Program_Code\BuildingManager\BuildingPlaceholder.cs" />
@@ -298,10 +313,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Map_Code\Map_Objects\Blocks\" />
-    <Folder Include="Map_Code\Map_Objects\Tiles\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(TargetDir)saves" mkdir "$(TargetDir)saves"

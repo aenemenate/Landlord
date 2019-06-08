@@ -27,7 +27,7 @@ namespace Landlord
 
         // CONSTRUCTOR //
 
-		public MapTile(Point size, Point worldIndex, float[,] heightMap, bool containsDungeon)
+		public MapTile(Point size, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
             width = size.X;
             height = size.Y;
@@ -37,7 +37,7 @@ namespace Landlord
             floor = new Tile[width * height];
             creatures = new List<Creature>();
             dijkstraMaps = new DijkstraMaps(width, height);
-            Init(new Random(), worldIndex, heightMap, containsDungeon);
+            Init(new Random(), worldIndex, heightMap, plantTypes, creatureTypes, containsDungeon);
             owned = false;
         }
 
@@ -48,9 +48,9 @@ namespace Landlord
 
         // FUNCTIONS //
         // init functions
-        public void Init(Random rng, Point worldIndex, float[,] heightMap, bool containsDungeon)
+        public void Init(Random rng, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
-            WorldMapGeneration.GenerateForestMap(rng, this, worldIndex, heightMap);
+            WorldMapGeneration.GenerateForestMap(rng, this, plantTypes, creatureTypes, worldIndex, heightMap);
             if (containsDungeon == true)
                 WorldMapGeneration.GenerateDungeonEntrance(this);
             DetermineCost();
@@ -61,18 +61,14 @@ namespace Landlord
             cost = 0;
             sqMeters = 0;
             for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    if (!(floor[i * width + j] is Water) && map[i * width + j] is Air)
-                    {
+                for (int j = 0; j < height; j++) {
+                    if (!(floor[i * width + j] is Water) && map[i * width + j] is Air) {
                         cost += .5F;
                         sqMeters += 1;
                     }
                     if (map[i * width + j] is DownStair)
                         cost += 1000F;
                 }
-            }
         }
 
         // draw function
@@ -242,13 +238,13 @@ namespace Landlord
             return closestPoint;
         }
 
-        internal List<Point> GetAllGrassTiles()
+        internal List<Point> GetAllDirtTiles()
         {
             List<Point> grassTiles = new List<Point>();
             for (int i = 0; i < Width; i++)
                 for (int j = 0; j < Height; j++)
                 {
-                    if (Floor[i * width + j] is Grass)
+                    if (Floor[i * width + j] is DirtFloor)
                         grassTiles.Add(new Point(i, j));
                 }
             return grassTiles;

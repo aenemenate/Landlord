@@ -15,8 +15,8 @@ namespace Landlord
 
         // CONSTRUCTORS
 
-        public Player (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, string name, string gender, bool friendly, Class uclass, byte graphic = 1,
-            bool solid = true, bool opaque = true) : base (map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, friendly, solid, opaque)
+        public Player (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, string name, string gender, DietType diet, string faction, Class uclass, byte graphic = 1,
+            bool solid = true, bool opaque = true) : base (map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, diet, faction, solid, opaque)
         {
             ForeColor = Color.AntiqueWhite;
 
@@ -57,8 +57,8 @@ namespace Landlord
                 blocks[point.X * width + point.Y].Visible = true;
                 blocks[point.X * width + point.Y].Explored = true;
                 if (blocks[point.X * width + point.Y].Opaque == false) {
-                    tiles[point.X * width + point.Y].Explored = true;
                     tiles[point.X * width + point.Y].Visible = true;
+                    tiles[point.X * width + point.Y].Explored = true;
                 }
 
                 // add items to memory map, remove them if there is a mismatch between memory map and local map
@@ -67,15 +67,14 @@ namespace Landlord
                 else if (Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] != null)
                     Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = null;
                 
-                if (blocks[point.X * width + point.Y] is Monster monster && (!monster.Friendly && monster.Alive))
+                if (blocks[point.X * width + point.Y] is Monster monster && (monster.Faction.Equals(Faction) == false && monster.Alive))
                     localDangerCount++;
 
                 if (blocks[point.X * width + point.Y] is Creature creature)
                     localCreatures.Add( creature );
             }
 
-            if (localDangerCount > 0)
-            {
+            if (localDangerCount > 0) {
                 if (dangerCount < localDangerCount)
                     Program.Player.Path = null;
                 dangerCount = localDangerCount;
@@ -92,8 +91,7 @@ namespace Landlord
                 return;
             }
 
-            if (Program.CurrentState is Play play)
-            {
+            if (Program.CurrentState is Play play) {
                 if (play.PlayMode == PlayMode.Roguelike) {
                     if (Body.MainHand is BlueprintPouch) {
                         play.PlayMode = PlayMode.BuildMode;
@@ -102,8 +100,7 @@ namespace Landlord
                     }
                     else if (Body.MainHand is RecipePouch)
                         Program.CurrentState = new CraftMenu();
-                    else
-                    {
+                    else {
                         pausePathing = inputModule.HandleInput(true, true);
 
                         if (!pausePathing)
@@ -148,25 +145,19 @@ namespace Landlord
 
         // PROPERTIES
 
-        public List<Point> Path
-        {
+        public List<Point> Path {
             get { return path; }
             set { path = value; }
         }
-
         public int DangerCount
         {
             get { return dangerCount; }
             set { dangerCount = value; }
         }
-
-        public PlayerInput InputModule
-        {
+        public PlayerInput InputModule {
             get { return inputModule; }
         }
-
-        public List<Creature> LocalCreatures
-        {
+        public List<Creature> LocalCreatures {
             get { return localCreatures; }
             set { localCreatures = value; }
         }

@@ -51,12 +51,13 @@ namespace Landlord
     public enum Resource
     {
         HP,
+        HV,
         MP,
         SP,
         MaxHP,
+        MaxHV,
         MaxMP,
-        MaxSP,
-        Encumbrance
+        MaxSP
     }
 
 
@@ -111,11 +112,12 @@ namespace Landlord
             {
                 { Resource.HP, hp },
                 { Resource.MaxHP, hp },
+                { Resource.HV, sp + hp },
+                { Resource.MaxHV, sp + hp },
                 { Resource.MP, mp },
                 { Resource.MaxMP, mp },
                 { Resource.SP, sp },
-                { Resource.MaxSP, sp },
-                { Resource.Encumbrance, attributes[Attribute.Strength] * 5 }
+                { Resource.MaxSP, sp }
             };
         }
 
@@ -248,6 +250,8 @@ namespace Landlord
                     return Resource.MaxHP;
                 case (Resource.MP):
                     return Resource.MaxMP;
+                case (Resource.HV):
+                    return Resource.MaxHV;
                 default: // Resource.SP
                     return Resource.MaxSP;
             }

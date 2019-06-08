@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<plants>
+  <plant name="grass" growthInterval="1" seedRadius="5">
+    <color r="44" g="176" b="55"/>
+    <growthStages>
+      <growthStage graphic="46" />
+      <growthStage graphic="44" />
+      <growthStage graphic="34" />
+    </growthStages>
+  </plant>
+  <plant name="dandelion" growthInterval="2" seedRadius="8">
+    <color r="240" g="225" b="48"/>
+    <growthStages>
+      <growthStage graphic="46" />
+      <growthStage graphic="39" />
+      <growthStage graphic="42" />
+    </growthStages>
+  </plant>
+</plants>

@@ -24,8 +24,8 @@ namespace Landlord
 
         // CONSTRUCTORS //
 
-        public Monster(Block[] map, Point position, Point worldIndex, int currentFloor, Color? color, int sightDist, int persistence, Dictionary<DesireType, int> baseDesires, Class uclass, string name, string gender, bool friendly, byte graphic,
-            bool solid = true, bool opaque = true) : base(map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, friendly, solid, opaque)
+        public Monster(Block[] map, Point position, Point worldIndex, int currentFloor, Color? color, int sightDist, int persistence, Dictionary<DesireType, int> baseDesires, Class uclass, string name, string gender, DietType diet, string faction, byte graphic,
+            bool solid = true, bool opaque = true) : base(map, position, worldIndex, currentFloor, sightDist, graphic, name, gender, diet, faction, solid, opaque)
         {
             this.persistence = persistence;
             patrolling = true;
@@ -138,8 +138,7 @@ namespace Landlord
             int bestVal = !patrolling ? GetPosValue(Position) : GetPatrolPosValue(Position);
 
             for (int i = Math.Max(0, Position.X - 1); i <= Math.Min(width - 1, Position.X + 1); i++)
-                for (int j = Math.Max(0, Position.Y - 1); j <= Math.Min(height - 1, Position.Y + 1); j++)
-                {
+                for (int j = Math.Max(0, Position.Y - 1); j <= Math.Min(height - 1, Position.Y + 1); j++) {
                     if (Position.Equals( new Point( i, j ) ) || blocks[i * width + j].Solid)
                         continue;
 

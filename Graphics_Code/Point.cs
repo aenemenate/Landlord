@@ -60,11 +60,8 @@ namespace Landlord
             return Math.Sqrt( deltaX * deltaX + deltaY * deltaY );
         }
 
-
-        public static List<Point> GetAdjacentWalkablePoints( this Point point )
+        public static List<Point> GetAdjacentWalkablePoints( this Point point, Point worldIndex, int currentFloor )
         {
-            int currentFloor = Program.Player.CurrentFloor;
-            Point worldIndex = Program.Player.WorldIndex;
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
             List<Point> adjacentPoints = new List<Point>();
@@ -73,6 +70,26 @@ namespace Landlord
                     if (point.Equals( new Point( i, j ) ) == false && blocks[i * width + j].Solid == false)
                         adjacentPoints.Add( new Point( i, j ) );
             return adjacentPoints;
+        }
+        public static Point GetClosestNearbyWalkablePos(this Point p1, Point p2, Point worldIndex, int currentFloor)
+        {
+            List<Point> adjacentPoints = GetAdjacentWalkablePoints(p1, worldIndex, currentFloor);
+            Point pg = new Point();
+            foreach (Point px in adjacentPoints) {
+                if (px.DistFrom(p2) < pg.DistFrom(p2))
+                    pg = px;
+            }
+            return pg;
+        }
+        public static Point GetFarthestNearbyWalkablePos(this Point p1, Point p2, Point worldIndex, int currentFloor)
+        {
+            List<Point> adjacentPoints = GetAdjacentWalkablePoints(p1, worldIndex, currentFloor);
+            Point pg = new Point();
+            foreach (Point px in adjacentPoints) {
+                if (px.DistFrom(p2) > pg.DistFrom(p2))
+                    pg = px;
+            }
+            return pg;
         }
     }
 }

@@ -307,13 +307,13 @@ namespace Landlord
                                     unexplored += 1;
                                     break;
                             }
-                            if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Name.Equals("stone wall"))
+                            if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Type == BlockType.Wall)
                                 mountains += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("grass"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Type == BlockType.Plant)
                                 plains += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("dirt"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y] is DirtFloor)
                                 dirt += 1;
-                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y].Name.Equals("water"))
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y] is Water)
                                 lakes += 1;
                         }
                     }
@@ -593,13 +593,13 @@ namespace Landlord
             {
                 if (ClickedDialog)
                     ClickedDialog = !ClickedDialog;
-                if (!loading)
-                {
+                if (!loading) {
                     Program.Console.Clear();
                     loading = true;
                     ReadWrite.LoadObjHoldersFromProgram();
                     loadThread =
                         new System.Threading.Thread( new System.Threading.ThreadStart( ReadWrite.SaveGame ) );
+                    loadThread.IsBackground = true;
                     loadThread.Start();
                     Program.Animations = new List<Animation>() { new LoadingAnim( "Saving" ) };
                     ReadWrite.OnFinishedLoading += CloseSaveScreen;
@@ -618,12 +618,12 @@ namespace Landlord
             {
                 if (ClickedDialog)
                     ClickedDialog = !ClickedDialog;
-                if (!loading)
-                {
+                if (!loading) {
                     Program.Console.Clear();
                     loading = true;
                     loadThread =
                         new System.Threading.Thread( new System.Threading.ThreadStart( ReadWrite.LoadGame ) );
+                    loadThread.IsBackground = true;
                     loadThread.Start();
                     Program.Animations = new List<Animation>() { new LoadingAnim( "Loading" ) };
                     DisplayTipMenu();
@@ -644,8 +644,7 @@ namespace Landlord
 
             static public void DisplayTipMenu()
             {
-                Program.ControlsConsole = new BorderedConsole( Program.Console.Width / 2, Program.Console.Height / 4 )
-                {
+                Program.ControlsConsole = new BorderedConsole( Program.Console.Width / 2, Program.Console.Height / 4 ) {
                     Position = new Microsoft.Xna.Framework.Point( Program.Console.Width / 4, Program.Console.Height / 8 * 3 )
                 };
 
@@ -656,8 +655,7 @@ namespace Landlord
                 label.Position = new Microsoft.Xna.Framework.Point( 1, 1 );
                 cursor.Print( tip );
 
-                var okButton = new SadConsole.Controls.Button( Program.ControlsConsole.Width / 4 )
-                {
+                var okButton = new SadConsole.Controls.Button( Program.ControlsConsole.Width / 4 ) {
                     Position = new Microsoft.Xna.Framework.Point( Program.ControlsConsole.Width / 8 * 3, Program.ControlsConsole.Height / 4 * 3 ),
                     Text = "Next Tip"
                 };
@@ -677,14 +675,14 @@ namespace Landlord
             {
                 if (ClickedDialog)
                     ClickedDialog = !ClickedDialog;
-                if (!loading)
-                {
+                if (!loading) {
                     Program.Console.Clear();
                     loading = true;
-                    DungeonHandler.CreateDungeon( Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y] );
+                    Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon = DataReader.GetNextDungeon(Program.Player.Stats.Level.Lvl);
                     Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon.OnFinishedGenerating += CloseGenerateDungeonScreen;
                     loadThread =
                         new System.Threading.Thread( new System.Threading.ThreadStart( Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon.Init ) );
+                    loadThread.IsBackground = true;
                     loadThread.Start();
                     Program.Animations = new List<Animation>() { new LoadingAnim( "Generating Dungeon" ) };
                 }
@@ -702,13 +700,13 @@ namespace Landlord
             {
                 if (ClickedDialog)
                     ClickedDialog = !ClickedDialog;
-                if (!loading)
-                {
+                if (!loading) {
                     Program.Console.Clear();
                     loading = true;
                     Program.WorldMap.OnFinishedGenerating += CloseGenerateWorldMapScreen;
                     loadThread =
                         new System.Threading.Thread(new System.Threading.ThreadStart(Program.WorldMap.GenerateWorldMap));
+                    loadThread.IsBackground = true;
                     loadThread.Start();
                     Program.Animations = new List<Animation>() { new LoadingAnim("Generating World") };
                 }
@@ -729,8 +727,7 @@ namespace Landlord
 
             // PROPERTIES //
 
-            static public bool Loading
-            {
+            static public bool Loading {
                 set { loading = value; }
             }
         }
@@ -926,26 +923,22 @@ namespace Landlord
 
         // PROPERTIES //
 
-        static public bool ClickedDialog
-        {
+        static public bool ClickedDialog {
             get { return clickedDialog; }
             set { clickedDialog = value; }
         }
 
-        static public GameState PrevGameState
-        {
+        static public GameState PrevGameState {
             get { return prevGameState; }
             set { prevGameState = value; }
         }
 
-        static public Element[,] WorldView
-        {
+        static public Element[,] WorldView {
             get { return worldView; }
             set { worldView = value; }
         }
 
-        static public int Granularity
-        {
+        static public int Granularity {
             get { return granularity; }
             set { granularity = value; }
         }
@@ -1475,6 +1468,8 @@ namespace Landlord
 
                     Program.WorldMap = new WorldMap(100, 100, "Test");
                     Program.Identification = new Identification(true);
+                    Program.TimeHandler = new TimeHandler(8, 0, 0, 1);
+                    Program.Factions = new List<Faction>();
                     name = "";
                     uclass = new Class();
                 }

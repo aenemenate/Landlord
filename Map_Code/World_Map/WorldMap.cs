@@ -12,6 +12,8 @@ namespace Landlord
         public event EventHandler<EventArgs> OnFinishedGenerating;
 
         private int tileWidth, tileHeight;
+        private List<string> creatureTypes;
+        private List<string> plantTypes;
         private MapTile[,] worldMap;
         private float[,] heightMap;
         private int seed;
@@ -45,6 +47,8 @@ namespace Landlord
         public void GenerateWorldMap()
         {
             worldMap = new MapTile[5, 5];
+            creatureTypes = DataReader.GetOverworldCreatureList();
+            plantTypes = DataReader.GetPlantList();
 
             Random rng = new Random(seed);
             SimplexNoise.Seed = this.seed;
@@ -71,13 +75,12 @@ namespace Landlord
                     foreach (Point point in dungeons)
                         if (point.X == i && point.Y == j)
                             dungeon = true;
-                    worldMap[i, j] = new MapTile(new Point(tileWidth, tileHeight), new Point(i, j), heightMap, dungeon);
+                    worldMap[i, j] = new MapTile(new Point(tileWidth, tileHeight), new Point(i, j), heightMap, plantTypes, creatureTypes, dungeon);
                     dungeon = false;
                 }
             }
             //for (int i = 1; i < 499; i++)
-            //    for (int j = 1; j < 499; j++)
-            //    {
+            //    for (int j = 1; j < 499; j++) {
             //        Point worldIndex = new Point( i / 100, j / 100 ), tilePosition = new Point( i % 100, j % 100 );
             //        worldMap[worldIndex.X, worldIndex.Y].Floor[tilePosition.X * 100 + tilePosition.Y].Explored = true;
             //        worldMap[worldIndex.X, worldIndex.Y].Blocks[tilePosition.X * 100 + tilePosition.Y].Explored = true;
@@ -87,12 +90,11 @@ namespace Landlord
 
         // PROPERTIES //
 
-        public MapTile this[int x, int y]
-        {
+        public MapTile this[int x, int y] {
             get { return worldMap[x,y]; }
             set { worldMap[x,y] = value; }
         }
-        public MapTile[,] WorldTiles { // DO NOT DELETE! Used for SERIALIZATION.
+        public MapTile[,] WorldTiles {
             get { return worldMap; }
             set { worldMap = value; }
         }
@@ -100,18 +102,27 @@ namespace Landlord
             get { return tileWidth; }
             set { tileWidth = value; }
         }
-        public int TileHeight
-        {
+        public int TileHeight {
             get { return tileHeight; }
             set { tileHeight = value; }
         }
-        public float[,] HeightMap
-        {
+        public List<string> CreatureTypes {
+            get { return creatureTypes; }
+            set { creatureTypes = value; }
+        }
+        public List<string> PlantTypes {
+            get { return plantTypes; }
+            set { plantTypes = value; }
+        }
+        public float[,] HeightMap {
             get { return heightMap; }
             set { heightMap = value; }
         }
-        public string Name
-        {
+        public int Seed {
+            get { return seed; }
+            set { seed = value; }
+        }
+        public string Name {
             get { return name; ; }
             set { name = value; }
         }

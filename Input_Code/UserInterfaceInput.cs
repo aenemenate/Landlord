@@ -18,12 +18,10 @@ namespace Landlord
 
         public static void HandleKeys()
         {
-            if (KeyboardState.IsKeyReleased(openMap))
-            {
+            if (KeyboardState.IsKeyReleased(openMap)) {
                 if (Program.CurrentState is Play play && play.PlayMode == PlayMode.Roguelike)
                     Program.CurrentState = new ViewWorld(true);
-                else if (Program.CurrentState is ViewWorld)
-                {
+                else if (Program.CurrentState is ViewWorld) {
                     Program.AudioEngine.PlaySound(Program.AudioEngine.CachedSoundFX["closeMap"]);
                     Program.CurrentState = new Play();
                 }
@@ -35,20 +33,17 @@ namespace Landlord
                 if (Program.CurrentState is Play play && play.PlayMode == PlayMode.Roguelike && Program.Player.Inventory.Exists(i => i.Name == "recipe pouch"))
                     Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == "recipe pouch"), true);
             }
-            else if (KeyboardState.IsKeyReleased(enterBuildMode))
-            {
+            else if (KeyboardState.IsKeyReleased(enterBuildMode)) {
                 if ((Program.CurrentState is Play play && play.PlayMode == PlayMode.Roguelike) && Program.Player.Inventory.Exists(i => i.Name == "blueprint pouch"))
                     Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == "blueprint pouch"), true);
             }
-            else if (KeyboardState.IsKeyReleased( openCharacterSheet ))
-            {
+            else if (KeyboardState.IsKeyReleased( openCharacterSheet )) {
                 if (( Program.CurrentState is Play play && play.PlayMode == PlayMode.Roguelike ))
                     Program.CurrentState = new CharacterSheet( Program.Player );
                 else if (Program.CurrentState is CharacterSheet cs)
                     Program.CurrentState = new Play();
             }
-            else if (KeyboardState.IsKeyReleased(devFunc1))
-            {
+            else if (KeyboardState.IsKeyReleased(devFunc1)) {
                 Item item = Program.Player.Inventory.Find( i => i.Name == "recipe pouch" );
                 Program.Player.Inventory.Remove( item );
                 Program.Player.Inventory.Add( new RecipePouch(false) );
@@ -57,8 +52,7 @@ namespace Landlord
                 Program.Player.Inventory.Remove( item );
                 Program.Player.Inventory.Add( new BlueprintPouch( false ) );
             }
-            else if (KeyboardState.IsKeyReleased(esc))
-            {
+            else if (KeyboardState.IsKeyReleased(esc)) {
                 if (Program.CurrentState is ViewWorld) {
                     Program.AudioEngine.PlaySound( Program.AudioEngine.CachedSoundFX["closeMap"] );
                     Program.CurrentState = new Play();

@@ -34,6 +34,7 @@ namespace Landlord
         static private WorldMap worldMap; // contains all block and character data
         static private Identification identification; // keeps track of what's been identified in current playthrough
         static private TimeHandler timeHandler; // keeps track of time
+        static private List<Faction> factions; // keeps track of the properties of game factions that the player has discovered
 
         static private Player player;
         static private GameState currentState;
@@ -59,16 +60,13 @@ namespace Landlord
             */
 
 
-    HookEvents(); // Hook render and update to SadConsole
+            HookEvents(); // Hook render and update to SadConsole
 
             // Start the game.
             SadConsole.Game.Instance.Run();
 
-            //
-            // Code here will not run until the game window closes.
-            //
-            
             SadConsole.Game.Instance.Dispose();
+            Environment.Exit(Environment.ExitCode);
         }
         private static void HookEvents ()
         {
@@ -92,8 +90,6 @@ namespace Landlord
             musicHandler = new MusicHandler();
             // play main menu theme
             Program.AudioEngine.PlayMusic( "Main_Menu" );
-
-            timeHandler = new TimeHandler(8, 0, 0, 1);
 
             // initialize the color schemes and material properties
             Physics.InitializePhysics();
@@ -183,6 +179,10 @@ namespace Landlord
         public static Random RNG {
             get { return rng; }
             set { rng = value; }
+        }
+        public static List<Faction> Factions {
+            get { return factions; }
+            set { factions = value; }
         }
     }
 }

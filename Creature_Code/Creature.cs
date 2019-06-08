@@ -5,34 +5,41 @@ using System.Linq;
 
 namespace Landlord
 {
+    public enum DietType
+    {
+        Herbivore,
+        Carnivore,
+        Omnivore
+    }
     abstract class Creature : Block , IComparable<Creature>, IEquatable<Creature>
     {
         private Point position;
         private Block currentBlock;
         private Point worldIndex;
         private int currentFloor;
+        private string faction;
         private UInt64 id;
 
-        private List<Item> inventory;
         private int sightDist;
         private List<Point> visiblePoints;
-        
-        private string gender;
+
         private float gold;
+        private List<Item> inventory;
+        private string gender;
+        private DietType diet;
         private Body body;
+        private bool alive;
         private Stats stats;
         private Class uclass;
         private List<Effect> effects;
 
-        private bool friendly;
-        private bool alive = true;
-
         private Time nextActionTime;
+        
 
 
         // CONSTRUCTORS //
 
-        public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, bool friendly,
+        public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, DietType diet, string faction,
             bool solid, bool opaque, BlockType type = BlockType.Creature, bool interactive = true, bool enterable = false) 
                 : base (graphic, name, type, solid, opaque, interactive, enterable) {
             id = (UInt64)((DateTime.Now - new DateTime(year: 2019, month: 5, day: 15)).TotalSeconds * 100);
@@ -44,13 +51,15 @@ namespace Landlord
             nextActionTime = new Time(Program.TimeHandler.CurrentTime);
             effects = new List<Effect>();
             gold = 0F;
+            alive = true;
 
             this.position = position;
             this.worldIndex = worldIndex;
             this.currentFloor = currentFloor;
             this.sightDist = sightDist;
             this.gender = gender;
-            this.friendly = friendly;
+            this.diet = diet;
+            this.faction = faction;
         }
 
         public Creature() : base()
@@ -70,7 +79,7 @@ namespace Landlord
         public override void Activate(Creature user)
         {
             if (alive) {
-                if (friendly == false)
+                if (faction.Equals(user.Faction) == false)
                     user.LaunchAttack(this);
                 else
                     user.StartDialog(this);
@@ -154,6 +163,9 @@ namespace Landlord
             Program.WorldMap[worldIndex.X - xDir, worldIndex.Y - yDir].Creatures.Remove(this);
             Program.WorldMap[worldIndex.X, worldIndex.Y][to.X, to.Y] = this;
 
+            if (this is Player)
+                Scheduler.InitCreatureListScheduling(Program.WorldMap[worldIndex.X, worldIndex.Y]);
+
             ApplyActionCost(8);
             return true;
         }
@@ -193,9 +205,9 @@ namespace Landlord
             if (this is Player) {
                 Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
                 Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallPlayerMoved(this);
+                Scheduler.InitCreatureListScheduling(Program.WorldMap[worldIndex.X, worldIndex.Y]);
             }
             
-            Scheduler.InitCreatureListScheduling(Program.WorldMap[WorldIndex.X, WorldIndex.Y], currentFloor);
         }
 
         public void TakeStairsUp()
@@ -214,10 +226,10 @@ namespace Landlord
             currentBlock = blocks[Position.X * Program.WorldMap.TileWidth + Position.Y];
             blocks[Position.X * Program.WorldMap.TileWidth + Position.Y] = this;
 
-            if (this is Player)
+            if (this is Player) {
                 Program.WorldMap[worldIndex.X, worldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
-
-            Scheduler.InitCreatureListScheduling( Program.WorldMap[worldIndex.X, worldIndex.Y], currentFloor );
+                Scheduler.InitCreatureListScheduling(Program.WorldMap[worldIndex.X, worldIndex.Y]);
+            }
         }
 
         
@@ -257,7 +269,10 @@ namespace Landlord
 
         public void ApplyActionCost( int maxNumOfSeconds ) {
             double granularity = stats.Attributes[Attribute.Agility] / 300;
-            nextActionTime.AddTime( (int)( maxNumOfSeconds * ( 1 - granularity ) ) );
+            int timeToAdd = (int)(maxNumOfSeconds * (1 - granularity));
+            nextActionTime.AddTime(timeToAdd);
+            if (new Random().Next(0, 20) < 4)
+                ChangeResource(Resource.HV, -(timeToAdd / 4));
         }
 
 
@@ -944,6 +959,10 @@ namespace Landlord
             get { return position; }
             set { position = value; }
         }
+        public Block CurrentBlock {
+            get { return currentBlock; }
+            set { currentBlock = value; }
+        }
         public Point WorldIndex {
             get { return worldIndex; }
             set { worldIndex = value; }
@@ -952,17 +971,46 @@ namespace Landlord
             get { return currentFloor; }
             set { currentFloor = value; }
         }
-        public int SightDist {
-            get { return sightDist; }
-            set { sightDist = value; }
+        public string Faction {
+            get { return faction; }
+            set { faction = value; }
         }
         public UInt64 ID {
             get { return id; }
             set { id = value; }
         }
+
+        public int SightDist {
+            get { return sightDist; }
+            set { sightDist = value; }
+        }
+        public List<Point> VisiblePoints {
+            get { return visiblePoints; }
+            set { visiblePoints = value; }
+        }
         public float Gold {
             get { return gold; }
             set { gold = value; }
+        }
+        public List<Item> Inventory {
+            get { return inventory; }
+            set { inventory = value; }
+        }
+        public string Gender {
+            get { return gender; }
+            set { gender = value; }
+        }
+        public DietType Diet {
+            get { return diet; }
+            set { diet = value; }
+        }
+        public Body Body {
+            get { return body; }
+            set { body = value; }
+        }
+        public bool Alive {
+            get { return alive; }
+            set { alive = value; }
         }
         public Stats Stats {
             get { return stats; }
@@ -976,37 +1024,10 @@ namespace Landlord
             get { return effects; }
             set { effects = value; }
         }
-        public Block CurrentBlock {
-            get { return currentBlock; }
-            set { currentBlock = value;}
-        }
-        public string Gender {
-            get { return gender; }
-            set { gender = value; }
-        }
-        public bool Friendly {
-            get { return friendly; }
-            set { friendly = value; }
-        }
-        public bool Alive {
-            get { return alive; }
-            set { alive = value; }
-        }
         public Time NextActionTime {
             get { return nextActionTime; }
             set { nextActionTime = value; }
         }
-        public List<Item> Inventory {
-            get { return inventory; }
-            set { inventory = value; }
-        }
-        public List<Point> VisiblePoints {
-            get { return visiblePoints; }
-            set { visiblePoints = value; }
-        }
-        public Body Body {
-            get { return body; }
-            set { body = value; }
-        }
+
     }
 }

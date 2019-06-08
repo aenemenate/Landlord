@@ -321,7 +321,7 @@ namespace Landlord
                     if (lakes >= plains && lakes >= mountains && lakes >= dirt)
                         worldView[x, y] = new Water();
                     else if (plains >= lakes && plains >= mountains && plains >= dirt)
-                        worldView[x, y] = new Grass(true);
+                        worldView[x, y] = new Grass();
                     else if (mountains >= plains && mountains >= lakes && mountains >= dirt)
                     {
                         mountainous = true;

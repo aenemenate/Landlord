@@ -45,17 +45,28 @@ namespace Landlord
         public static List<string> GetOverworldCreatureList()
         {
             List<string> stringifiedCreatures = new List<string>();
-
             // load
             XElement root = XElement.Load("res/data/OverworldCreatureTypes.xml");
             IEnumerable<XElement> creatures =
                 from el in root.Elements("creature")
                 select el;
-
-            foreach (XElement c in creatures) {
+            //convert
+            foreach (XElement c in creatures)
                 stringifiedCreatures.Add(System.Convert.ToString(ReadAttribute(c.Attribute("name"))));
-            }
             return stringifiedCreatures;
+        }
+        public static List<string> GetPlantList()
+        {
+            List<string> stringifiedPlants = new List<string>();
+            // load
+            XElement root = XElement.Load("res/data/PlantTypes.xml");
+            IEnumerable<XElement> plants =
+                from el in root.Elements("plant")
+                select el;
+            // convert
+            foreach (XElement p in plants)
+                stringifiedPlants.Add(System.Convert.ToString(ReadAttribute(p.Attribute("name"))));
+            return stringifiedPlants;
         }
         public static Dungeon GetNextDungeon(int preferredLvl)
         {
@@ -260,6 +271,40 @@ namespace Landlord
 
             return new Animal(map, position, worldIndex, currentFloor, color, sightDist, 3, baseDesires, uClass, name, "male", diet, faction, graphic);
         }
+        public static Plant GetPlant(string name)
+        {
+            XElement plantData = null;
+
+            // load all the plants
+            XElement root = XElement.Load("res/data/PlantTypes.xml");
+            IEnumerable<XElement> plants =
+                from el in root.Elements("plant")
+                select el;
+
+            // choose the right creature
+            foreach (XElement p in plants)
+                if (ReadAttribute(p.FirstAttribute).Equals(name))
+                    plantData = p;
+
+            if (plantData == null)
+                return null;
+
+            int growthInterval = System.Convert.ToInt32(ReadAttribute(plantData.Attribute("growthInterval")));
+            int seedRadius = System.Convert.ToInt32(ReadAttribute(plantData.Attribute("seedRadius")));
+
+            byte r = System.Convert.ToByte(ReadAttribute(plantData.Element("color").Attribute("r"))),
+                 g = System.Convert.ToByte(ReadAttribute(plantData.Element("color").Attribute("g"))),
+                 b = System.Convert.ToByte(ReadAttribute(plantData.Element("color").Attribute("b")));
+            Color? color = new Color(r, g, b);
+
+            IEnumerable<XElement> growthStagesTemp =
+                from el in plantData.Element("growthStages").Elements("growthStage")
+                select el;
+            List<byte> growthStages = new List<byte>();
+            foreach (XElement growthStage in growthStagesTemp)
+                growthStages.Add(System.Convert.ToByte(ReadAttribute(growthStage.Attribute("graphic"))));
+            return new Plant(growthStages[0], name, growthInterval, seedRadius, growthStages, color);
+        }
         public static WeaponEnchantment GetNextWeaponEnchantment()
         {
             // load all the enchantments
@@ -409,7 +454,7 @@ namespace Landlord
             bool reading = false;
             foreach (char c in att)
                 if (reading == true && c != '"')
-                    text = text + c;
+                    text += c;
                 else if (c == '"')
                     reading = true;
 
@@ -422,10 +467,9 @@ namespace Landlord
 
             bool reading = false;
             foreach (char c in el)
-                if (reading == true)
-                {
+                if (reading == true) {
                     if (c != '<')
-                        text = text + c;
+                        text += c;
                     else
                         reading = false;
                 }

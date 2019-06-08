@@ -21,7 +21,19 @@ namespace Landlord
             set { harmful = value; }
         }
     }
-    
+    // the below tile is only used for world map display not for in game 
+    class Grass : Tile
+    {
+        public Grass() : base()
+        {
+            Graphic = 34;
+            Name = "grass";
+            ForeColor = Color.LawnGreen;
+            BackColor = new Color(87, 59, 12);
+            Harmful = false;
+        }
+    }
+
     class DirtFloor : Tile
     {
         public DirtFloor() 

@@ -27,7 +27,7 @@ namespace Landlord
 
         // CONSTRUCTOR //
 
-		public MapTile(Point size, Point worldIndex, float[,] heightMap, List<string> creatureTypes, bool containsDungeon)
+		public MapTile(Point size, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
             width = size.X;
             height = size.Y;
@@ -37,7 +37,7 @@ namespace Landlord
             floor = new Tile[width * height];
             creatures = new List<Creature>();
             dijkstraMaps = new DijkstraMaps(width, height);
-            Init(new Random(), worldIndex, heightMap, creatureTypes, containsDungeon);
+            Init(new Random(), worldIndex, heightMap, plantTypes, creatureTypes, containsDungeon);
             owned = false;
         }
 
@@ -48,9 +48,9 @@ namespace Landlord
 
         // FUNCTIONS //
         // init functions
-        public void Init(Random rng, Point worldIndex, float[,] heightMap, List<string> creatureTypes, bool containsDungeon)
+        public void Init(Random rng, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
-            WorldMapGeneration.GenerateForestMap(rng, this, creatureTypes, worldIndex, heightMap);
+            WorldMapGeneration.GenerateForestMap(rng, this, plantTypes, creatureTypes, worldIndex, heightMap);
             if (containsDungeon == true)
                 WorldMapGeneration.GenerateDungeonEntrance(this);
             DetermineCost();

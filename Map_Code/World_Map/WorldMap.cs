@@ -13,6 +13,7 @@ namespace Landlord
 
         private int tileWidth, tileHeight;
         private List<string> creatureTypes;
+        private List<string> plantTypes;
         private MapTile[,] worldMap;
         private float[,] heightMap;
         private int seed;
@@ -47,6 +48,7 @@ namespace Landlord
         {
             worldMap = new MapTile[5, 5];
             creatureTypes = DataReader.GetOverworldCreatureList();
+            plantTypes = DataReader.GetPlantList();
 
             Random rng = new Random(seed);
             SimplexNoise.Seed = this.seed;
@@ -73,7 +75,7 @@ namespace Landlord
                     foreach (Point point in dungeons)
                         if (point.X == i && point.Y == j)
                             dungeon = true;
-                    worldMap[i, j] = new MapTile(new Point(tileWidth, tileHeight), new Point(i, j), heightMap, creatureTypes, dungeon);
+                    worldMap[i, j] = new MapTile(new Point(tileWidth, tileHeight), new Point(i, j), heightMap, plantTypes, creatureTypes, dungeon);
                     dungeon = false;
                 }
             }
@@ -92,7 +94,7 @@ namespace Landlord
             get { return worldMap[x,y]; }
             set { worldMap[x,y] = value; }
         }
-        public MapTile[,] WorldTiles { // DO NOT DELETE! Used for SERIALIZATION.
+        public MapTile[,] WorldTiles {
             get { return worldMap; }
             set { worldMap = value; }
         }
@@ -107,6 +109,10 @@ namespace Landlord
         public List<string> CreatureTypes {
             get { return creatureTypes; }
             set { creatureTypes = value; }
+        }
+        public List<string> PlantTypes {
+            get { return plantTypes; }
+            set { plantTypes = value; }
         }
         public float[,] HeightMap {
             get { return heightMap; }

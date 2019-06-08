@@ -13,7 +13,7 @@ namespace Landlord
 
         // funcs that work on individual tiles
 
-        public static void GenerateForestMap(Random rng, MapTile map, List<string> creatureTypes, Point worldIndex, float[,] heightMap)
+        public static void GenerateForestMap(Random rng, MapTile map, List<string> plantTypes, List<string> creatureTypes, Point worldIndex, float[,] heightMap)
         {
             for (int i = 0; i < map.Width; i++)
                 for (int j = 0; j < map.Height; j++) {
@@ -22,7 +22,7 @@ namespace Landlord
                         map.Floor[i * map.Width + j] = new DirtFloor();
                     }
                     else if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= WaterCutoff + 6f) {
-                        map.Blocks[i * map.Width + j] = new Grass(true);
+                        map.Blocks[i * map.Width + j] = new Air();
                         map.Floor[i * map.Width + j] = new DirtFloor();
                     }
                     else if (heightMap[i + map.Width * worldIndex.X, j + map.Height * worldIndex.Y] >= WaterCutoff) {
@@ -34,11 +34,12 @@ namespace Landlord
                         map.Floor[i * map.Width + j] = new Water();
                     }
                 }
-            GenerateTrees(map, rng, 7, 18);
+            GenerateTrees(map, rng, 7, 15);
+            GeneratePlants(map, rng, plantTypes, 100, 25);
             GenerateOre(map, rng, 0.025f);
-            GenerateCreatures(map, rng, creatureTypes);
+            //GenerateCreatures(map, rng, creatureTypes);
         }
-        public static void GenerateTrees(MapTile map, Random rng, int numOfSeedTrees, int growthGenerations)
+        private static void GenerateTrees(MapTile map, Random rng, int numOfSeedTrees, int growthGenerations)
         {
             // place seed trees
             List<Point> availableSpots = map.GetAllDirtTiles();
@@ -49,7 +50,7 @@ namespace Landlord
             // placement algorithm
             while (placedTrees < numOfSeedTrees)
             {
-                Point potentialSpot = null;
+                Point potentialSpot;
                 int count = 0;
                 while (nextSpot == null && count < availableSpots.Count) {
                     count++;
@@ -87,6 +88,40 @@ namespace Landlord
                     }
                 }
             }
+        }
+        private static void GeneratePlants(MapTile map, Random rng, List<string> plantTypes, int numOfSeedPlants, int growthGenerations)
+        {
+            // place seed trees
+            List<Point> availableSpots = map.GetAllDirtTiles();
+            Point nextSpot = null;
+            int placedPlants = 0;
+
+            // placement algorithm
+            while (placedPlants < numOfSeedPlants) {
+                Plant p;
+                nextSpot = availableSpots[rng.Next(0, availableSpots.Count)];
+                if (nextSpot != null){
+                    placedPlants++;
+                    p = DataReader.GetPlant(plantTypes[rng.Next(0, plantTypes.Count)]);
+                    map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
+                }
+            }
+            // growth algorithm
+            for (int g = 0; g < growthGenerations; g++)
+                for (int i = 0; i < map.Width; i++)
+                    for (int j = 0; j < map.Height; j++)
+                        if (map[i, j] is Plant p && g % p.GrowthInterval == 0) {
+                            int currentStage = p.GrowthStages.IndexOf(p.Graphic);
+                            if (currentStage < p.GrowthStages.Count - 1) {
+                                p.Graphic = p.GrowthStages[currentStage + 1];
+                                continue;
+                            }
+                            int randX = rng.Next(i - p.SeedRadius, i + p.SeedRadius + 1), randY = rng.Next(j - p.SeedRadius, j + p.SeedRadius + 1);
+                            Point seedSpot = new Point(Math.Min(map.Width - 1, Math.Max(0, randX)), Math.Min(map.Height - 1, Math.Max(0, randY)));
+                            if (map.Floor[seedSpot.X * map.Width + seedSpot.Y] is DirtFloor && map.Blocks[seedSpot.X * map.Width + seedSpot.Y].Solid == false) {
+                                map[seedSpot.X, seedSpot.Y] = new Plant(p.GrowthStages[0], p.Name, p.GrowthInterval, p.SeedRadius, p.GrowthStages, p.ForeColor);
+                            }
+                        }
         }
         private static void GenerateOre( MapTile map, Random rng, float scale )
         {
@@ -160,10 +195,8 @@ namespace Landlord
                 {
                     for (int k = i - 1; k <= i + 1; k++)
                         for (int m = j - 1; m <= j + 1; m++)
-                        {
                             if (heightMap[k, m] > heightMap[i, j])
                                 return false;
-                        }
                     return true;
                 }
                 return false;

@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework;
 
 namespace Landlord
 {
-    class Tree : Plant
+    class Tree : Block
     {
         private int thickness;
 
         // CONSTRUCTORS //
-        public Tree(Material material, byte graphic = 10, string name = "tree", bool solid = true, bool opaque = true, BlockType type = BlockType.Tree)
-            : base(graphic, name, solid, opaque, type)
+        public Tree(Material material, byte graphic = 10, string name = "tree", bool solid = true, bool opaque = true, BlockType type = BlockType.Tree, bool interactive = true, bool enterable = false)
+            : base(graphic, name, type, solid, opaque, interactive, enterable)
         {
             void DetermineThickness()
             {
@@ -20,6 +20,7 @@ namespace Landlord
 
             this.Material = material;
             this.ForeColor = new Color(205, 133, 63);
+            this.BackColor = Color.Pink;
             DetermineThickness();
         }
 
@@ -34,11 +35,6 @@ namespace Landlord
         {
             if (user.Body.MainHand != null && (user.Body.MainHand is Axe || user.Body.MainHand is Sword))
                 user.ChopTree(this);
-        }
-
-        public override void Grow()
-        {
-
         }
 
         public void DropLogs(Point pos, Creature user)

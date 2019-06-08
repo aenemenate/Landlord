@@ -147,7 +147,6 @@
     <Compile Include="Map_Code\Map_Objects\Blocks\DownStair.cs" />
     <Compile Include="Map_Code\Map_Objects\Blocks\Floor.cs" />
     <Compile Include="Map_Code\Map_Objects\Blocks\OreWall.cs" />
-    <Compile Include="Map_Code\Map_Objects\Blocks\Plants\Grass.cs" />
     <Compile Include="Map_Code\Map_Objects\Blocks\Plants\Plant.cs" />
     <Compile Include="Map_Code\Map_Objects\Blocks\StoneMill.cs" />
     <Compile Include="Map_Code\Map_Objects\Blocks\Plants\Tree.cs" />
@@ -245,6 +244,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="res\data\OverworldCreatureTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\data\PlantTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="res\data\Settings.xml" />

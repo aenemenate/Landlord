@@ -19,6 +19,9 @@ namespace Landlord
         private int seed;
         private string name;
 
+        private int plantsInterval; // how many times have the plants been updated this playthrough
+        private int completedUpdateHour;
+
 
         // CONSTRUCTORS //
 
@@ -30,9 +33,11 @@ namespace Landlord
             else
                 this.seed = seed;
 
-            this.tileWidth = width;
-            this.tileHeight = height;
+            tileWidth = width;
+            tileHeight = height;
             this.name = name;
+            plantsInterval = 0;
+            completedUpdateHour = 8;
 
             //GenerateWorldMap(width, height, name);
         }
@@ -87,6 +92,14 @@ namespace Landlord
             //    }
             OnFinishedGenerating(this, EventArgs.Empty);
         }
+        public void UpdatePlants()
+        {
+            for (int i = 0; i < 5; i++)
+                for (int j = 0; j < 5; j++)
+                    worldMap[i, j].UpdatePlants(plantsInterval);
+            plantsInterval++;
+            completedUpdateHour = Program.TimeHandler.CurrentTime.Hour;
+        }
 
         // PROPERTIES //
 
@@ -125,6 +138,14 @@ namespace Landlord
         public string Name {
             get { return name; ; }
             set { name = value; }
+        }
+        public int PlantsInterval {
+            get { return plantsInterval; }
+            set { plantsInterval = value; }
+        }
+        public int CompletedUpdateHour {
+            get { return completedUpdateHour; }
+            set { completedUpdateHour = value; }
         }
     }
 }

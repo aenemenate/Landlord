@@ -9,7 +9,8 @@ namespace Landlord
         private int growthInterval;
         private int seedRadius;
         private List<byte> growthStages;
-        public Plant(byte graphic, string name, int growthInterval, int seedRadius, List<byte> growthStages, Color? color = null, bool solid = false, bool opaque = false, BlockType type = BlockType.Plant, bool interactive = true, bool enterable = false) : base(graphic, name, type, solid, opaque, interactive, enterable)
+        private string requirement;
+        public Plant(byte graphic, string name, int growthInterval, int seedRadius, List<byte> growthStages, string requirement, Color? color = null, bool explored = false, bool solid = false, bool opaque = false, BlockType type = BlockType.Plant, bool interactive = true, bool enterable = false) : base(graphic, name, type, explored, solid, opaque, interactive, enterable)
         {
             if (color != null)
                 this.ForeColor = (Color)color;
@@ -20,36 +21,44 @@ namespace Landlord
             this.growthInterval = growthInterval;
             this.seedRadius = seedRadius;
             this.growthStages = growthStages;
+            this.requirement = requirement;
         }
         public Plant() : base()
         {
 
         }
-        public void Grow(MapTile map, Point position)
+        public void Grow(MapTile map, Point position, Random rng)
         {
-            int currentStage = 0;
-            for (int i = 0; i < growthStages.Count; i++)
-                if (Graphic == growthStages[i])
-                    currentStage = i;
+            int currentStage = growthStages.IndexOf(Graphic);
             if (currentStage < growthStages.Count - 1) {
                 Graphic = growthStages[currentStage + 1];
                 return;
             }
-            Random rng = new Random();
             int randX = rng.Next(position.X - seedRadius, position.X + seedRadius + 1), randY = rng.Next(position.Y - seedRadius, position.Y + seedRadius + 1);
             Point seedSpot = new Point(Math.Min(map.Width - 1, Math.Max(0, randX)), Math.Min(map.Height - 1, Math.Max(0, randY)));
-            TrySeed(map, seedSpot);
+            TrySeed(map, seedSpot, rng);
         }
         // tries to place a seed at the specified position
-        public void TrySeed(MapTile map, Point position)
+        public void TrySeed(MapTile map, Point position, Random rng)
         {
-            Block block = map.Blocks[position.X * map.Width + position.Y];
-            Tile tile = map.Floor[position.X * map.Width + position.Y];
-            if (tile is DirtFloor && ((block is Plant p && p.Graphic == p.GrowthStages[p.GrowthStages.Count - 1]) || block is Air)) {
-                Plant plant = (Plant)this.Copy();
-                plant.Graphic = growthStages[0];
-                map.Blocks[position.X * map.Width + position.Y] = plant;
+            bool explored = map.Blocks[position.X * map.Width + position.Y].Explored;
+            if (map.Floor[position.X * map.Width + position.Y] is DirtFloor)
+                if ((map.Blocks[position.X * map.Width + position.Y] is Plant && rng.Next(0, 20) < 5) || map.Blocks[position.X * map.Width + position.Y] is Air)
+                    if (RequirementsMet(map, position))
+                        map[position.X, position.Y] = new Plant(growthStages[0], Name, growthInterval, seedRadius, growthStages, requirement, ForeColor, explored);
+        }
+        public bool RequirementsMet(MapTile map, Point position)
+        {
+            if (requirement.Equals(""))
+                return true;
+            if (requirement.Contains("tile_nearby;")) {
+                if (requirement.Contains("water;")) {
+                    int dist = System.Convert.ToInt32(requirement.Replace("tile_nearby;water;", ""));
+                    if (map.GetClosestOfTileTypeToPos(position, new Water()).DistFrom(position) < dist)
+                        return true;
+                }
             }
+            return false;
         }
         public override void Activate(Creature user)
         {
@@ -67,6 +76,10 @@ namespace Landlord
         public List<byte> GrowthStages {
             get { return growthStages; }
             set { growthStages = value; }
+        }
+        public string Requirement {
+            get { return requirement; }
+            set { requirement = value; }
         }
     }
 }

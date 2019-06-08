@@ -46,6 +46,15 @@ namespace Landlord
             this.interactive = interactive;
             this.enterable = enterable;
         }
+        public Block(byte graphic, string name, BlockType type, bool explored, bool solid, bool opaque, bool interactive, bool enterable, Color? foreColor = null, Color? backColor = null)
+            : base(graphic, name, explored, foreColor, backColor)
+        {
+            this.type = type;
+            this.solid = solid;
+            this.opaque = opaque;
+            this.interactive = interactive;
+            this.enterable = enterable;
+        }
         public Block() : base()
         {
 

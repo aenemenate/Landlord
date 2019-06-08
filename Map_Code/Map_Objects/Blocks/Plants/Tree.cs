@@ -46,8 +46,8 @@ namespace Landlord
                     int treeRoll = rng.Next(1, 11), maxChance = 10;
                     double distFromTree = new Point(i, j).DistFrom(pos);
                     bool pointCloserToTreeThanfeller = new Point(i, j).DistFrom(user.Position) > distFromTree;
-
-                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToTreeThanfeller && Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j] is Air)
+                    Block block = Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j];
+                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToTreeThanfeller && (block is Air || block is Plant))
                         Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j] = new Log(true);
                 }
 

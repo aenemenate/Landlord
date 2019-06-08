@@ -291,15 +291,12 @@ namespace Landlord
                     int plains = 0, dirt = 0, mountains = 0, lakes = 0, unexplored = 0, explored = 0;
                     int iLimit = (x + 1) * granularity;
                     int jLimit = (y + 1) * granularity;
-                    for (int i = x * granularity; i < iLimit; i += 2)
-                    {
-                        for (int j = y * granularity; j < jLimit; j += 2)
-                        {
+                    for (int i = x * granularity; i < iLimit; i += 2) {
+                        for (int j = y * granularity; j < jLimit; j += 2) {
                             worldIndex = new Point(i / hectareWidth, j / hectareHeight);
                             Point localPos = new Point(i - (worldIndex.X * hectareWidth), j - (worldIndex.Y * hectareHeight));
 
-                            switch (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Explored)
-                            {
+                            switch (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Explored) {
                                 case (true):
                                     explored += 1;
                                     break;
@@ -322,8 +319,7 @@ namespace Landlord
                         worldView[x, y] = new Water();
                     else if (plains >= lakes && plains >= mountains && plains >= dirt)
                         worldView[x, y] = new Grass();
-                    else if (mountains >= plains && mountains >= lakes && mountains >= dirt)
-                    {
+                    else if (mountains >= plains && mountains >= lakes && mountains >= dirt) {
                         mountainous = true;
                         mountainPoints.Add(new Point(x, y));
                         worldView[x, y] = new Wall(Material.Stone);
@@ -351,8 +347,7 @@ namespace Landlord
                 // set dungeon entrances
                 for (int i = 0; i < 5; i++)
                     for (int j = 0; j < 5; j++)
-                        if (Program.WorldMap[i, j].DungeonEntrance != null)
-                        {
+                        if (Program.WorldMap[i, j].DungeonEntrance != null) {
                             Point dungEntrance = new Point(Program.WorldMap[i, j].DungeonEntrance.X + (i * hectareWidth), Program.WorldMap[i, j].DungeonEntrance.Y + (j * hectareHeight));
                             bool tileVisible = TileNextToExploredPlains(new Point(dungEntrance.X / granularity, dungEntrance.Y / granularity));
                             if (tileVisible)
@@ -374,7 +369,6 @@ namespace Landlord
                         (Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DungeonEntrance.Y + (Program.Player.WorldIndex.Y * hectareHeight)) / granularity] = new PlayerWorld();
 
             }
-
             static public void View()
             {
                 void DrawTooltip(int exploredTiles, int unexploredTiles, Point mWorldIndex, Point mPos) {
@@ -465,7 +459,6 @@ namespace Landlord
                     ClickedDialog = true;
                 }
             }
-
             static public void BuyMap(MapTile map)
             {
                 Program.ControlsConsole = new BorderedConsole(Program.Console.Width / 4, Program.Console.Height / 4)
@@ -514,7 +507,6 @@ namespace Landlord
                 SadConsole.Global.CurrentScreen.Children.Add(Program.ControlsConsole);
                 Program.CurrentState = new DialogWindow();
             }
-
             static private void DisplayNotEnoughGold()
             {
                 Program.ControlsConsole = new BorderedConsole(Program.Console.Width / 4, Program.Console.Height / 4)
@@ -545,7 +537,6 @@ namespace Landlord
                 SadConsole.Global.CurrentScreen.Children.Add(Program.ControlsConsole);
                 Program.CurrentState = new DialogWindow();
             }
-
             static public void DisplayNotOwned(string action)
             {
                 prevGameState = Program.CurrentState;
@@ -577,18 +568,14 @@ namespace Landlord
                 SadConsole.Global.CurrentScreen.Children.Add(Program.ControlsConsole);
                 Program.CurrentState = new DialogWindow();
             }
-
         }
 
         static public class LoadSave
         {
             static private bool loading = false;
-
             static private System.Threading.Thread loadThread;
 
-
             // FUNCTIONS //
-
             static public void SaveScreen()
             {
                 if (ClickedDialog)
@@ -605,7 +592,6 @@ namespace Landlord
                     ReadWrite.OnFinishedLoading += CloseSaveScreen;
                 }
             }
-
             static public void CloseSaveScreen( object sender, EventArgs e )
             {
                 Program.Console.Clear();
@@ -613,7 +599,6 @@ namespace Landlord
                 Program.CurrentState = new MainMenu();
                 loading = false;
             }
-
             static public void LoadScreen()
             {
                 if (ClickedDialog)
@@ -631,7 +616,6 @@ namespace Landlord
                     ReadWrite.OnFinishedLoading += CloseLoadScreen;
                 }
             }
-
             static public void CloseLoadScreen( object sender, EventArgs e )
             {
                 SadConsole.Global.CurrentScreen.Children.Remove( Program.ControlsConsole );
@@ -641,7 +625,6 @@ namespace Landlord
                 ReadWrite.SetObjHoldersToProgram();
                 loading = false;
             }
-
             static public void DisplayTipMenu()
             {
                 Program.ControlsConsole = new BorderedConsole( Program.Console.Width / 2, Program.Console.Height / 4 ) {
@@ -670,7 +653,6 @@ namespace Landlord
                 SadConsole.Global.CurrentScreen.Children.Add( Program.ControlsConsole );
 
             }
-
             static public void GenerateDungeonScreen()
             {
                 if (ClickedDialog)
@@ -695,7 +677,6 @@ namespace Landlord
                 Program.CurrentState = new Play();
                 loading = false;
             }
-
             static public void GenerateWorldMapScreen()
             {
                 if (ClickedDialog)
@@ -724,17 +705,13 @@ namespace Landlord
                 loading = false;
             }
 
-
             // PROPERTIES //
-
             static public bool Loading {
                 set { loading = value; }
             }
         }
 
-
         // FUNCTIONS //
-
         static public void PauseMenu()
         {
             prevGameState = Program.CurrentState;
@@ -772,7 +749,6 @@ namespace Landlord
             SadConsole.Global.CurrentScreen.Children.Add(Program.ControlsConsole);
             Program.CurrentState = new DialogWindow();
         }
-
         static public void DeathNotification()
         {
 
@@ -810,7 +786,6 @@ namespace Landlord
             SadConsole.Global.CurrentScreen.Children.Add(Program.ControlsConsole);
             Program.CurrentState = new DialogWindow();
         }
-        
         static public void DisplayIncorrectUsage(string text)
         {
             prevGameState = Program.CurrentState;
@@ -842,7 +817,6 @@ namespace Landlord
             SadConsole.Global.CurrentScreen.Children.Add(Program.ControlsConsole);
             Program.CurrentState = new DialogWindow();
         }
-
         static public void DisplayIdentified(string text)
         {
             prevGameState = Program.CurrentState;
@@ -873,7 +847,6 @@ namespace Landlord
             SadConsole.Global.CurrentScreen.Children.Add(Program.ControlsConsole);
             Program.CurrentState = new DialogWindow();
         }
-
         static public void SelectWieldingHand(Item currentlyViewedItem)
         {
             prevGameState = Program.CurrentState;
@@ -920,24 +893,19 @@ namespace Landlord
             Program.CurrentState = new DialogWindow();
         }
 
-
         // PROPERTIES //
-
         static public bool ClickedDialog {
             get { return clickedDialog; }
             set { clickedDialog = value; }
         }
-
         static public GameState PrevGameState {
             get { return prevGameState; }
             set { prevGameState = value; }
         }
-
         static public Element[,] WorldView {
             get { return worldView; }
             set { worldView = value; }
         }
-
         static public int Granularity {
             get { return granularity; }
             set { granularity = value; }

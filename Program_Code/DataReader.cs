@@ -289,21 +289,34 @@ namespace Landlord
             if (plantData == null)
                 return null;
 
-            int growthInterval = System.Convert.ToInt32(ReadAttribute(plantData.Attribute("growthInterval")));
-            int seedRadius = System.Convert.ToInt32(ReadAttribute(plantData.Attribute("seedRadius")));
+            int growthInterval = System.Convert.ToInt32(ReadAttribute(plantData.Attribute("growth_interval")));
+            int seedRadius = System.Convert.ToInt32(ReadAttribute(plantData.Attribute("seed_radius")));
 
-            byte r = System.Convert.ToByte(ReadAttribute(plantData.Element("color").Attribute("r"))),
-                 g = System.Convert.ToByte(ReadAttribute(plantData.Element("color").Attribute("g"))),
-                 b = System.Convert.ToByte(ReadAttribute(plantData.Element("color").Attribute("b")));
-            Color? color = new Color(r, g, b);
+            byte r = System.Convert.ToByte(ReadAttribute(plantData.Element("fore_color").Attribute("r"))),
+                 g = System.Convert.ToByte(ReadAttribute(plantData.Element("fore_color").Attribute("g"))),
+                 b = System.Convert.ToByte(ReadAttribute(plantData.Element("fore_color").Attribute("b")));
+            Color? foreColor = new Color(r, g, b);
 
             IEnumerable<XElement> growthStagesTemp =
-                from el in plantData.Element("growthStages").Elements("growthStage")
+                from el in plantData.Element("growth_stages").Elements("growth_stage")
                 select el;
             List<byte> growthStages = new List<byte>();
             foreach (XElement growthStage in growthStagesTemp)
                 growthStages.Add(System.Convert.ToByte(ReadAttribute(growthStage.Attribute("graphic"))));
-            return new Plant(growthStages[0], name, growthInterval, seedRadius, growthStages, color);
+
+            string requirement;
+            if (ReadAttribute(plantData.Element("requirement").FirstAttribute).Equals(""))
+                requirement = "";
+            else {
+                requirement =
+                    ReadAttribute(plantData.Element("requirement").FirstAttribute)
+                    + ';'
+                    + ReadAttribute(plantData.Element("requirement").Attribute("type"))
+                    + ';'
+                    + ReadAttribute(plantData.Element("requirement").Attribute("dist"));
+            }
+
+            return new Plant(growthStages[0], name, growthInterval, seedRadius, growthStages, requirement, foreColor);
         }
         public static WeaponEnchantment GetNextWeaponEnchantment()
         {

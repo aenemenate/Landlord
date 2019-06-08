@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <plants>
-  <plant name="grass" growthInterval="1" seedRadius="5">
-    <color r="44" g="176" b="55"/>
-    <growthStages>
-      <growthStage graphic="46" />
-      <growthStage graphic="44" />
-      <growthStage graphic="34" />
-    </growthStages>
+  <plant name="grass" growth_interval="1" seed_radius="5">
+    <requirement req=""/>
+    <fore_color r="124" g="252" b="0"/>
+    <growth_stages>
+      <growth_stage graphic="46" />
+      <growth_stage graphic="44" />
+      <growth_stage graphic="34" />
+    </growth_stages>
   </plant>
-  <plant name="dandelion" growthInterval="2" seedRadius="8">
-    <color r="240" g="225" b="48"/>
-    <growthStages>
-      <growthStage graphic="46" />
-      <growthStage graphic="39" />
-      <growthStage graphic="42" />
-    </growthStages>
+  <plant name="dandelion" growth_interval="2" seed_radius="8">
+    <requirement req=""/>
+    <fore_color r="240" g="225" b="48"/>
+    <growth_stages>
+      <growth_stage graphic="46" />
+      <growth_stage graphic="39" />
+      <growth_stage graphic="42" />
+    </growth_stages>
+  </plant>
+  <plant name="blackberry bush" growth_interval="3" seed_radius="4">
+    <requirement req="tile_nearby" type="water" dist="8"/>
+    <fore_color r="77" g="0" b="54"/>
+    <growth_stages>
+      <growth_stage graphic="46" />
+      <growth_stage graphic="44" />
+      <growth_stage graphic="39" />
+      <growth_stage graphic="37" />
+      <growth_stage graphic="171" />
+    </growth_stages>
   </plant>
 </plants>

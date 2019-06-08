@@ -45,9 +45,7 @@ namespace Landlord
         {
         }
 
-
         // FUNCTIONS //
-        // init functions
         public void Init(Random rng, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
             WorldMapGeneration.GenerateForestMap(rng, this, plantTypes, creatureTypes, worldIndex, heightMap);
@@ -55,14 +53,13 @@ namespace Landlord
                 WorldMapGeneration.GenerateDungeonEntrance(this);
             DetermineCost();
         }
-
         public void DetermineCost()
         {
             cost = 0;
             sqMeters = 0;
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < height; j++) {
-                    if (!(floor[i * width + j] is Water) && map[i * width + j] is Air) {
+                    if (floor[i * width + j] is DirtFloor && map[i * width + j].Solid == false) {
                         cost += .5F;
                         sqMeters += 1;
                     }
@@ -70,8 +67,6 @@ namespace Landlord
                         cost += 1000F;
                 }
         }
-
-        // draw function
         public void DrawCell(int x, int y)
         {
             Point startPoint = Program.Window.CalculateMapStartPoint();
@@ -156,10 +151,8 @@ namespace Landlord
                     }
                 }
                 if (block.Explored == false)
-                {
                         Program.Console.SetGlyph( x - startPoint.X, y - startPoint.Y, block.Graphic, Color.Black, Color.Black );
-                    
-                } else
+                else
                     switch (block.Visible)
                     {
                         case (false):
@@ -180,8 +173,15 @@ namespace Landlord
             else
                 RenderBlock();
         }
-        
-        // get functions
+        public void UpdatePlants(int plantsInterval)
+        {
+            Random rng = new Random();
+            for (int i = 0; i < Width; i++)
+                for (int j = 0; j < Height; j++)
+                    if (Blocks[i * width + j] is Plant p && plantsInterval % p.GrowthInterval == 0)
+                        p.Grow(this, new Point(i, j), rng);
+        }
+        // check functions
         internal bool PointWithinBounds(Point point)
         {
             if (point.X >= 0 && point.X < Width)
@@ -189,14 +189,12 @@ namespace Landlord
                     return true;
             return false;
         }
-
         internal bool PointOnEdge(Point point)
         {
             if (point.X == 0 || point.X == Width - 1 || point.Y == 0 || point.Y == Height - 1)
                 return true;
             return false;
         }
-
         internal bool AdjacentBlocksEmpty(Point point)
         {
             if (PointWithinBounds(new Point(point.X + 1, point.Y)) && !map[(point.X + 1) * width + point.Y].Solid)
@@ -209,7 +207,6 @@ namespace Landlord
                 return true;
             return false;
         }
-
         internal bool PointIsNextToWater(Point point)
         {
             int maxX = Math.Min(height - 1, point.X + 1), maxY = Math.Min(width - 1, point.Y + 1);
@@ -222,7 +219,7 @@ namespace Landlord
 
             return false;
         }
-
+        // get functions
         internal Point GetClosestOfTileTypeToPos( Point pos, Tile tileType  )
         {
             Point closestPoint = new Point();
@@ -237,7 +234,6 @@ namespace Landlord
                 }
             return closestPoint;
         }
-
         internal List<Point> GetAllDirtTiles()
         {
             List<Point> grassTiles = new List<Point>();
@@ -249,15 +245,12 @@ namespace Landlord
                 }
             return grassTiles;
         }
-
         internal Point GetMousePos(Point mousePos)
         {
             return new Point(Program.Window.CalculateMapStartPoint().X + (mousePos.X), Program.Window.CalculateMapStartPoint().Y + mousePos.Y);
         }
 
-        
         // PROPERTIES //
-
         public Block this[int x, int y] {
             get { return map[x * width + y]; }
             set { map[x * width + y] = value; }

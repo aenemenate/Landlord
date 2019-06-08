@@ -10,7 +10,14 @@ namespace Landlord
 
 
         // FUNCTIONS //
-
+        public static void CheckUpdates()
+        {
+            int lastPlantUpdate = Program.WorldMap.CompletedUpdateHour;
+            if (lastPlantUpdate <= Program.TimeHandler.CurrentTime.Hour - 4 ||
+                (lastPlantUpdate != 0 && Program.TimeHandler.CurrentTime.Hour == 0)) {
+                Program.WorldMap.UpdatePlants();
+            }
+        }
         public static void HandleRoguelikeScheduling()
         {
             int currentFloor = Program.Player.CurrentFloor;
@@ -24,9 +31,6 @@ namespace Landlord
             for (int i = 0; i < creatures.Count; i++) {
                 if (creatures[i] is Player) {
                     Program.Player.DetermineAction();
-                    for (i = 0; i < creatures.Count; i++)
-                        if (creatures[i] is Player)
-                            creatures[i] = Program.Player;
                     break;
                 }
                 creatures[i].DetermineAction();
@@ -37,8 +41,8 @@ namespace Landlord
             for (int i = 0; i < creatures.Count; i++)
                 if (creatures[i].NextActionTime.IsGreaterThan(Program.TimeHandler.CurrentTime))
                     Program.TimeHandler.CurrentTime = creatures[i].NextActionTime;
+            CheckUpdates();
         }
-
         public static void HandleBuildModeScheduling()
         {
             if (DateTime.Now - updateTimeSpan < lastUpdate)
@@ -62,17 +66,13 @@ namespace Landlord
             creatures.Sort();
             for (int i = 0; i < creatures.Count; i++)
                 if (creatures[i].NextActionTime.IsLessThan(Program.TimeHandler.CurrentTime) || creatures[i].NextActionTime.Equals(Program.TimeHandler.CurrentTime)) {
-                    if (creatures[i] is Player == false)
-                        creatures[i].DetermineAction();
-                    else {
+                    if (creatures[i] is Player)
                         BuildingManager.DeterminePlayerAction();
-                        for (i = 0; i < creatures.Count; i++)
-                            if (creatures[i] is Player)
-                                creatures[i] = Program.Player;
-                    }
+                    else
+                        creatures[i].DetermineAction();
                 }
+            CheckUpdates();
         }
-
         public static void HandleCraftingScheduling(int secondsToAdvance)
         {
             int counter = 0;
@@ -103,9 +103,9 @@ namespace Landlord
                                     creatures[i] = Program.Player;
                         }
                     }
+                CheckUpdates();
             }
         }
-
         private static void UpdateCreatureList(MapTile map)
         {
             map.Creatures = new List<Creature>();
@@ -122,7 +122,6 @@ namespace Landlord
                             map.Dungeon.Floors[i].Creatures.Add(creature);
                 }
         }
-
         public static void InitCreatureListScheduling(MapTile map)
         {
             UpdateCreatureList(map);
@@ -142,11 +141,8 @@ namespace Landlord
 
         }
 
-
         // PROPERTIES //
-
-        public static DateTime LastUpdate
-        {
+        public static DateTime LastUpdate {
             get { return lastUpdate; }
             set { lastUpdate = value; }
         }

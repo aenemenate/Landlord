@@ -28,11 +28,12 @@ namespace Landlord
         {
             Graphic = 34;
             Name = "grass";
-            ForeColor = Color.LawnGreen;
-            BackColor = new Color(87, 59, 12);
+            ForeColor = new Color(124, 252, 0);
+            BackColor = new Color(67, 48, 30);
             Harmful = false;
         }
     }
+    // *
 
     class DirtFloor : Tile
     {
@@ -42,7 +43,7 @@ namespace Landlord
             Graphic = 46;
             Name = "dirt";
             ForeColor = new Color(120, 72, 0);
-            BackColor = Color.Black;
+            BackColor = new Color(67, 48, 30);
             Harmful = false;
         }
     }

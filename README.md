@@ -1,3 +1,3 @@
-# Landlord-Master - IAS
+# Landlord v0.05-5
 
-This branch is focused on improving the game by adding AI. In order to do so, some other big things have to be done though. I will merge this branch once I consider it "build-worthy".
+Landlord is a roguelike game about purchasing plots of land and using them to make money. Currently the features are sparse, but I'm working slowly on adding everything that's necessary to the final vision.

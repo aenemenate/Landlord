@@ -59,7 +59,6 @@ namespace Landlord
             }
             patrolMaps = new PatrolMaps(100, 100, patrolPoints, this);
         }
-
         public bool PointWithinBounds(Point point)
         {
             if (point.X >= 0 && point.X < Width)
@@ -67,14 +66,12 @@ namespace Landlord
                     return true;
             return false;
         }
-
         public bool PointOnEdge(Point point)
         {
             if (point.X == 0 || point.X == Width - 1 || point.Y == 0 || point.Y == Height - 1)
                 return true;
             return false;
         }
-        
         public bool AdjacentBlockEmpty(Point point)
         {
             if (PointWithinBounds(new Point(point.X + 1, point.Y)) && !map[point.X + 1 * Program.WorldMap.TileWidth + point.Y].Solid)
@@ -87,7 +84,6 @@ namespace Landlord
                 return true;
             return false;
         }
-
         public Point GetDownStairPos()
         {
             for (int i = 0; i < width; i++)
@@ -98,55 +94,46 @@ namespace Landlord
         }
 
         // ACCESSORS //
-
         public Block this[int x, int y]
         {
             get { if (!new Point(x, y).Equals(new Point())) return map[x * Program.WorldMap.TileWidth + y]; else return null; }
             set { map[x * Program.WorldMap.TileWidth + y] = value; }
         }
-
         public Block[] Blocks
         {
             get { return map; }
             set { map = value; }
         }
-
         public Block[] MemoryMap
         {
             get { return memoryMap; }
             set { memoryMap = value; }
         }
-
         public Tile[] Floor
         {
             get { return floor; }
             set { floor = value; }
         }
-
         public List<Creature> Creatures
         {
             get { return creatures; }
             set { creatures = value; }
         }
-
         public PatrolMaps PatrolMaps
         {
             get { return patrolMaps; }
             set { patrolMaps = value; }
         }
-
         public List<Point> PatrolPoints
         {
             get { return patrolPoints; }
             set { patrolPoints = value; }
         }
-
         public int Width
         {
             get { return width; }
             set { width = value; }
         }
-
         public int Height
         {
             get { return height; }

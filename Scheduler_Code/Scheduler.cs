@@ -135,7 +135,7 @@ namespace Landlord
                 for (int i = 0; i < map.Dungeon.Floors.GetLength(0); i++) {
                     creatureListLength = map.Dungeon.Floors[i].Creatures.Count;
                     if (creatureListLength > 1)
-                        for (int j = 0; i < creatureListLength; j++)
+                        for (int j = 0; j < creatureListLength; j++)
                             map.Dungeon.Floors[i].Creatures[j].NextActionTime = new Time(Program.TimeHandler.CurrentTime);
                 }
 

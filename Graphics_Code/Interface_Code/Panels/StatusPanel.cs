@@ -82,7 +82,9 @@ namespace Landlord
                 Program.Window.Print(StartX + 1, Program.Window.Height - 2, "                  ", 18);
 
                 if (Program.CurrentState is Play && Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos) && mouseIsOnMap && blocks[mapPos.X * width + mapPos.Y].Explored) {
-                    if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty)
+                    if (blocks[mapPos.X * width + mapPos.Y] is Item i) // print item name
+                        Program.Window.Print(StartX + 1, Program.Window.Height - 3, i.Name, 18);
+                    else if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty) // print block name
                         Program.Window.Print(StartX + 1, Program.Window.Height - 3, blocks[mapPos.X * width + mapPos.Y].Name, 18);
                     else
                         Program.Window.Print(StartX + 1, Program.Window.Height - 3, tiles[mapPos.X * width + mapPos.Y].Name, 18);

@@ -14,6 +14,8 @@ DesireTypes:
 
     <weapon name="rat claw" type="Dagger" material="Bone" effect=""/>
 
+    <diet>Herbivore</diet>
+
     <base_desires>
       <desire_type name="KillPlayer" value="0"/>
       <desire_type name="Treasure" value="1"/>
@@ -47,7 +49,9 @@ DesireTypes:
     <color r="148" g="108" b="15"/>
     
     <weapon name="cave-spider mandible" type="Dagger" material="Bone" effect="weak_poison"/>
-    
+
+    <diet>Carnivore</diet>
+
     <base_desires>
       <desire_type name="KillPlayer" value="2"/>
       <desire_type name="Treasure" value="0"/>
@@ -81,7 +85,9 @@ DesireTypes:
     <color r="115" g="126" b="158"/>
 
     <weapon name="bat tooth" type="Dagger" material="Bone" effect="weak_lifesteal"/>
-    
+
+    <diet>Carnivore</diet>
+
     <base_desires>
       <desire_type name="KillPlayer" value="1"/>
       <desire_type name="Treasure" value="2"/>
@@ -113,6 +119,8 @@ DesireTypes:
     <color r="30" g="115" b="82"/>
 
     <weapon name="snake fang" type="Dagger" material="Bone" effect="weak_poison"/>
+
+    <diet>Carnivore</diet>
 
     <base_desires>
       <desire_type name="KillPlayer" value="3"/>
@@ -146,6 +154,8 @@ DesireTypes:
     <color r="89" g="152" b="47"/>
 
     <weapon name="grootslang tooth" type="Dagger" material="Bone" effect=""/>
+
+    <diet>Omnivore</diet>
 
     <base_desires>
       <desire_type name="KillPlayer" value="0"/>
@@ -182,6 +192,8 @@ DesireTypes:
 
     <weapon name="scorpion tail" type="Sword" material="Bone" effect=""/>
 
+    <diet>Carnivore</diet>
+
     <base_desires>
       <desire_type name="KillPlayer" value="4"/>
       <desire_type name="Treasure" value="1"/>
@@ -214,6 +226,8 @@ DesireTypes:
     <color r="157" g="21" b="44"/>
 
     <weapon name="soldier-ant mandible" type="Dagger" material="Bone" effect=""/>
+
+    <diet>Carnivore</diet>
 
     <base_desires>
       <desire_type name="KillPlayer" value="5"/>
@@ -248,6 +262,8 @@ DesireTypes:
 
     <weapon name="cave-lizard claw" type="Dagger" material="Bone" effect=""/>
 
+    <diet>Carnivore</diet>
+
     <base_desires>
       <desire_type name="KillPlayer" value="0"/>
       <desire_type name="Treasure" value="0"/>
@@ -277,7 +293,9 @@ DesireTypes:
   <monster name="kobold" ascii_char="107" faction="demons" sight_dist="8">
 
     <color r="65" g="146" b="75"/>
-    
+
+    <diet>Carnivore</diet>
+
     <base_desires>
       <desire_type name="KillPlayer" value="3"/>
       <desire_type name="Treasure" value="1"/>

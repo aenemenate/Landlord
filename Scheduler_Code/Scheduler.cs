@@ -53,16 +53,13 @@ namespace Landlord
                 Program.TimeHandler.CurrentTime.AddTime(1);
             else
                 return;
-
+            
             int currentFloor = Program.Player.CurrentFloor;
             Point worldIndex = Program.Player.WorldIndex;
 
             UpdateCreatureList(Program.WorldMap[worldIndex.X, worldIndex.Y]);
 
             List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
-            int width = Program.WorldMap.TileWidth;
-
-
             creatures.Sort();
             for (int i = 0; i < creatures.Count; i++)
                 if (creatures[i].NextActionTime.IsLessThan(Program.TimeHandler.CurrentTime) || creatures[i].NextActionTime.Equals(Program.TimeHandler.CurrentTime)) {
@@ -71,6 +68,12 @@ namespace Landlord
                     else
                         creatures[i].DetermineAction();
                 }
+
+            // set the current time to whichever creature has not yet moved
+            creatures.Sort();
+            for (int i = 0; i < creatures.Count; i++)
+                if (creatures[i].NextActionTime.IsGreaterThan(Program.TimeHandler.CurrentTime))
+                    Program.TimeHandler.CurrentTime = creatures[i].NextActionTime;
             CheckUpdates();
         }
         public static void HandleCraftingScheduling(int secondsToAdvance)

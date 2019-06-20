@@ -271,7 +271,7 @@ namespace Landlord
             double granularity = stats.Attributes[Attribute.Agility] / 300;
             int timeToAdd = (int)(maxNumOfSeconds * (1 - granularity));
             nextActionTime.AddTime(timeToAdd);
-            if (new Random().Next(0, 20) < 4)
+            if (new Random().Next(0, 100) < 2)
                 ChangeResource(Resource.HV, -(timeToAdd / 4));
         }
 

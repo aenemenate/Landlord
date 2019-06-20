@@ -96,8 +96,7 @@ namespace Landlord
         internal static bool DetermineIfEnoughMaterials()
         {
             List<RecipeComponent> recipe = GetConstructRecipe();
-            if (recipe == null)
-            {
+            if (recipe == null) {
                 return false;
             }
             
@@ -197,19 +196,20 @@ namespace Landlord
                 Program.Player.DetermineAction();
                 return;
             }
+
             DetermineNextConstruction();
             if (currentConstructionPos.Equals(new Point()) == false) // this means a pending construction has been found and it can definitely be built
             {
                 RecipeComponent nextComponent = RecipeComponent.Null;
 
-                if (currentConstructRecipe.Count > getIndex)
+                if (currentConstructRecipe.Count > getIndex) // if get has not gotten up to the count
                     nextComponent = currentConstructRecipe[getIndex];
                 else {
                     Program.Player.Path = null;
                     playerState = PlayerState.PlaceMaterials;
                 }
 
-                if (playerState == PlayerState.Idle)
+                if (playerState == PlayerState.Idle) 
                     playerState = PlayerState.GetMaterial;
 
                 if (playerState == PlayerState.GetMaterial)
@@ -257,6 +257,7 @@ namespace Landlord
         {
             Point nextPos = GetClosestMaterialPos(nextComponent, true); // returns new Point() if item is in player's inventory, returns null if the object can't be found
             
+            // if the material is not on the map or in your inventory
             if (nextPos == null)
             {
                 if (nextComponent == RecipeComponent.Log)
@@ -264,38 +265,34 @@ namespace Landlord
                 else if (nextComponent == RecipeComponent.Stone)
                 {
                 }
-                else
-                {
-                    if (currentCraftingRecipe == null && Program.Player.Inventory.Exists(i => i is RecipePouch))
-                    {
+                else {
+                    if (currentCraftingRecipe == null && Program.Player.Inventory.Exists(i => i is RecipePouch)) {
                         RecipePouch rp = (RecipePouch)Program.Player.Inventory.Find(i => i is RecipePouch);
                         foreach (CraftingRecipe r in rp.Recipes)
-                            if (r.CraftingTarget.Exists(e => e.ToComponent() == nextComponent))
-                            {
+                            if (r.CraftingTarget.Exists(e => e.ToComponent() == nextComponent)) {
                                 currentCraftingRecipe = r;
                                 break;
                             }
                     }
                     if (currentCraftingRecipe != null)
                     {
+                        if (!currentCraftingRecipe.CraftingTarget.Exists(e => e.ToComponent() == nextComponent))
+                            currentCraftingRecipe = null;
                         if (Program.Player.Inventory.Exists(i => i.ToComponent() == currentCraftingRecipe.Recipe[0]))
                             HandleCraftComponent();
                         else
                             HandleGetMaterial(currentCraftingRecipe.Recipe[0], true);
                     }
                 }
-
                 return;
-            }
+            } 
             
             bool hasItem = nextPos.Equals(new Point());
-
             if (hasItem == true)
                 nextPos = GetClosestMaterialPos(nextComponent, false);
 
 
-            if (nextPos == null)
-            {
+            if (nextPos == null) {
                 playerState = PlayerState.PlaceMaterials;
                 return;
             }
@@ -511,7 +508,6 @@ namespace Landlord
 
             Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, construction.Graphic, foreColor, backColor);
         }
-
 
 
         // PROPERTIES //

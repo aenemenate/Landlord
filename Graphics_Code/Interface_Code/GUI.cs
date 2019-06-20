@@ -873,9 +873,7 @@ namespace Landlord
                 {
                     bool determined = DetermineCurrentItem(highlighting);
                     if (determined)
-                    {
                         Program.AudioEngine.PlaySound( Program.AudioEngine.CachedSoundFX["grabBlueprint"] );
-                    }
                 }
                 else if (Global.MouseState.RightClicked && Program.CurrentState is Play)
                 {
@@ -1010,30 +1008,6 @@ namespace Landlord
 
                     // print the header
                     Program.Console.Print(Program.Window.Width - (StatusPanel.Width / 2 + header.Length / 2), 1, header, color);
-
-
-                    // DELETE BELOW //
-                    // print the right page turning button
-                    Program.Console.Print(Program.Window.Width - 2, blueprintsStartY, " ", color, bgColor);
-
-                    if (mousePos.Equals(new Point(Program.Window.Width - 2, blueprintsStartY)))
-                        bgColor = highlightedColor * 0.95F;
-
-                    if (blueprintsPages > 1 && blueprintsCurrentPage < blueprintsPages - 1)
-                        Program.Console.Print(Program.Window.Width - 2, blueprintsStartY, ">", color, bgColor);
-
-                    bgColor = panelColorDarker;
-
-                    // print the left page turning button
-                    Program.Console.Print( StartX + 1, blueprintsStartY, " ", color, bgColor);
-
-                    if (mousePos.Equals(new Point( StartX + 1, blueprintsStartY)))
-                        bgColor = highlightedColor * 0.95F;
-
-                    if (blueprintsPages > 1 && blueprintsCurrentPage > 0)
-                        Program.Console.Print( StartX + 1, blueprintsStartY, "<", color, bgColor);
-
-                    bgColor = panelColor;
                 }
 
                 void PrintTime()

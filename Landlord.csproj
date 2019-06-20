@@ -187,8 +187,6 @@
     <Compile Include="Program_Code\Game_States\Save_Load\Saving.cs" />
     <Compile Include="Program_Code\Game_States\Save_Load\Loading.cs" />
     <Compile Include="Program_Code\Game_States\Screens\MainMenu.cs" />
-    <Compile Include="Program_Code\Game_States\Side_Bar_Stuff\ViewAttributes.cs" />
-    <Compile Include="Program_Code\Game_States\Side_Bar_Stuff\ViewSkills.cs" />
     <Compile Include="Program_Code\Game_States\Side_Bar_Stuff\ViewEquipment.cs" />
     <Compile Include="Program_Code\Game_States\Menus\ViewLoot.cs" />
     <Compile Include="Program_Code\Game_States\Side_Bar_Stuff\ViewItem.cs" />

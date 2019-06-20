@@ -32,6 +32,16 @@ namespace Landlord
 
         // FUNCTIONS //
 
+        private static void ClearViewArea()
+        {
+            for (int i = width; i < width + 20; ++i) {
+                for (int j = 0; j < Program.Console.Height; j++) {
+                    GUI.Console.SetGlyph(i, j, ' ', new Color(color, 0.97F), new Color(color, 0.97F));
+                }
+
+            }
+        }
+
         public static bool HandleInventory()
         {
             Point mousePos = new Point( Global.MouseState.ScreenPosition.X / Global.FontDefault.Size.X,
@@ -107,10 +117,12 @@ namespace Landlord
                     currentlyViewedItem = null;
                 } else if (leftClicked)
                 {
-                    if (Program.CurrentState is Play || Program.CurrentState is ViewItem)
+                    if (Program.CurrentState is Play || Program.CurrentState is ViewItem || Program.CurrentState is ViewEquipment)
                     {
                         if (Program.CurrentState is ViewItem == false)
-                            Program.Animations.Add( new OpenItemView( color ) );
+                            Program.Animations.Add(new OpenItemView(color));
+                        else
+                            ClearViewArea();
                         Program.CurrentState = new ViewItem();
                     } else if (Program.CurrentState is ViewLoot viewLoot)
                     {
@@ -132,12 +144,13 @@ namespace Landlord
                 {
                     Program.Player.Unequip( currentlyViewedItem );
                     currentlyViewedItem = null;
-                } else if (leftClicked && ( Program.CurrentState is Play || Program.CurrentState is ViewEquipment ))
+                } else if (leftClicked && ( Program.CurrentState is Play || Program.CurrentState is ViewEquipment || Program.CurrentState is ViewItem))
                 {
                     if (Program.CurrentState is ViewEquipment == false)
                         Program.Animations.Add( new OpenItemView( color ) );
+                    else
+                        ClearViewArea();
                     Program.CurrentState = new ViewEquipment();
-
                 }
             }
 

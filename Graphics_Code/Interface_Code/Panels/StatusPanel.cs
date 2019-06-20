@@ -33,18 +33,8 @@ namespace Landlord
                     Program.CurrentState = new CharacterSheet(curCreature);
                 }
                 else {
-                    bool mouseOverSkillsButton = mousePos.X >= StartX + 1 && mousePos.X <= StartX + 8 && mousePos.Y == 11;
-                    bool mouseOverStatsButton = mousePos.Y == 11 && mousePos.X >= Program.Console.Width - 1 - "[STATS]".Length && mousePos.X <= Program.Console.Width - 2;
                     bool mouseOverTabs = mousePos.Y >= tabStartY - 3 && mousePos.Y <= tabStartY - 1;
-                    if (mouseOverSkillsButton)
-                    {
-                        Program.Animations.Add( new OpenStatusView( statusColor ) );
-                        Program.CurrentState = new ViewSkills();
-                    } else if (mouseOverStatsButton)
-                    {
-                        Program.Animations.Add( new OpenStatusView( statusColor ) );
-                        Program.CurrentState = new ViewAttributes();
-                    } else if (mouseOverTabs)
+                    if (mouseOverTabs)
                     {
                         if (mousePos.X > StartX && mousePos.X < StartX + 7)
                             selectedTab = 0;
@@ -241,6 +231,8 @@ namespace Landlord
                         curY++;
                         // for each stat, draw if appropriate
                         if (creature is Player) {
+                            DrawResourceBar(curY, creature.Stats.Resources[Resource.HV], creature.Stats.Resources[Resource.MaxHV], 20, new Color(45, 122, 51));
+                            curY++;
                             DrawResourceBar( curY, creature.Stats.Resources[Resource.MP], creature.Stats.Resources[Resource.MaxMP], 20, new Color( 45, 122, 116 ) );
                             curY++;
                             DrawResourceBar( curY, creature.Stats.Resources[Resource.SP], creature.Stats.Resources[Resource.MaxSP], 20, new Color( 122, 116, 45 ) );
@@ -278,98 +270,6 @@ namespace Landlord
             PrintTabs();
             PrintLookFunc();
         }
-
-        public static void HandleSkillsView()
-        {
-            Point mousePos = new Point( SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
-                 SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y );
-            int viewStartX = StartX - 20;
-
-            if (Program.Animations.Count == 0)
-                RenderSkillsView();
-
-            bool clickedOutsideOfItemWindow = ( mousePos.X > viewStartX + 20 || mousePos.X < viewStartX );
-
-            if (SadConsole.Global.MouseState.LeftClicked && ( clickedOutsideOfItemWindow ))
-                Program.Animations.Add( new CloseStatusView() );
-        }
-        public static void RenderSkillsView()
-        {
-            int viewStartX = StartX - 20;
-
-            Color bgColor = new Color( statusColor, 0.99F );
-            Color textColor = new Color( Color.AntiqueWhite, 0.99F );
-
-            // clear the page
-            for (int j = 0; j < Program.Window.Height; j++)
-                GUI.Console.Print( viewStartX, j, "                    ", textColor, bgColor );
-
-            List<string> sortedSkillList = Enum.GetNames( typeof( Skill ) ).ToList();
-            sortedSkillList.Sort();
-
-            int y = 0;
-            // print major/minor skills
-            for (int i = 0; i < sortedSkillList.Count; i++)
-            {
-                Color skillColor = textColor;
-                string skillName = sortedSkillList[i];
-                Enum.TryParse( skillName, out Skill currentSkill );
-
-                if (!( Program.Player.Class.MajorSkills.Contains( currentSkill ) || Program.Player.Class.MinorSkills.Contains( currentSkill ) ))
-                    continue;
-                if (Program.Player.Class.MajorSkills.Contains( currentSkill ))
-                    skillColor = new Color( Color.RoyalBlue, 0.99F );
-                else if (Program.Player.Class.MinorSkills.Contains( currentSkill ))
-                    skillColor = new Color( Color.LimeGreen, 0.99F );
-
-                Program.Window.Print( GUI.Console, viewStartX + 1, 1 + y * 2, skillName, 18, skillColor );
-                Program.Window.Print( GUI.Console, viewStartX + 17, 1 + y * 2, $"{Program.Player.Stats.Skills[currentSkill]}", 2, textColor );
-                y++;
-            }
-            // print misc. skills
-            for (int i = 0; i < sortedSkillList.Count; i++)
-            {
-                string skillName = sortedSkillList[i];
-                Enum.TryParse( skillName, out Skill currentSkill );
-                if (Program.Player.Class.MajorSkills.Contains( currentSkill ) || Program.Player.Class.MinorSkills.Contains( currentSkill ))
-                    continue;
-                Program.Window.Print( GUI.Console, viewStartX + 1, 1 + y * 2, skillName, 18, textColor );
-                Program.Window.Print( GUI.Console, viewStartX + 17, 1 + y * 2, $"{Program.Player.Stats.Skills[currentSkill]}", 2, textColor );
-                y++;
-            }
-        }
-
-
-        public static void HandleAttributesView()
-        {
-            Point mousePos = new Point( SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
-                 SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y );
-            int viewStartX = StartX - 20;
-
-            if (Program.Animations.Count == 0)
-                RenderAttributesView();
-
-            bool clickedOutsideOfItemWindow = ( mousePos.X > viewStartX + 20 || mousePos.X < viewStartX );
-
-            if (SadConsole.Global.MouseState.LeftClicked && ( clickedOutsideOfItemWindow ))
-                Program.Animations.Add( new CloseStatusView() );
-        }
-        public static void RenderAttributesView()
-        {
-            int viewStartX = StartX - 20;
-            Color textColor = new Color( Color.AntiqueWhite, 0.99F );
-
-            // clear the page
-            for (int j = 0; j < Program.Window.Height; j++)
-                GUI.Console.Print( viewStartX, j, "                    ", Color.White, new Color( statusColor, 0.99F ) );
-
-            for (int index = 0; index < Enum.GetNames( typeof( Attribute ) ).Length; index++)
-            {
-                Program.Window.Print( GUI.Console, viewStartX + 1, 1 + index * 2, Enum.GetName( typeof( Attribute ), index ), 18, textColor );
-                Program.Window.Print( GUI.Console, viewStartX + 17, 1 + index * 2, $"{Program.Player.Stats.Attributes[(Attribute)index]}", 2, textColor );
-            }
-        }
-
 
         // PROPERTIES //
 

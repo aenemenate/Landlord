@@ -236,8 +236,8 @@ namespace Landlord
 
                 // "Global" variables
 
-                int hectareWidth = Program.WorldMap.HeightMap.GetLength(0) / 5;
-                int hectareHeight = Program.WorldMap.HeightMap.GetLength(1) / 5;
+                int hectareWidth = Program.WorldMap.HeightMap.GetLength(0) / 4;
+                int hectareHeight = Program.WorldMap.HeightMap.GetLength(1) / 4;
 
                 List<Point> mountainSpots = new List<Point>();
                 List<Point> dungeonSpots = new List<Point>();
@@ -345,8 +345,8 @@ namespace Landlord
                         DetermineTile(ref mountainSpots, x, y);
 
                 // set dungeon entrances
-                for (int i = 0; i < 5; i++)
-                    for (int j = 0; j < 5; j++)
+                for (int i = 0; i < 4; i++)
+                    for (int j = 0; j < 4; j++)
                         if (Program.WorldMap[i, j].DungeonEntrance != null) {
                             Point dungEntrance = new Point(Program.WorldMap[i, j].DungeonEntrance.X + (i * hectareWidth), Program.WorldMap[i, j].DungeonEntrance.Y + (j * hectareHeight));
                             bool tileVisible = TileNextToExploredPlains(new Point(dungEntrance.X / granularity, dungEntrance.Y / granularity));
@@ -411,11 +411,10 @@ namespace Landlord
                 if (mousePos.X < startPoint.X)
                     mouseWorldIndex.X = -1;
                 if (mousePos.Y < startPoint.Y)
-                    mouseWorldIndex.X = -1;
+                    mouseWorldIndex.Y = -1;
 
                 int unexplored = 0, explored = 0;
-                for (int i = startPoint.X - 1; i <= startPoint.X + WorldView.GetLength(0); i++)
-                {
+                for (int i = startPoint.X - 1; i <= startPoint.X + WorldView.GetLength(0); i++) {
                     for (int j = startPoint.Y - 1; j <= startPoint.Y + WorldView.GetLength(1); j++)
                     {
                         Point worldPos = new Point(i - startPoint.X, j - startPoint.Y);
@@ -451,7 +450,7 @@ namespace Landlord
 
                 Program.Console.Print(startPoint.X + WorldView.GetLength( 0 ) / 2 - 4, startPoint.Y - 1, "TOWN MAP", Color.Gold, Color.Black);
 
-                if (mouseWorldIndex.X >= 0 && mouseWorldIndex.X < 5 && mouseWorldIndex.Y >= 0 && mouseWorldIndex.Y < 5)
+                if (mouseWorldIndex.X >= 0 && mouseWorldIndex.X < 4 && mouseWorldIndex.Y >= 0 && mouseWorldIndex.Y < 4)
                     DrawTooltip(explored, unexplored, mouseWorldIndex, mousePos);
                 else if (SadConsole.Global.MouseState.LeftClicked)
                 {

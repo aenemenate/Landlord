@@ -18,10 +18,10 @@ namespace Landlord
             if (creature.Position.X == 0 && creature.WorldIndex.X != 0) {
                 success = creature.MoveMaps(new Point(Program.WorldMap.TileWidth - 1, creature.Position.Y), -1, 0);
             }
-            else if (creature.Position.Y == Program.WorldMap.TileHeight - 1 && creature.WorldIndex.Y != 4) {
+            else if (creature.Position.Y == Program.WorldMap.TileHeight - 1 && creature.WorldIndex.Y != 3) {
                 success = creature.MoveMaps(new Point(creature.Position.X, 0), 0, +1);
             }
-            else if (creature.Position.X == Program.WorldMap.TileWidth - 1 && creature.WorldIndex.X != 4) {
+            else if (creature.Position.X == Program.WorldMap.TileWidth - 1 && creature.WorldIndex.X != 3) {
                 success = creature.MoveMaps(new Point(0, creature.Position.Y), +1, 0);
             }
             else if (creature.Position.Y == 0 && creature.WorldIndex.Y != 0) {

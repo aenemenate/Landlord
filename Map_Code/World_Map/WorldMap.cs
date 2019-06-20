@@ -51,7 +51,7 @@ namespace Landlord
 
         public void GenerateWorldMap()
         {
-            worldMap = new MapTile[5, 5];
+            worldMap = new MapTile[4, 4];
             creatureTypes = DataReader.GetOverworldCreatureList();
             plantTypes = DataReader.GetPlantList();
 
@@ -59,24 +59,24 @@ namespace Landlord
             SimplexNoise.Seed = this.seed;
             float scale = .005f;
 
-            heightMap = SimplexNoise.Calc2D(tileWidth * 5, tileHeight * 5, scale);
+            heightMap = SimplexNoise.Calc2D(tileWidth * 4, tileHeight * 4, scale);
             List<Point> potentialDungeons = new List<Point>();
             List<Point> dungeons = new List<Point>();
             bool dungeon = false;
 
             WorldMapGeneration.GenerateRivers( rng, tileWidth, tileHeight, heightMap );
 
-            for (int i = 0; i < 5; i++)
-                for (int j = 0; j < 5; j++)
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 4; j++)
                     potentialDungeons.Add(new Point(i, j));
-            for (int c = 0; c < 10; c++) {
+            for (int c = 0; c < 8; c++) {
                 int index = rng.Next(0, potentialDungeons.Count);
                 dungeons.Add(potentialDungeons[index]);
                 potentialDungeons.RemoveAt(index);
             }
 
-            for (int i = 0; i < 5; i++) {
-                for (int j = 0; j < 5; j++) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
                     foreach (Point point in dungeons)
                         if (point.X == i && point.Y == j)
                             dungeon = true;
@@ -94,8 +94,8 @@ namespace Landlord
         }
         public void UpdatePlants()
         {
-            for (int i = 0; i < 5; i++)
-                for (int j = 0; j < 5; j++)
+            for (int i = 0; i < worldMap.GetLength(0); i++)
+                for (int j = 0; j < worldMap.GetLength(1); j++)
                     worldMap[i, j].UpdatePlants(plantsInterval);
             plantsInterval++;
             completedUpdateHour = Program.TimeHandler.CurrentTime.Hour;

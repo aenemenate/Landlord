@@ -176,14 +176,14 @@ namespace Landlord
 
         public static void GenerateRivers( Random rng, int width, int height, float[,] heightMap )
         {
-            Point leftPoint = new Point( 1, rng.Next( 2, 497 ) );
-            Point rightPoint = new Point( 498, rng.Next( 2, 497 ) );
+            Point leftPoint = new Point( 1, rng.Next( 2, 397 ) );
+            Point rightPoint = new Point( 398, rng.Next( 2, 397 ) );
             while (leftPoint.Y % 100 == 0 || rightPoint.Y % 100 == 0 ||
                     heightMap[leftPoint.X, leftPoint.Y] >= StoneCutoff ||
                       heightMap[rightPoint.X, rightPoint.Y] >= StoneCutoff)
             {
-                leftPoint = new Point( 1, rng.Next( 2, 497 ) );
-                rightPoint = new Point( 498, rng.Next( 2, 497 ) );
+                leftPoint = new Point( 1, rng.Next( 2, 397) );
+                rightPoint = new Point( 398, rng.Next( 2, 397) );
             }
             Generate5x5River( leftPoint, rightPoint, heightMap );
 
@@ -217,8 +217,8 @@ namespace Landlord
             // find high and low spots
             List<Point> potentialRiverSprings = new List<Point>(); // prospects will have a height over 165 while having no higher neighbors
             List<Point> potentialRiverDeposits = new List<Point>();
-            for (int i = 1; i < 499; i++)
-                for (int j = 1; j < 499; j++)
+            for (int i = 1; i < 399; i++)
+                for (int j = 1; j < 399; j++)
                 {
                     if (CheckedCanSpawnRiverHere( i, j ) && rng.Next( 0, 100 ) > 40)
                         potentialRiverSprings.Add( new Point( i, j ) );
@@ -276,8 +276,8 @@ namespace Landlord
             List<Point> path = Riverfinder.FindPath( start, end, heightMap );
             foreach (Point point in path)
             {
-                for (int i = Math.Max( 0, point.X - 2 ); i <= Math.Min( 499, point.X + 2 ); i++)
-                    for (int j = Math.Max( 0, point.Y - 2 ); j <= Math.Min( 499, point.Y + 2 ); j++)
+                for (int i = Math.Max( 0, point.X - 2 ); i <= Math.Min( 399, point.X + 2 ); i++)
+                    for (int j = Math.Max( 0, point.Y - 2 ); j <= Math.Min( 399, point.Y + 2 ); j++)
                     {
                         if (heightMap[i, j] >= WaterCutoff)
                             heightMap[i, j] = WaterCutoff - 1;

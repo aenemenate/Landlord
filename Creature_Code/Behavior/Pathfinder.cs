@@ -131,7 +131,8 @@ namespace Landlord
 
     static class Riverfinder
     {
-        public static List<Point> FindPath( Point start, Point end, float[,] heightMap ) {
+        public static List<Point> FindPath( Point start, Point end, float[,] heightMap )
+        {
             List<Point> path       = new List<Point>();
             List<Node>  openList   = new List<Node>() { new Node( start, 0, 0 ) };
             List<Node>  closedList = new List<Node>();
@@ -145,8 +146,8 @@ namespace Landlord
                 Point tempIndex = new Point();
                 if (currentIndex.Equals( endIndex ))
                     return end;
-                for (int i = Math.Max(0, currentIndex.X - 1); i <= Math.Min( 4, currentIndex.X + 1 ); i++)
-                    for (int j = Math.Max( 0, currentIndex.Y - 1 ); j <= Math.Min( 4, currentIndex.Y + 1 ); j++) {
+                for (int i = Math.Max(0, currentIndex.X - 1); i <= Math.Min( 3, currentIndex.X + 1 ); i++)
+                    for (int j = Math.Max( 0, currentIndex.Y - 1 ); j <= Math.Min( 3, currentIndex.Y + 1 ); j++) {
                         if (new Point( i, j ).DistFrom( endIndex ) < tempIndex.DistFrom( endIndex ))
                             tempIndex = new Point( i, j );
                     }
@@ -253,13 +254,13 @@ namespace Landlord
         private static List<Node> GetAdjacentNodes( Node node, Point currentIndex )
         {
             List<Node> adjacentNodes = new List<Node>();
-            if (node.Pos.X - 1 >= Math.Max( 0, currentIndex.X * 100 - 1 ))
+            if (node.Pos.X - 1 >= Math.Max( 0, currentIndex.X * 100 - 100 ))
                 adjacentNodes.Add( new Node( new Point( node.Pos.X - 1, node.Pos.Y ), 0, 0, node ) );
-            if (node.Pos.X + 1 <= Math.Min( 499, currentIndex.X * 100 + 100 ))
+            if (node.Pos.X + 1 <= Math.Min( 399, currentIndex.X * 100 + 100 ))
                 adjacentNodes.Add( new Node( new Point( node.Pos.X + 1, node.Pos.Y ), 0, 0, node ) );
-            if (node.Pos.Y - 1 >= Math.Max( 0, currentIndex.Y * 100 - 1 ))
+            if (node.Pos.Y - 1 >= Math.Max( 0, currentIndex.Y * 100 - 100 ))
                 adjacentNodes.Add( new Node( new Point( node.Pos.X, node.Pos.Y - 1 ), 0, 0, node ) );
-            if (node.Pos.Y + 1 <= Math.Min( 499, currentIndex.Y * 100 + 100 ))
+            if (node.Pos.Y + 1 <= Math.Min( 399, currentIndex.Y * 100 + 100 ))
                 adjacentNodes.Add( new Node( new Point( node.Pos.X, node.Pos.Y + 1 ), 0, 0, node ) );
             return adjacentNodes;
         }

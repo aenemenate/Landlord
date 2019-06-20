@@ -178,7 +178,7 @@ namespace Landlord
         public static bool RenderInventory() // display handling
         {
             int heightOfItems = inventoryItems.Count;
-            int itemPortHeight = Program.Console.Height - 7 - ( displayingEquipment ? equipmentStartY : equipmentHeight );
+            int itemPortHeight = Program.Console.Height - 8 - ( displayingEquipment ? equipmentStartY : equipmentHeight );
             itemsPerPage = itemPortHeight / padding;
 
             Point mousePos = new Point( SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
@@ -398,6 +398,7 @@ namespace Landlord
                     equipmentTitle = (char)31 + equipmentTitle + (char)31;
                 else
                     equipmentTitle = (char)30 + equipmentTitle + (char)30;
+                GUI.Console.Print(0, equipmentStartY - 3, "                      ", textColor);
                 GUI.Console.Print( width / 2 - "  EQUIPMENT  ".Length / 2, equipmentStartY - 2, equipmentTitle, textColor );
 
                 if (!displayingEquipment)
@@ -562,27 +563,24 @@ namespace Landlord
             float fgAlpha = 0.99F;
             Color color = new Color( Color.AntiqueWhite, fgAlpha );
 
-            if (GUI.Console.GetGlyph( width + 1, 1 ) != name[0])
-            {
-                string pt2 = "";
+            string pt2 = "";
 
-                // split the name into two lines if necessary
-                Tuple<string, string> stringParts = Window.SplitNameIfGreaterThanLength( name, pt2, 18 );
-                name = stringParts.Item1;
-                pt2 = stringParts.Item2;
+            // split the name into two lines if necessary
+            Tuple<string, string> stringParts = Window.SplitNameIfGreaterThanLength(name, pt2, 18);
+            name = stringParts.Item1;
+            pt2 = stringParts.Item2;
 
 
-                // print the name at top
-                if (item.Identified)
-                    color = item.ReturnRarityColor();
+            // print the name at top
+            if (item.Identified)
+                color = item.ReturnRarityColor();
 
-                GUI.Console.Print( width + 1, 1, name, color );
-                GUI.Console.Print( width + 1, 2, pt2, color );
+            GUI.Console.Print(width + 1, 1, name, color);
+            GUI.Console.Print(width + 1, 2, pt2, color);
 
-                Tuple<byte, Color> comparisonArrow = GUI.GetItemArrow( item );
-                if (comparisonArrow.Item1 != 0)
-                    GUI.Console.SetGlyph( width + 1 + ( pt2 == "" ? name.Length : pt2.Length ), pt2 == "" ? 1 : 2, comparisonArrow.Item1, comparisonArrow.Item2 );
-            }
+            Tuple<byte, Color> comparisonArrow = GUI.GetItemArrow(item);
+            if (comparisonArrow.Item1 != 0)
+                GUI.Console.SetGlyph(width + 1 + (pt2 == "" ? name.Length : pt2.Length), pt2 == "" ? 1 : 2, comparisonArrow.Item1, comparisonArrow.Item2);
 
 
             //// print the splash art
@@ -594,23 +592,17 @@ namespace Landlord
 
 
             //print the item description
-            if (GUI.Console.GetGlyph( width + 1, 13 ) != item.Description[0])
-            {
-                color = new Color( 100, 116, 136, 0.99F );
-                Program.Window.Print( GUI.Console, width + 1, 13, item.Description, 18, color );
-            }
+            color = new Color(100, 116, 136, 0.99F);
+            Program.Window.Print(GUI.Console, width + 1, 13, item.Description, 18, color);
 
 
             // print the weight, volume, and quality
-            if (GUI.Console.GetGlyph( width + 1, 21 ) != 'W')
-            {
-                color = new Color( Color.LightGray, 0.99F );
-                string plural = ".";
-                if (item.Weight > 1)
-                    plural = "s.";
-                GUI.Console.Print( width + 1, 21, "Weight: " + Math.Round( item.Weight, 2 ) + " lb" + plural, color );
-                GUI.Console.Print( width + 1, 23, "Size: " + Math.Round( Convert.FromCubicFeetToCubicInches( item.Volume ), 2 ), color );
-            }
+            color = new Color(Color.LightGray, 0.99F);
+            string plural = ".";
+            if (item.Weight > 1)
+                plural = "s.";
+            GUI.Console.Print(width + 1, 21, "Weight: " + Math.Round(item.Weight, 2) + " lb" + plural, color);
+            GUI.Console.Print(width + 1, 23, "Size: " + Math.Round(Convert.FromCubicFeetToCubicInches(item.Volume), 2), color);
             GUI.Console.Print( width + 7, 24, "cubic inches", color );
 
             // print the actions

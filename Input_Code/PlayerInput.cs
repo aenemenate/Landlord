@@ -173,9 +173,15 @@ namespace Landlord
                     }
                     else if (Program.Player.PointNextToSelf(mapPos) && blocks[mapPos.X * width + mapPos.Y].Interactive) {
                         if (!(blocks[mapPos.X * width + mapPos.Y] is Item )) {
-                            if (blocks[mapPos.X * width + mapPos.Y] is Chest || blocks[mapPos.X * width + mapPos.Y] is CraftingTable)
+                            Block block = blocks[mapPos.X * width + mapPos.Y];
+                            if (block is Chest || block is CraftingTable || block is StoneMill)
                                 GUI.LootMenu.ClickedContainer = true;
-                            blocks[mapPos.X * width + mapPos.Y].Activate( Program.Player );
+                            if (block is Tree)
+                                Program.Player.ChopTree(mapPos);
+                            else if (block is Plant)
+                                Program.Player.HarvestPlant(mapPos);
+                            else
+                                block.Activate(Program.Player);
                         }
                         else
                             Program.Player.GetItem(mapPos);

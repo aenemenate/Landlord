@@ -33,8 +33,6 @@ namespace Landlord
 
         public override void Activate(Creature user)
         {
-            if (user.Body.MainHand != null && (user.Body.MainHand is Axe || user.Body.MainHand is Sword))
-                user.ChopTree(this);
         }
 
         public void DropLogs(Point pos, Creature user)

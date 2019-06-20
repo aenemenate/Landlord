@@ -114,6 +114,7 @@
     <Compile Include="Audio_Code\AudioPlaybackEngine.cs" />
     <Compile Include="Input_Code\PlayerInput.cs" />
     <Compile Include="Item_Code\Items\EmptyBottle.cs" />
+    <Compile Include="Item_Code\Materials\Resources\Food.cs" />
     <Compile Include="Item_Code\Materials\Resources\CoalOre.cs" />
     <Compile Include="Item_Code\Materials\Resources\StoneWheel.cs" />
     <Compile Include="Item_Code\Materials\Resources\WoodWheel.cs" />

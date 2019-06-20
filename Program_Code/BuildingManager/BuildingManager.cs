@@ -365,7 +365,7 @@ namespace Landlord
                     if (I is Axe || I is Sword)
                         Program.Player.Wield(i, true);
                 }
-                Program.Player.ChopTree((Tree)blocks[closestTree.X * width + closestTree.Y]);
+                Program.Player.ChopTree(closestTree);
             }
 
         }

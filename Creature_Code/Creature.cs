@@ -685,13 +685,14 @@ namespace Landlord
             ApplyActionCost( 20 );
         }
 
-        public void ChopTree( Tree tree )
+        public void ChopTree( Point pos )
         {
+            if (Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y] is Tree == false)
+                return;
             Item weapon = body.MainHand;
-            Random rng = new Random();
             if (weapon is Axe || weapon is Sword) {
-                Point pos = GetNearbyTreePos(tree);
-
+                Random rng = new Random();
+                Tree tree = (Tree)Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y];
                 tree.Thickness -= GetWepDmg(weapon);
                 ApplyActionCost(GetWeaponCost(weapon));
                 if (rng.Next(0, 100) < 10)
@@ -705,6 +706,26 @@ namespace Landlord
                     if (Program.CurrentState is Play play && play.PlayMode == PlayMode.BuildMode)
                         Wield(inventory.FindIndex(i => i is BlueprintPouch), true);
                 }
+            }
+        }
+
+        public void HarvestPlant( Point pos )
+        {
+            if (Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y] is Plant == false)
+                return;
+            Item weapon = body.MainHand;
+            if (weapon is Sword || weapon is Dagger)
+            {
+                Random rng = new Random();
+                Plant plant = (Plant)Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y];
+                ApplyActionCost(GetWeaponCost(weapon));
+                if (rng.Next(0, 100) < 10)
+                    LvlWeaponSkill(weapon, 5);
+                // deplete stamina
+                ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
+                Program.MsgConsole.WriteLine($"{Name} harvested the {plant.Name}.");
+
+                plant.DropHarvest(Program.WorldMap[worldIndex.X, worldIndex.Y], pos);
             }
         }
 

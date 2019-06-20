@@ -25,6 +25,8 @@ namespace Landlord
         Cloth,
         Silk,
         Bone,
+        Plant,
+        Meat,
         Water,
         Coal,
         Null
@@ -86,6 +88,8 @@ namespace Landlord
             densities.Add(Material.Cloth, 0.014);
             densities.Add(Material.Silk, 0.009);
             densities.Add(Material.Bone, 0.052);
+            densities.Add(Material.Meat, 0.028);
+            densities.Add(Material.Plant, 0.016);
             densities.Add(Material.Water, 0.036);
         }
 
@@ -94,6 +98,8 @@ namespace Landlord
             impactYields.Add(Material.Cloth, 1);
 
             impactYields.Add(Material.Glass, 1);
+            impactYields.Add(Material.Plant, 1);
+            impactYields.Add(Material.Meat, 2);
             impactYields.Add(Material.Leather, 2);
             impactYields.Add(Material.Bone, 8);
             impactYields.Add( Material.Coal, 8 );
@@ -113,6 +119,8 @@ namespace Landlord
 
             impactFractures.Add(Material.Glass, 12);
             impactFractures.Add(Material.Bone, 50);
+            impactFractures.Add(Material.Plant, 50);
+            impactFractures.Add(Material.Meat, 125);
             impactFractures.Add(Material.Leather, 125);
             impactFractures.Add( Material.Stone, 200 );
             impactFractures.Add( Material.Coal, 200 );
@@ -128,8 +136,10 @@ namespace Landlord
         private static void InitializeShearYields()
         {
             shearYields.Add(Material.Cloth, 1);
+            shearYields.Add(Material.Meat, 1);
+            shearYields.Add(Material.Plant, 1);
+            shearYields.Add(Material.Leather, 1);
 
-            shearYields.Add(Material.Leather, 5);
             shearYields.Add(Material.Bone, 10);
             shearYields.Add( Material.Coal, 13 );
             shearYields.Add(Material.Stone, 16);
@@ -147,6 +157,8 @@ namespace Landlord
         {
             shearFractures.Add(Material.Cloth, 1);
 
+            shearFractures.Add(Material.Meat, 15);
+            shearFractures.Add(Material.Plant, 15);
             shearFractures.Add(Material.Leather, 25);
             shearFractures.Add(Material.Bone, 75);
             shearFractures.Add( Material.Coal, 100 );
@@ -180,6 +192,8 @@ namespace Landlord
             materialNames.Add( Material.Cloth, "cloth" );
             materialNames.Add( Material.Silk, "silk" );
             materialNames.Add( Material.Bone, "bone" );
+            materialNames.Add(Material.Meat, "meat");
+            materialNames.Add(Material.Plant, "plant");
             materialNames.Add( Material.Water, "water" );
         }
 
@@ -202,6 +216,8 @@ namespace Landlord
             materialColors.Add( Material.Cloth, new Color( 253, 243, 234 ) );
             materialColors.Add( Material.Silk, new Color( 255, 248, 220 ) );
             materialColors.Add( Material.Bone, new Color( 227, 218, 201 ) );
+            materialColors.Add( Material.Plant, new Color(58, 95, 11) );
+            materialColors.Add( Material.Meat, new Color(209, 0, 0) );
             materialColors.Add( Material.Water, new Color( 64, 164, 223 ) );
         }
 

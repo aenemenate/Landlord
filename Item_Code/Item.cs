@@ -16,6 +16,7 @@ namespace Landlord
         BlueprintPouch,
         RecipePouch,
         Armor,
+        Food,
         Log, 
         Stone,
         Coal,
@@ -45,10 +46,10 @@ namespace Landlord
     
     abstract class Item : Block
     {
-        private ItemType itemType;        // VAR itemType denotes which category of items this item belongs to.
-        private Rarity rarity;           // VAR rarity indicates how valuable an item is
-        private double volume;          // VAR volume stores the size of an item. It's measured in cubic feet
-        private DamageType damageType; // VAR damageType determines what kind of damage this item deals in combat (bulky items deal blunt damage and sharp ones deal shear damage).
+        private ItemType itemType;            // VAR itemType denotes which category of items this item belongs to.
+        private Rarity rarity;              // VAR rarity indicates how valuable an item is
+        private double volume;            // VAR volume stores the size of an item. It's measured in cubic feet
+        private DamageType damageType;  // VAR damageType determines what kind of damage this item deals in combat (bulky items deal blunt damage and sharp ones deal shear damage).
         private bool hollow;          // VAR hollow is used to help determine the weight of an item. Hollow items wiegh less than solid ones, after all.
         private Block blockPlacedOn;
 

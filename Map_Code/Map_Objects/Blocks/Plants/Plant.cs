@@ -10,6 +10,7 @@ namespace Landlord
         private int seedRadius;
         private List<byte> growthStages;
         private string requirement;
+        private Food harvest;
         public Plant(byte graphic, string name, int growthInterval, int seedRadius, List<byte> growthStages, string requirement, Color? color = null, bool explored = false, bool solid = false, bool opaque = false, BlockType type = BlockType.Plant, bool interactive = true, bool enterable = false) : base(graphic, name, type, explored, solid, opaque, interactive, enterable)
         {
             if (color != null)
@@ -59,6 +60,14 @@ namespace Landlord
                 }
             }
             return false;
+        }
+        public void DropHarvest(MapTile map, Point position)
+        {
+            if (requirement != "") {
+                map[position.X, position.Y] = new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 166, .01, ForeColor);
+            }
+            else
+                map[position.X, position.Y] = new Air();
         }
         public override void Activate(Creature user)
         {

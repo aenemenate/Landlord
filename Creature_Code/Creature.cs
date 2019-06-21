@@ -795,6 +795,27 @@ namespace Landlord
             return canCarry;
         }
 
+        public void Eat(Item item)
+        {
+            if (item.ItemType == ItemType.Food)
+            {
+                int index = Inventory.IndexOf(item);
+
+                Food food = (Food)item;
+
+                food.Activate(this);
+
+                inventory.Remove(item);
+
+                ApplyActionCost(6);
+
+                if (this.Visible)
+                    Program.MsgConsole.WriteLine($"{Name} ate the {item.Name}");
+            }
+            else
+                Menus.DisplayIncorrectUsage("You can't eat that.");
+        }
+
         public void Drink(Item item)
         {
             if (item.ItemType == ItemType.Potion)

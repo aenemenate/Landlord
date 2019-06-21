@@ -538,27 +538,28 @@ namespace Landlord
             if (Program.Animations.Count == 0)
                 RenderItemView();
 
-            bool selectingDrop = mousePos.Y == 27 && mousePos.X >= width + 1 && mousePos.X <= width + 6;
-            bool selectingThrow = mousePos.Y == 27 && mousePos.X >= width + 12 && mousePos.X <= width + 18;
-            bool selectingDrink = mousePos.Y == 29 && mousePos.X >= width + 1 && mousePos.X <= width + 7;
+            bool selectingEat = mousePos.Y == 27 && mousePos.X >= width + 1 && mousePos.X <= width + 5;
+            bool selectingDrink = mousePos.Y == 27 && mousePos.X >= width + 12 && mousePos.X <= width + 18;
+            bool selectingDrop = mousePos.Y == 29 && mousePos.X >= width + 1 && mousePos.X <= width + 6;
             bool selectingEquip = mousePos.Y == 29 && mousePos.X >= width + 12 && mousePos.X <= width + 18;
 
             bool mouseOutsideOfItemWindow = ( mousePos.X > width || mousePos.X < width );
 
-            if (SadConsole.Global.MouseState.LeftClicked && ( mouseOutsideOfItemWindow || selectingDrop || selectingEquip || selectingDrink || selectingThrow ) && !highlighting)
+            if (SadConsole.Global.MouseState.LeftClicked && ( mouseOutsideOfItemWindow || selectingDrop || selectingEquip || selectingDrink || selectingEat ) && !highlighting)
             {
-                if (selectingDrop)
-                    Program.Player.Drop( currentlyViewedItem );
+                if (selectingEat)
+                    Program.Player.Eat(currentlyViewedItem);
                 else if (selectingDrink)
-                    Program.Player.Drink( currentlyViewedItem );
-                else if (selectingEquip)
-                {
-                    if (currentlyViewedItem is Armor == false)
-                    {
-                        Menus.SelectWieldingHand( currentlyViewedItem );
+                    Program.Player.Drink(currentlyViewedItem);
+                else if (selectingDrop)
+                    Program.Player.Drop(currentlyViewedItem);
+                else if (selectingEquip) {
+                    if (currentlyViewedItem is Armor == false) {
+                        Menus.SelectWieldingHand(currentlyViewedItem);
                         return;
-                    } else
-                        Program.Player.Equip( (Armor)currentlyViewedItem );
+                    }
+                    else
+                        Program.Player.Equip((Armor)currentlyViewedItem);
                 }
                 currentlyViewedItem = null;
                 if (Program.CurrentState is DialogWindow == false)
@@ -628,9 +629,9 @@ namespace Landlord
 
                 bool thisIsTheFirstIteration = x == width + 1;
                 if (thisIsTheFirstIteration)
-                    action = "[drop]";
+                    action = "[eat]";
                 else
-                    action = "[throw]";
+                    action = "[drink]";
 
                 if (Program.Window.MousePos.Y == 27 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
                     highlightingAction = true;
@@ -642,7 +643,7 @@ namespace Landlord
 
                 highlightingAction = false;
                 if (thisIsTheFirstIteration)
-                    action = "[drink]";
+                    action = "[drop]";
                 else
                     action = "[equip]";
                 if (Program.Window.MousePos.Y == 29 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)

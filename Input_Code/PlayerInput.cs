@@ -63,8 +63,15 @@ namespace Landlord
 
                 // if there's only one nearby object
                 if (!multipleNearbyObjs && !noNearbyObj) {
-                    if (!(blocks[interactiveSpots[0].X * width + interactiveSpots[0].Y] is Item))
-                        blocks[interactiveSpots[0].X * width + interactiveSpots[0].Y].Activate(Program.Player);
+                    if (!(blocks[interactiveSpots[0].X * width + interactiveSpots[0].Y] is Item)) {
+                        Block block = blocks[interactiveSpots[0].X * width + interactiveSpots[0].Y];
+                        if (block is Tree)
+                            Program.Player.ChopTree(interactiveSpots[0]);
+                        else if (block is Plant)
+                            Program.Player.HarvestPlant(interactiveSpots[0]);
+                        else
+                            block.Activate(Program.Player);
+                    }
                     else
                         Program.Player.GetItem(interactiveSpots[0]);
                 }
@@ -114,8 +121,15 @@ namespace Landlord
                     if (nextPos.Equals(Program.Player.Position) && Program.Player.CurrentBlock.Enterable == true)
                         Program.Player.CurrentBlock.Activate(Program.Player);
                     else if (interactiveSpots.Contains(nextPos)) {
-                        if (!(blocks[nextPos.X * width + nextPos.Y] is Item))
-                            blocks[nextPos.X * width + nextPos.Y].Activate(Program.Player);
+                        if (!(blocks[nextPos.X * width + nextPos.Y] is Item)) {
+                            Block block = blocks[nextPos.X * width + nextPos.Y];
+                            if (block is Tree)
+                                Program.Player.ChopTree(nextPos);
+                            else if (block is Plant)
+                                Program.Player.HarvestPlant(nextPos);
+                            else
+                                block.Activate(Program.Player);
+                        }
                         else
                             Program.Player.GetItem(nextPos);
                     }

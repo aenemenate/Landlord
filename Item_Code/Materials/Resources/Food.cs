@@ -26,6 +26,7 @@ namespace Landlord
 
         public override void Activate(Creature user)
         {
+            user.ChangeResource(Resource.HV, (int)(Weight * 50));
         }
 
         public override string DetermineDescription()

@@ -62,14 +62,14 @@ namespace Landlord
                 }
             }
             if (requirement.Contains("block_nearby;")) {
-                if (requirement.Contains("tree;")) {
-                    int dist = System.Convert.ToInt32(requirement.Replace("block_nearby;tree;", ""));
-                    if (map.GetClosestOfBlockTypeToPos(position, BlockType.Tree).DistFrom(position) < dist)
-                        return true;
-                }
                 if (requirement.Contains("wall;")) {
                     int dist = System.Convert.ToInt32(requirement.Replace("block_nearby;wall;", ""));
                     if (map.GetClosestOfBlockTypeToPos(position, BlockType.Wall).DistFrom(position) < dist)
+                        return true;
+                }
+                else if (requirement.Contains("tree;")) {
+                    int dist = System.Convert.ToInt32(requirement.Replace("block_nearby;tree;", ""));
+                    if (map.GetClosestOfBlockTypeToPos(position, BlockType.Tree).DistFrom(position) < dist)
                         return true;
                 }
             }
@@ -87,7 +87,7 @@ namespace Landlord
             if (IsEdible() == false)
                 map[position.X, position.Y] = new Air();
             else
-                map[position.X, position.Y] = new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 165, .013, ForeColor);
+                map[position.X, position.Y] = new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 15 * 16 + 10, .013, ForeColor);
         }
         public override void Activate(Creature user)
         {

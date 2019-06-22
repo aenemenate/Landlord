@@ -10,7 +10,7 @@
       <growth_stage graphic="34" />
     </growth_stages>
   </plant>
-  <plant name="dandelion" growth_interval="2" seed_radius="8">
+  <plant name="dandelion" growth_interval="3" seed_radius="8">
     <requirement req=""/>
     <fore_color r="240" g="225" b="48"/>
     <growth_stages>
@@ -50,9 +50,18 @@
       <growth_stage graphic="171" />
     </growth_stages>
   </plant>
-  <plant name="mushroom patch" growth_interval="1" seed_radius="8">
-    <requirement req="block_nearby" type="tree" dist="4"/>
-    <fore_color r="77" g="0" b="54"/>
+  <plant name="mushroom stalk" growth_interval="2" seed_radius="8">
+    <requirement req="block_nearby" type="tree" dist="2"/>
+    <fore_color r="255" g="218" b="185"/>
+    <growth_stages>
+      <growth_stage graphic="46" />
+      <growth_stage graphic="58" />
+      <growth_stage graphic="148" />
+    </growth_stages>
+  </plant>
+  <plant name="mushroom patch" growth_interval="2" seed_radius="8">
+    <requirement req="block_nearby" type="wall" dist="7"/>
+    <fore_color r="255" g="218" b="185"/>
     <growth_stages>
       <growth_stage graphic="46" />
       <growth_stage graphic="58" />

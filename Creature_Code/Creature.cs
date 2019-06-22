@@ -270,7 +270,7 @@ namespace Landlord
             if (new Random().Next(0, 100) <= 2)
                 ChangeResource(Resource.HV, -(timeToAdd / 4));
             if (Stats.Resources[Resource.HV] == 0 && new Random().Next(0, 100) <= 4)
-                ChangeResource(Resource.HV, -1);
+                ChangeResource(Resource.HP, -1);
         }
 
 
@@ -631,18 +631,21 @@ namespace Landlord
         // block interactions
         public void OpenDoor( Block door )
         {
-            if (door.Solid == true)
-            {
+            string verb;
+            if (door.Solid == true) {
                 door.Graphic = 45; // -
                 door.Solid = false;
                 door.Opaque = false;
+                verb = "opened";
             }
-            else
-            {
+            else {
                 door.Graphic = 43; // +
                 door.Solid = true;
                 door.Opaque = true;
+                verb = "closed";
             }
+            if (this.Visible)
+                Program.MsgConsole.WriteLine($"{Name} {verb} the {door.Name}");
             ApplyActionCost(4);
         }
 
@@ -661,7 +664,8 @@ namespace Landlord
                 if (pushTo[newPos.X, newPos.Y].Solid == false) {
                     pushTo[newPos.X, newPos.Y] = cart;
                     blocks[oldPos.X * width + oldPos.Y] = new Air();
-                    Program.MsgConsole.WriteLine( $"{Name} pushed the {cart.Name}" );
+                    if (this.Visible)
+                        Program.MsgConsole.WriteLine( $"{Name} pushed the {cart.Name}" );
                 }
                 else
                     Program.MsgConsole.WriteLine( $"{Name} tried to push the {cart.Name} into a {pushTo[newPos.X, newPos.Y].Name}" );

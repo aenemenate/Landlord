@@ -36,7 +36,7 @@ namespace Landlord
                     }
                 }
             GenerateTrees(map, rng, 7, 15);
-            GeneratePlants(map, rng, plantTypes, 100, 30);
+            GeneratePlants(map, rng, plantTypes, 120, 27);
             GenerateOre(map, rng, 0.025f);
             GenerateCreatures(map, rng, creatureTypes);
         }
@@ -107,9 +107,21 @@ namespace Landlord
                     if (p.Requirement.Equals(""))
                         map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
                     else if (p.Requirement.Contains("tile_nearby")) {
-                        if (p.Requirement.Contains("water")) {
+                        if (p.Requirement.Contains("water"))  {
                             int dist = System.Convert.ToInt32(p.Requirement.Replace("tile_nearby;water;", ""));
                             if (map.GetClosestOfTileTypeToPos(nextSpot, new Water()).DistFrom(nextSpot) < dist)
+                                map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
+                        }
+                    }
+                    else if (p.Requirement.Contains("block_nearby")) {
+                        if (p.Requirement.Contains("wall;")) {
+                            int dist = System.Convert.ToInt32(p.Requirement.Replace("block_nearby;wall;", ""));
+                            if (map.GetClosestOfBlockTypeToPos(nextSpot, BlockType.Wall).DistFrom(nextSpot) < dist)
+                                map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
+                        }
+                        else if (p.Requirement.Contains("tree;")) {
+                            int dist = System.Convert.ToInt32(p.Requirement.Replace("block_nearby;tree;", ""));
+                            if (map.GetClosestOfBlockTypeToPos(nextSpot, BlockType.Tree).DistFrom(nextSpot) < dist)
                                 map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
                         }
                     }

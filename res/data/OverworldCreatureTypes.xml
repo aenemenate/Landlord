@@ -7,21 +7,13 @@ DesireTypes:
   Flee,
   Eat
 -->
-<!--
-Wildlife factions:
-  prey
-  predators
-  scavengers
-  fish
--->
-
 <!-- 
 SpawnZones:
   Forests
   Plains
-  Plains near Mountains
-  Plains near Rivers
-  Rivers
+  Near Mountains
+  Near Rivers
+  In Rivers
 -->
 
 <creature_types>
@@ -56,7 +48,39 @@ SpawnZones:
     </class>
 
   </creature>
+  
+  <creature name="deer" ascii_char="114" faction="deer" sight_dist="5">
 
+    <color r="186" g="135" b="89"/>
+
+    <weapon name="deer paw" type="mace" material="Bone" effect=""/>
+
+    <diet>Herbivore</diet>
+
+    <base_desires>
+      <desire_type name="Treasure" value="0"/>
+      <desire_type name="Flee" value="4"/>
+      <desire_type name="Eat" value="2"/>
+    </base_desires>
+
+    <class>
+      <major_skills>
+        <skill>Unarmored</skill>
+        <skill>Sneak</skill>
+      </major_skills>
+      <minor_skills>
+        <skill>Restoration</skill>
+      </minor_skills>
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Intelligence</attribute>
+      </major_attributes>
+    </class>
+
+  </creature>
+  
+  <!--
   <creature name="wolf" ascii_char="119" faction="wolves" sight_dist="7">
 
     <color r="240" g="246" b="218"/>
@@ -206,5 +230,5 @@ SpawnZones:
     </class>
 
   </creature>
-
+  -->
 </creature_types>

@@ -19,9 +19,29 @@
       <growth_stage graphic="42" />
     </growth_stages>
   </plant>
+  <plant name="poppy" growth_interval="3" seed_radius="8">
+    <requirement req=""/>
+    <fore_color r="199" g="61" b="50"/>
+    <growth_stages>
+      <growth_stage graphic="46" />
+      <growth_stage graphic="39" />
+      <growth_stage graphic="42" />
+    </growth_stages>
+  </plant>
   <plant name="blackberry bush" growth_interval="3" seed_radius="4">
     <requirement req="tile_nearby" type="water" dist="8"/>
     <fore_color r="77" g="0" b="54"/>
+    <growth_stages>
+      <growth_stage graphic="46" />
+      <growth_stage graphic="44" />
+      <growth_stage graphic="39" />
+      <growth_stage graphic="37" />
+      <growth_stage graphic="171" />
+    </growth_stages>
+  </plant>
+  <plant name="raspberry bush" growth_interval="3" seed_radius="3">
+    <requirement req="tile_nearby" type="water" dist="12"/>
+    <fore_color r="227" g="11" b="93"/>
     <growth_stages>
       <growth_stage graphic="46" />
       <growth_stage graphic="44" />

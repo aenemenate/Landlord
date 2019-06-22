@@ -234,10 +234,6 @@ namespace Landlord
 
         
         // checks //
-        public bool PointNextToSelf(Point point)
-        {
-            return (Math.Abs(Position.X - point.X) <= 1 && Math.Abs(position.Y - point.Y) <= 1);
-        }
 
         public bool CanCarryItem(Item item)
         {
@@ -713,16 +709,19 @@ namespace Landlord
         {
             if (Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y] is Plant == false)
                 return;
+            Plant plant = (Plant)Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y];
             Item weapon = body.MainHand;
-            if (weapon is Sword || weapon is Dagger)
+            if (!plant.Name.Equals("grass") || this is Animal || (weapon is Dagger || weapon is Sword || weapon is Axe))
             {
                 Random rng = new Random();
-                Plant plant = (Plant)Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y];
-                ApplyActionCost(GetWeaponCost(weapon));
-                if (rng.Next(0, 100) < 10)
-                    LvlWeaponSkill(weapon, 5);
+                if (weapon != null) {
+                    ApplyActionCost(GetWeaponCost(weapon));
+                    if (rng.Next(0, 100) < 10)
+                        LvlWeaponSkill(weapon, 5);
+                    ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
+                }
+                ChangeResource(Resource.SP, -20);
                 // deplete stamina
-                ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
                 Program.MsgConsole.WriteLine($"{Name} harvested the {plant.Name}.");
 
                 plant.DropHarvest(Program.WorldMap[worldIndex.X, worldIndex.Y], pos);
@@ -795,12 +794,23 @@ namespace Landlord
             return canCarry;
         }
 
+        public void Eat()
+        {
+            Food food = (Food)inventory.Find(i => i.ItemType == ItemType.Food);
+            if (food == null)
+                return;
+
+            food.Activate(this);
+            inventory.Remove(food);
+            ApplyActionCost(6);
+            if (this.Visible)
+                Program.MsgConsole.WriteLine($"{Name} ate the {food.Name}");
+        }
+
         public void Eat(Item item)
         {
             if (item.ItemType == ItemType.Food)
             {
-                int index = Inventory.IndexOf(item);
-
                 Food food = (Food)item;
 
                 food.Activate(this);

@@ -38,7 +38,7 @@ namespace Landlord
             GenerateTrees(map, rng, 7, 15);
             GeneratePlants(map, rng, plantTypes, 100, 30);
             GenerateOre(map, rng, 0.025f);
-            //GenerateCreatures(map, rng, creatureTypes);
+            GenerateCreatures(map, rng, creatureTypes);
         }
         private static void GenerateTrees(MapTile map, Random rng, int numOfSeedTrees, int growthGenerations)
         {
@@ -145,6 +145,8 @@ namespace Landlord
                 Point nextPoint = availableSpots[rng.Next(0, availableSpots.Count)];
                 if (map[nextPoint.X, nextPoint.Y].Solid == false) {
                     Animal a = DataReader.GetAnimal(creatureTypes[rng.Next(0, creatureTypes.Count)], map.Blocks, nextPoint, map.WorldIndex, -1);
+                    int maxHV = a.Stats.Resources[Resource.HV];
+                    a.Stats.Resources[Resource.HV] = rng.Next(maxHV / 3, maxHV);
                     if (a != null) {
                         map[nextPoint.X, nextPoint.Y] = a;
                         placedCreatures++;

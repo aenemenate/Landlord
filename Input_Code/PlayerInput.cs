@@ -185,7 +185,7 @@ namespace Landlord
                         if (movedMaps == false && Program.Player.CurrentBlock.Enterable)
                             Program.Player.CurrentBlock.Activate(Program.Player);
                     }
-                    else if (Program.Player.PointNextToSelf(mapPos) && blocks[mapPos.X * width + mapPos.Y].Interactive) {
+                    else if (Program.Player.Position.NextToPoint(mapPos) && blocks[mapPos.X * width + mapPos.Y].Interactive) {
                         if (!(blocks[mapPos.X * width + mapPos.Y] is Item )) {
                             Block block = blocks[mapPos.X * width + mapPos.Y];
                             if (block is Chest || block is CraftingTable || block is StoneMill)

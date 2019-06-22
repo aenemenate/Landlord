@@ -91,7 +91,7 @@ namespace Landlord
             List<Point> itemSpots = GetNearbyBlocksOfType(BlockType.Item);
             List<Point> doorSpots = GetNearbyBlocksOfType(BlockType.Door);
 
-            bool nextToPlayer = PointNextToSelf(Program.Player.Position);
+            bool nextToPlayer = Position.NextToPoint(Program.Player.Position);
             bool wantToKillPlayer = CurrentDesires[DesireType.KillPlayer] > 0;
             if (nextToPlayer && wantToKillPlayer) {
                 LaunchAttack(Program.Player);

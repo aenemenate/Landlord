@@ -44,7 +44,7 @@ namespace Landlord
         {
             bool explored = map.Blocks[position.X * map.Width + position.Y].Explored;
             if (map.Floor[position.X * map.Width + position.Y] is DirtFloor)
-                if ((map.Blocks[position.X * map.Width + position.Y] is Plant && rng.Next(0, 20) < 5) || map.Blocks[position.X * map.Width + position.Y] is Air)
+                if ((map.Blocks[position.X * map.Width + position.Y] is Plant && rng.Next(0, 20) <= 5) || map.Blocks[position.X * map.Width + position.Y] is Air)
                     if (RequirementsMet(map, position))
                         map[position.X, position.Y] = new Plant(growthStages[0], Name, growthInterval, seedRadius, growthStages, requirement, ForeColor, explored);
         }
@@ -61,13 +61,20 @@ namespace Landlord
             }
             return false;
         }
+
+        internal bool IsEdible()
+        {
+            return requirement != "";
+        }
+
         public void DropHarvest(MapTile map, Point position)
         {
-            if (requirement != "") {
-                map[position.X, position.Y] = new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 166, .01, ForeColor);
-            }
-            else
+            int currentStage = growthStages.IndexOf(Graphic);
+            if (currentStage < growthStages.Count - 1) {
                 map[position.X, position.Y] = new Air();
+            }
+            else if (IsEdible())
+                map[position.X, position.Y] = new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 165, .013, ForeColor);
         }
         public override void Activate(Creature user)
         {

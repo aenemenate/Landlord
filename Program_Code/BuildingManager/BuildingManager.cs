@@ -299,7 +299,7 @@ namespace Landlord
 
             if (hasItem == false || Program.Player.CanCarryItem(nextComponent.ToItem()) == true)
             {
-                bool nextToItem = Program.Player.PointNextToSelf(nextPos);
+                bool nextToItem = Program.Player.Position.NextToPoint(nextPos);
                 int currentFloor = Program.Player.CurrentFloor;
                 Point worldIndex = Program.Player.WorldIndex;
                 Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
@@ -353,7 +353,7 @@ namespace Landlord
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
             Point closestTree = blocks.GetClosestOfBlockTypeToPos( Program.Player.Position, new Point(width, height), BlockType.Tree);
-            bool nextToTree = Program.Player.PointNextToSelf(closestTree);
+            bool nextToTree = Program.Player.Position.NextToPoint(closestTree);
             if (!nextToTree)
                 PathToPoint(closestTree);
             else {
@@ -375,7 +375,7 @@ namespace Landlord
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
             Point closestStoneWall = blocks.GetClosestOfBlockTypeToPos( Program.Player.Position, new Point(width, height), BlockType.Wall, Material.Stone );
-            bool nextToStoneWall = Program.Player.PointNextToSelf( closestStoneWall );
+            bool nextToStoneWall = Program.Player.Position.NextToPoint( closestStoneWall );
             if (!nextToStoneWall) {
                 PathToPoint( closestStoneWall );
             }
@@ -415,7 +415,7 @@ namespace Landlord
 
         private static void HandlePlaceMaterials( RecipeComponent nextComponent )
         {
-            bool nextToConstruction = Program.Player.PointNextToSelf(currentConstructionPos);
+            bool nextToConstruction = Program.Player.Position.NextToPoint(currentConstructionPos);
             
             if (nextToConstruction == false)
                 PathToPoint(currentConstructionPos);

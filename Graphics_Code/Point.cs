@@ -59,7 +59,10 @@ namespace Landlord
             int deltaY = p1.Y - p2.Y;
             return Math.Sqrt( deltaX * deltaX + deltaY * deltaY );
         }
-
+        public static bool NextToPoint(this Point p1, Point p2)
+        {
+            return (p1.DistFrom(p2) <= Math.Sqrt(2));
+        }
         public static List<Point> GetAdjacentWalkablePoints( this Point point, Point worldIndex, int currentFloor )
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
@@ -84,7 +87,7 @@ namespace Landlord
         public static Point GetFarthestNearbyWalkablePos(this Point p1, Point p2, Point worldIndex, int currentFloor)
         {
             List<Point> adjacentPoints = GetAdjacentWalkablePoints(p1, worldIndex, currentFloor);
-            Point pg = new Point();
+            Point pg = new Point(p2.X, p2.Y);
             foreach (Point px in adjacentPoints) {
                 if (px.DistFrom(p2) > pg.DistFrom(p2))
                     pg = px;

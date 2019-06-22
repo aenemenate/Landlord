@@ -93,7 +93,7 @@ namespace Landlord
             if (!Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos))
                 return;
 
-            if (Program.Player.PointNextToSelf(mapPos)) {
+            if (Program.Player.Position.NextToPoint(mapPos)) {
                 if (blocks[mapPos.X * width + mapPos.Y].Interactive && !mapPos.Equals(Program.Player.Position))
                     Program.Console.SetGlyph(mousePos.X, mousePos.Y, blocks[mapPos.X * width + mapPos.Y].Graphic,
                                 blocks[mapPos.X * width + mapPos.Y].ForeColor, interactiveColor);

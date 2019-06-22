@@ -101,7 +101,9 @@ namespace Landlord
                         RandomMove();
                     return;
                 case DietType.Herbivore:
-                    if (hunger <= (maxHunger / 3) * 2) {
+                    if (cFocus != null && cFocus.Alive)
+                        Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
+                    else if (hunger <= (maxHunger / 3) * 2) {
                         if (!FoodInInventory()) {
                             if (pFocus == new Point())
                                 RandomMove();
@@ -110,15 +112,16 @@ namespace Landlord
                                     HarvestPlant(pFocus);
                                 else if (Program.WorldMap[WorldIndex.X, WorldIndex.Y][pFocus.X, pFocus.Y] is Food)
                                     GetItem(pFocus);
+                                else
+                                    RandomMove();
                             }
-                            else
-                                Move(Position.GetClosestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
+                            else {
+                                Move(Position.GetClosestNearbyWalkablePos(pFocus, WorldIndex, CurrentFloor));
+                            }
                         }
                         else
                             Eat();
                     }
-                    else if (cFocus != null && cFocus.Alive)
-                        Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
                     else
                         RandomMove();
                     return;

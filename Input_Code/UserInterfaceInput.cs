@@ -1,5 +1,6 @@
 ﻿using static SadConsole.Global;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Landlord
 {
@@ -14,7 +15,7 @@ namespace Landlord
         private static Microsoft.Xna.Framework.Input.Keys openJournal = Microsoft.Xna.Framework.Input.Keys.J;
 
         private static Microsoft.Xna.Framework.Input.Keys esc = Microsoft.Xna.Framework.Input.Keys.Escape;
-        private static Microsoft.Xna.Framework.Input.Keys devFunc1 = Microsoft.Xna.Framework.Input.Keys.F1;
+        private static Microsoft.Xna.Framework.Input.Keys devFunc1 = Microsoft.Xna.Framework.Input.Keys.Z;
 
         public static void HandleKeys()
         {
@@ -43,14 +44,15 @@ namespace Landlord
                 else if (Program.CurrentState is CharacterSheet cs)
                     Program.CurrentState = new Play();
             }
-            else if (KeyboardState.IsKeyReleased(devFunc1)) {
-                Item item = Program.Player.Inventory.Find( i => i.Name == "recipe pouch" );
-                Program.Player.Inventory.Remove( item );
-                Program.Player.Inventory.Add( new RecipePouch(false) );
+            else if (KeyboardState.IsKeyReleased(devFunc1))
+            {
 
-                item = Program.Player.Inventory.Find( i => i.Name == "blueprint pouch" );
-                Program.Player.Inventory.Remove( item );
-                Program.Player.Inventory.Add( new BlueprintPouch( false ) );
+                int currentFloor = Program.Player.CurrentFloor;
+                Point worldIndex = Program.Player.WorldIndex;
+                List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
+                foreach (Creature c in creatures) {
+                    System.Console.WriteLine($"{c.Name}:   {c.Stats.Resources[Resource.HV]} / {c.Stats.Resources[Resource.MaxHV]} Hunger");
+                }
             }
             else if (KeyboardState.IsKeyReleased(esc)) {
                 if (Program.CurrentState is ViewWorld) {

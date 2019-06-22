@@ -591,6 +591,11 @@ namespace Landlord
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
+            bool destinationNotValid = ((to == Position || to == new Point()) || (to.X < 0 || to.X >= width) || (to.Y < 0 || to.Y >= height)) || blocks[to.X * width + to.Y].Solid;
+
+            if (destinationNotValid)
+                return;
+
             if (to.Equals(new Point()))
                 return;
             if (blocks[to.X * width + to.Y] is Door door && door.Solid == true && openDoors ) {
@@ -604,11 +609,6 @@ namespace Landlord
                 return;
             }
 
-            bool destinationNotValid = ((to == Position || to == new Point()) || (to.X < 0 || to.X >= width) || (to.Y < 0 || to.Y >= height)) || blocks[to.X * width + to.Y].Solid;
-
-            if (destinationNotValid)
-                return;
-            
             blocks[position.X * width + position.Y] = currentBlock;
             currentBlock = blocks[to.X * width + to.Y];
 

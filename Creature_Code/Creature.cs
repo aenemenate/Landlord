@@ -267,8 +267,10 @@ namespace Landlord
             double granularity = stats.Attributes[Attribute.Agility] / 300;
             int timeToAdd = (int)(maxNumOfSeconds * (1 - granularity));
             nextActionTime.AddTime(timeToAdd);
-            if (new Random().Next(0, 100) < 2)
+            if (new Random().Next(0, 100) <= 2)
                 ChangeResource(Resource.HV, -(timeToAdd / 4));
+            if (Stats.Resources[Resource.HV] == 0 && new Random().Next(0, 100) <= 4)
+                ChangeResource(Resource.HV, -1);
         }
 
 
@@ -580,6 +582,7 @@ namespace Landlord
             Solid = false;
             Opaque = false;
             alive = false;
+            inventory.Add(new Food(DietType.Carnivore, $"{Name} meat slab", 238, 0.25));
             if (this is Player == false) UnequipAll();
         }
         // movement

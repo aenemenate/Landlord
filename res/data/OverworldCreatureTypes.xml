@@ -49,7 +49,7 @@ SpawnZones:
 
   </creature>
   
-  <creature name="deer" ascii_char="114" faction="deer" sight_dist="5">
+  <creature name="deer" ascii_char="100" faction="deer" sight_dist="5">
 
     <color r="186" g="135" b="89"/>
 

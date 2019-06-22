@@ -714,8 +714,7 @@ namespace Landlord
                 return;
             Plant plant = (Plant)Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y];
             Item weapon = body.MainHand;
-            if (!plant.Name.Equals("grass") || this is Animal || (weapon is Dagger || weapon is Sword || weapon is Axe))
-            {
+            if (!plant.Name.Equals("grass") || this is Animal || (weapon is Dagger || weapon is Sword || weapon is Axe)) {
                 Random rng = new Random();
                 if (weapon != null) {
                     ApplyActionCost(GetWeaponCost(weapon));

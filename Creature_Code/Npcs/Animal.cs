@@ -105,18 +105,16 @@ namespace Landlord
                         Move(Position.GetFarthestNearbyWalkablePos(cFocus.Position, WorldIndex, CurrentFloor));
                     else if (hunger <= (maxHunger / 3) * 2) {
                         if (!FoodInInventory()) {
-                            if (pFocus == new Point())
+                            if (pFocus.Equals(new Point())) {
                                 RandomMove();
-                            else if (Position.NextToPoint(pFocus)) {
+                            }
+                            else if (!Position.NextToPoint(pFocus))
+                                Move(Position.GetClosestNearbyWalkablePos(pFocus, WorldIndex, CurrentFloor));
+                            else {
                                 if (Program.WorldMap[WorldIndex.X, WorldIndex.Y][pFocus.X, pFocus.Y] is Plant)
                                     HarvestPlant(pFocus);
                                 else if (Program.WorldMap[WorldIndex.X, WorldIndex.Y][pFocus.X, pFocus.Y] is Food)
                                     GetItem(pFocus);
-                                else
-                                    RandomMove();
-                            }
-                            else {
-                                Move(Position.GetClosestNearbyWalkablePos(pFocus, WorldIndex, CurrentFloor));
                             }
                         }
                         else

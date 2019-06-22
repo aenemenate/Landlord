@@ -173,6 +173,7 @@ namespace Landlord
             else
                 RenderBlock();
         }
+
         public void UpdatePlants(int plantsInterval)
         {
             Random rng = new Random();
@@ -230,6 +231,20 @@ namespace Landlord
                     if (floor[i * width + j].Name.Equals(tileType.Name) && dist < nearestDist) {
                         nearestDist = dist;
                         closestPoint = new Point( i, j );
+                    }
+                }
+            return closestPoint;
+        }
+        internal Point GetClosestOfBlockTypeToPos(Point pos, BlockType blockType)
+        {
+            Point closestPoint = new Point();
+            double nearestDist = 100000;
+            for (int i = 0; i < Width; i++)
+                for (int j = 0; j < Height; j++) {
+                    double dist = new Point(i, j).DistFrom(pos);
+                    if (map[i * width + j].Type == blockType && dist < nearestDist) {
+                        nearestDist = dist;
+                        closestPoint = new Point(i, j);
                     }
                 }
             return closestPoint;

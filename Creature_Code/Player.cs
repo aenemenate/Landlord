@@ -87,7 +87,6 @@ namespace Landlord
         {
 
             if (!Alive) {
-                Menus.DeathNotification();
                 return;
             }
 

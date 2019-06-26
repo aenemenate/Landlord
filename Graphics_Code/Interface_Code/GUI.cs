@@ -108,7 +108,7 @@ namespace Landlord
                         string invCounter = "x" + itemsCount[item.Name];
 
                         string pt2 = "";
-                        Tuple<string, string> nameParts = Window.SplitNameIfGreaterThanLength(name, pt2, Width - invCounter.Length);
+                        Tuple<string, string> nameParts = Window.SplitNameIfGreaterThanLength(name, pt2, Width - invCounter.Length - 1);
                         name = nameParts.Item1;
                         if (nameParts.Item2 != "")
                             pt2 = nameParts.Item2;

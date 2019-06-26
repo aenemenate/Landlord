@@ -577,6 +577,8 @@ namespace Landlord
         
         private void Die()
         {
+            if (!alive)
+                return;
             Graphic = 37;
             ForeColor = Color.Red;
             Solid = false;
@@ -584,30 +586,35 @@ namespace Landlord
             alive = false;
             inventory.Add(new Food(DietType.Carnivore, $"{Name} meat slab", 238, 0.25));
             if (this is Player == false) UnequipAll();
+            else Menus.DeathNotification();
         }
         // movement
-        public void Move( Point to, bool openDoors = false )
+        public void Move( Point to, bool openDoors = true )
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
-            bool destinationNotValid = ((to == Position || to == new Point()) || (to.X < 0 || to.X >= width) || (to.Y < 0 || to.Y >= height)) || blocks[to.X * width + to.Y].Solid;
+            bool destinationNotValid = ((to.Equals(position) || to.Equals(new Point()) || (to.X < 0 || to.X >= width) || (to.Y < 0 || to.Y >= height)));
 
             if (destinationNotValid)
                 return;
 
+            if (blocks[to.X * width + to.Y].Solid) {
+                if (blocks[to.X * width + to.Y] is Door door && openDoors) {
+                    OpenDoor(door);
+                    return;
+                }
+                else if (blocks[to.X * width + to.Y] is Cart cart) {
+                    int xDir = to.X - position.X, yDir = to.Y - position.Y;
+                    PushCart(to, new Point(to.X + xDir, to.Y + yDir));
+                    return;
+                }
+                else
+                    return;
+            }
+
             if (to.Equals(new Point()))
                 return;
-            if (blocks[to.X * width + to.Y] is Door door && door.Solid == true && openDoors ) {
-                OpenDoor( door );
-                return;
-            }
-            if ( blocks[to.X * width + to.Y] is Cart cart && cart.Solid == true )
-            {
-                int xDir = to.X - position.X, yDir = to.Y - position.Y;
-                PushCart( to, new Point(to.X + xDir, to.Y + yDir) );
-                return;
-            }
 
             blocks[position.X * width + position.Y] = currentBlock;
             currentBlock = blocks[to.X * width + to.Y];

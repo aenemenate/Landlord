@@ -71,7 +71,9 @@ namespace Landlord
                 SharpSerializer s = new SharpSerializer(true);
                 s.Serialize(this, ms);
                 ms.Position = 0;
-                return (Block)s.Deserialize(ms);
+                Block block = (Block)s.Deserialize(ms);
+                System.GC.Collect();
+                return block;
             }
         }
 

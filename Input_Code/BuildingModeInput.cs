@@ -18,14 +18,12 @@ namespace Landlord
 
         // FUNCTIONS //
 
-        public bool HandleKeys()
+        public void HandleKeys()
         {
             bool pausePressed = SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Space);
 
             if (pausePressed)
-                return true;
-
-            return false;
+                BuildingManager.Paused = !BuildingManager.Paused;
         }
 
         public void HandleMouse()
@@ -49,21 +47,17 @@ namespace Landlord
         {
             Blueprint bp = GUI.BuildPanel.CurrentlySelectedBlueprint;
 
-            if (bp == null || mouseIsOnMap == false)
+            if (bp == null || !mouseIsOnMap)
                 return;
             
             if (BuildingManager.ConstructionMap[mapPos.X, mapPos.Y] == null || BuildingManager.ConstructionMap[mapPos.X, mapPos.Y].Name != bp.BlueprintTarget.Name)
-            {
                 BuildingManager.ConstructionMap[mapPos.X, mapPos.Y] = new BuildingPlaceholder(bp.BlueprintTarget.Graphic, bp.BlueprintTarget.Name, bp.BlueprintTarget);
-                BuildingManager.DetermineNextConstruction();
-            }
         }
 
         private void HandleRightButtonDown(Point mapPos, bool mouseIsOnMap)
         {
-            if (mouseIsOnMap == true)
-            {
-                BuildingManager.CurrentConstructionPos = new Point();
+            if (mouseIsOnMap == true) {
+                BuildingManager.NextConstruction = new Point();
                 BuildingManager.ConstructionMap[mapPos.X, mapPos.Y] = null;
             }
         }

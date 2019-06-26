@@ -19,7 +19,7 @@ namespace Landlord
 
         private static BuildingPlaceholder[,] constructionMap = new BuildingPlaceholder[Program.WorldMap.TileWidth, Program.WorldMap.TileHeight];
 
-        private static Point currentConstructionPos = new Point();
+        private static Point nextConstruction = new Point();
         private static List<RecipeComponent> currentConstructRecipe = null;
         private static int getIndex = 0;
 
@@ -31,32 +31,26 @@ namespace Landlord
         // INPUT
         public static void HandleInput()
         {
-            bool pausePressed = InputHandler.HandleKeys();
-            if (pausePressed)
-                paused = !paused;
-
-            InputHandler.HandleMouse();
+            inputHandler.HandleKeys();
+            inputHandler.HandleMouse();
         }
 
 
         // CONSTRUCTION HANDLING
 
-        internal static void DetermineNextConstruction()
+        private static void DetermineNextConstruction()
         {
-            if (currentConstructionPos.Equals(new Point() ))
-            {
+            if (nextConstruction.Equals(new Point() )) {
                 for (int i = 0; i < constructionMap.GetLength(0); i++)
-                    for (int j = 0; j < constructionMap.GetLength(1); j++)
-                    {
-                        if (constructionMap[i, j] != null)
-                        {
-                            currentConstructionPos = new Point(i, j);
+                    for (int j = 0; j < constructionMap.GetLength(1); j++) {
+                        if (constructionMap[i, j] != null) {
+                            nextConstruction = new Point(i, j);
                             bool enoughMaterials = DetermineIfEnoughMaterials();
                             if (!enoughMaterials)
                             {
                                 Menus.DisplayIncorrectUsage("You don't have the required materials!");
                                 RemoveAllConstructionsWithName(constructionMap[i, j].Name);
-                                currentConstructionPos = new Point();
+                                nextConstruction = new Point();
                                 DetermineNextConstruction();
                             }
                             else
@@ -65,26 +59,22 @@ namespace Landlord
                     }
             }
         }
-
-        internal static void RemoveAllConstructionsWithName(string name)
+        private static void RemoveAllConstructionsWithName(string name)
         {
             for (int i = 0; i < constructionMap.GetLength(0); i++)
-                for (int j = 0; j < constructionMap.GetLength(1); j++)
-                {
+                for (int j = 0; j < constructionMap.GetLength(1); j++) {
                     if (constructionMap[i, j] != null && constructionMap[i, j].Name == name)
                         constructionMap[i, j] = null;
                 }
         }
-
-        internal static List<RecipeComponent> GetConstructRecipe()
+        private static List<RecipeComponent> GetConstructRecipe()
         {
             List<RecipeComponent> recipe = new List<RecipeComponent>();
-            BuildingPlaceholder currentConstruct = constructionMap[currentConstructionPos.X, currentConstructionPos.Y];
+            BuildingPlaceholder currentConstruct = constructionMap[nextConstruction.X, nextConstruction.Y];
 
             // populate recipe list
             foreach (Blueprint bp in ((BlueprintPouch)Program.Player.Body.MainHand).Blueprints)
-                if (bp.BlueprintTarget.Name == currentConstruct.Name)
-                {
+                if (bp.BlueprintTarget.Name == currentConstruct.Name) {
                     foreach (RecipeComponent rc in bp.Recipe)
                         recipe.Add(rc);
                     break;
@@ -92,8 +82,7 @@ namespace Landlord
 
             return recipe;
         }
-
-        internal static bool DetermineIfEnoughMaterials()
+        private static bool DetermineIfEnoughMaterials()
         {
             List<RecipeComponent> recipe = GetConstructRecipe();
             if (recipe == null) {
@@ -101,8 +90,7 @@ namespace Landlord
             }
             
             // check player inventory
-            foreach (Item item in Program.Player.Inventory)
-            {
+            foreach (Item item in Program.Player.Inventory) {
                 RecipeComponent itemC = item.ToComponent();
                 if (recipe.Contains(itemC))
                     recipe.Remove(itemC);
@@ -150,8 +138,7 @@ namespace Landlord
 
             return false;
         }
-
-        internal static Point GetClosestMaterialPos(RecipeComponent recipe, bool checkInventory)
+        private static Point GetClosestMaterialPos(RecipeComponent recipe, bool checkInventory)
         {
             int currentFloor = Program.Player.CurrentFloor;
             Point worldIndex = Program.Player.WorldIndex;
@@ -190,7 +177,7 @@ namespace Landlord
 
         // LOGIC FOR DETERMINING PLAYER ACTION //
 
-        internal static void DeterminePlayerAction( bool calledFromCraftingScheduler = false )
+        internal static void DeterminePlayerAction(bool calledFromCraftingScheduler = false)
         {
             if (calledFromCraftingScheduler) {
                 Program.Player.DetermineAction();
@@ -198,7 +185,7 @@ namespace Landlord
             }
 
             DetermineNextConstruction();
-            if (currentConstructionPos.Equals(new Point()) == false) // this means a pending construction has been found and it can definitely be built
+            if (nextConstruction.Equals(new Point()) == false) // this means a pending construction has been found and it can definitely be built
             {
                 RecipeComponent nextComponent = RecipeComponent.Null;
 
@@ -224,7 +211,6 @@ namespace Landlord
 
             Program.Player.DetermineAction();
         }
-
         private static void PathToPoint(Point pos)
         {
             int currentFloor = Program.Player.CurrentFloor;
@@ -242,9 +228,9 @@ namespace Landlord
                     Program.Player.SetPath( nextPos );
                 else
                 {
-                    Program.MsgConsole.WriteLine( $"The {constructionMap[currentConstructionPos.X, currentConstructionPos.Y]} couldn't be built because a path couldn't be found." );
-                    constructionMap[currentConstructionPos.X, currentConstructionPos.Y] = null;
-                    currentConstructionPos = new Point();
+                    Program.MsgConsole.WriteLine( $"The {constructionMap[nextConstruction.X, nextConstruction.Y]} couldn't be built because a path couldn't be found." );
+                    constructionMap[nextConstruction.X, nextConstruction.Y] = null;
+                    nextConstruction = new Point();
 
                     DetermineNextConstruction();
                     playerState = PlayerState.Idle;
@@ -252,7 +238,6 @@ namespace Landlord
                 }
             }
         }
-
         private static void HandleGetMaterial(RecipeComponent nextComponent, bool forCrafting = false)
         {
             Point nextPos = GetClosestMaterialPos(nextComponent, true); // returns new Point() if item is in player's inventory, returns null if the object can't be found
@@ -287,8 +272,7 @@ namespace Landlord
                 return;
             } 
             
-            bool hasItem = nextPos.Equals(new Point());
-            if (hasItem == true)
+            if (nextPos.Equals(new Point()))
                 nextPos = GetClosestMaterialPos(nextComponent, false);
 
 
@@ -297,7 +281,7 @@ namespace Landlord
                 return;
             }
 
-            if (hasItem == false || Program.Player.CanCarryItem(nextComponent.ToItem()) == true)
+            if (!nextPos.Equals(new Point()) || Program.Player.CanCarryItem(nextComponent.ToItem()) == true)
             {
                 bool nextToItem = Program.Player.Position.NextToPoint(nextPos);
                 int currentFloor = Program.Player.CurrentFloor;
@@ -344,7 +328,6 @@ namespace Landlord
                 playerState = PlayerState.PlaceMaterials;
             }
         }
-
         private static void HandleChopTree()
         {
             int currentFloor = Program.Player.CurrentFloor;
@@ -366,7 +349,6 @@ namespace Landlord
             }
 
         }
-
         private static void HandleMineRock()
         {
             int currentFloor = Program.Player.CurrentFloor;
@@ -393,7 +375,6 @@ namespace Landlord
                 }
             }
         }
-
         private static void HandleCraftComponent()
         {
             CraftingManager.CraftingRecipe = currentCraftingRecipe;
@@ -412,20 +393,19 @@ namespace Landlord
             currentCraftingRecipe = null;
             playerState = PlayerState.GetMaterial;
         }
-
-        private static void HandlePlaceMaterials( RecipeComponent nextComponent )
+        private static void HandlePlaceMaterials(RecipeComponent nextComponent)
         {
-            bool nextToConstruction = Program.Player.Position.NextToPoint(currentConstructionPos);
+            bool nextToConstruction = Program.Player.Position.NextToPoint(nextConstruction);
             
             if (nextToConstruction == false)
-                PathToPoint(currentConstructionPos);
+                PathToPoint(nextConstruction);
             else {
                 for (int i = Program.Player.Inventory.Count - 1; i >= 0 ; i--) {
                     Item item = Program.Player.Inventory[i];
                     RecipeComponent itemC = item.ToComponent();
                     if (currentConstructRecipe.Contains(itemC)) {
                         Program.Player.Inventory.Remove(item);
-                        constructionMap[currentConstructionPos.X, currentConstructionPos.Y].HeldComponents.Add(nextComponent.ToItem());
+                        constructionMap[nextConstruction.X, nextConstruction.Y].HeldComponents.Add(nextComponent.ToItem());
                         currentConstructRecipe.Remove(itemC);
                     }
                 }
@@ -437,13 +417,12 @@ namespace Landlord
                     FinishConstruction();
             }
         }
-
-        private static bool DropUnnecessaryItems( RecipeComponent nextComponent )
+        private static bool DropUnnecessaryItems(RecipeComponent nextComponent)
         {
             bool droppedItems = false;
             for (int i = Program.Player.Inventory.Count - 1; i >= 0; i--) {
                 Item I = Program.Player.Inventory[i];
-                if (I is MeleeWeapon == false && I is RecipePouch == false && I is Potion == false && I is BlueprintPouch == false && !I.ToComponent().Equals(nextComponent)) {
+                if (I is MeleeWeapon == false && I is RecipePouch == false && I is Potion == false && I is Food == false && I is BlueprintPouch == false && !I.ToComponent().Equals(nextComponent)) {
                     List<Point> nearbyChests = Program.Player.GetNearbyBlocksOfType( BlockType.Chest );
                     if (nearbyChests.Count > 0) {
                         int currentFloor = Program.Player.CurrentFloor;
@@ -461,7 +440,6 @@ namespace Landlord
             }
             return droppedItems;
         }
-
         private static void FinishConstruction()
         {
             int currentFloor = Program.Player.CurrentFloor;
@@ -469,14 +447,14 @@ namespace Landlord
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth;
 
-            Block building = constructionMap[currentConstructionPos.X, currentConstructionPos.Y].BuildTarget;
-            if (!currentConstructionPos.Equals(Program.Player.Position))
-                blocks[currentConstructionPos.X * width + currentConstructionPos.Y] = building.Copy();
+            Block building = constructionMap[nextConstruction.X, nextConstruction.Y].BuildTarget;
+            if (!nextConstruction.Equals(Program.Player.Position))
+                blocks[nextConstruction.X * width + nextConstruction.Y] = building.Copy();
             else
                 Program.Player.CurrentBlock = building.Copy();
 
-            constructionMap[currentConstructionPos.X, currentConstructionPos.Y] = null;
-            currentConstructionPos = new Point();
+            constructionMap[nextConstruction.X, nextConstruction.Y] = null;
+            nextConstruction = new Point();
 
             DetermineNextConstruction();
             playerState = PlayerState.Idle;
@@ -485,7 +463,6 @@ namespace Landlord
 
 
         // RENDERING
-
         public static void RenderConstructionMap()
         {
             Point startPoint = Program.Window.CalculateMapStartPoint();
@@ -493,7 +470,6 @@ namespace Landlord
                 for (int j = startPoint.Y; j - startPoint.Y < Program.Window.Height; j++)
                     DrawCell(i, j);
         }
-        
         public static void DrawCell(int x, int y)
         {
             Point startPoint = Program.Window.CalculateMapStartPoint();
@@ -509,14 +485,7 @@ namespace Landlord
             Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, construction.Graphic, foreColor, backColor);
         }
 
-
         // PROPERTIES //
-
-        public static BuildingModeInput InputHandler
-        {
-            get { return inputHandler; }
-            set { inputHandler = value; }
-        }
         public static bool Paused
         {
             get { return paused; }
@@ -527,10 +496,10 @@ namespace Landlord
             get { return constructionMap; }
             set { constructionMap = value; }
         }
-        public static Point CurrentConstructionPos
+        public static Point NextConstruction
         {
-            get { return currentConstructionPos; }
-            set { currentConstructionPos = value; }
+            get { return nextConstruction; }
+            set { nextConstruction = value; }
         }
     }
 }

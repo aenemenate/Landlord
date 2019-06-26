@@ -597,6 +597,7 @@ namespace Landlord
                 Program.FinishedAnims.Add( Program.Animations[0] );
                 Program.CurrentState = new MainMenu();
                 loading = false;
+                System.GC.Collect();
             }
             static public void LoadScreen()
             {
@@ -623,6 +624,7 @@ namespace Landlord
                 Program.CurrentState = new Play();
                 ReadWrite.SetObjHoldersToProgram();
                 loading = false;
+                System.GC.Collect();
             }
             static public void DisplayTipMenu()
             {
@@ -777,6 +779,7 @@ namespace Landlord
                 Program.MsgConsole.Console.Clear();
                 SadConsole.Global.CurrentScreen.Children.Remove(Program.ControlsConsole);
                 Program.CurrentState = new MainMenu();
+                ReadWrite.DeleteSave();
             };
 
             Program.ControlsConsole.Add(label);

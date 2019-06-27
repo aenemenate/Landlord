@@ -71,7 +71,7 @@ namespace Landlord
         
         private void RenderRoguelikeGUI()
         {
-            if (SadConsole.Global.MouseState.RightButtonDown)
+            if (SadConsole.Global.MouseState.RightButtonDown || Program.Player.InputModule.AimingMode)
                 RenderPath();
             RenderInteractivity();
         }
@@ -112,30 +112,46 @@ namespace Landlord
             Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
-            List<Point> guiPath = null;
             Point startPoint = Program.Window.CalculateMapStartPoint();
-            guiPath = GUI.CalculatePath(startPoint, Program.Window.Width);
-            if (guiPath != null)
+            if (Program.Player.InputModule.AimingMode == false)
             {
-                foreach (Point point in guiPath)
-                {
-                    bool pointOutsideMapViewer = point.Y - startPoint.Y < 0
-                        || point.Y - startPoint.Y >= Program.Window.Height
-                        || point.X - startPoint.X < 0
-                        || point.X - startPoint.X >= Program.Window.Width - StatusPanel.Width;
+                List<Point> guiPath = GUI.CalculatePath(startPoint, Program.Window.Width);
+                if (guiPath != null) {
+                    foreach (Point point in guiPath) {
+                        bool pointOutsideMapViewer = point.Y - startPoint.Y < 0
+                             || point.Y - startPoint.Y >= Program.Window.Height
+                                || point.X - startPoint.X < 0
+                                   || point.X - startPoint.X >= Program.Window.Width - StatusPanel.Width;
+                        if (pointOutsideMapViewer)
+                            continue;
 
-                    if (pointOutsideMapViewer)
-                        continue;
+                        if (blocks[point.X * width + point.Y] is Air) {
+                            Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, tiles[point.X * width + point.Y].Graphic,
+                                tiles[point.X * width + point.Y].ForeColor, Color.RoyalBlue);
+                            continue;
+                        }
 
-                    if (blocks[point.X * width + point.Y] is Air) {
-                        Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, tiles[point.X * width + point.Y].Graphic,
-                            tiles[point.X * width + point.Y].ForeColor, Color.RoyalBlue);
-                        continue;
+                        Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, blocks[point.X * width + point.Y].Graphic,
+                                blocks[point.X * width + point.Y].ForeColor, Color.RoyalBlue);
                     }
-
-                    Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, blocks[point.X * width + point.Y].Graphic,
-                            blocks[point.X * width + point.Y].ForeColor, Color.CornflowerBlue);
                 }
+            }
+            else
+            {
+                Point mousePos = new Point(SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
+                       SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y);
+                Point mapPos = new Point(startPoint.X + (mousePos.X), startPoint.Y + mousePos.Y);
+                bool Plot(int x, int y)
+                {
+                    if (Program.Player.Position.Equals(new Point(x, y)))
+                        return true;
+                    if (blocks[x * width + y].Solid)
+                        return false;
+                    Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, new Point(x, y).Equals(mapPos) ? 88 : blocks[x * width + y].Graphic,
+                            new Point(x, y).Equals(mapPos) ? Color.DarkRed * 0.98F : blocks[x * width + y].ForeColor, Color.Red);
+                    return true;
+                }
+                Bresenhams.Line(Program.Player.Position.X, Program.Player.Position.Y, mapPos.X, mapPos.Y, Plot);
             }
         }
 

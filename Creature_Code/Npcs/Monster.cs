@@ -106,9 +106,10 @@ namespace Landlord
             else if (doorSpots.Count > 0 && map.Blocks[doorSpots[0].X * map.Width + doorSpots[0].Y].Solid)
                 map.Blocks[doorSpots[0].X * map.Width + doorSpots[0].Y].Activate(this);
             else if (movePos.Equals(Position) == false)
-                Move(movePos);
+                Move(movePos, true);
             else
                 Wait();
+
             UpdateFOV();
             HandleVisibility();
         }

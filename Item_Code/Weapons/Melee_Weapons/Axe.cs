@@ -9,23 +9,12 @@ namespace Landlord
         {
         }
 
-        public Axe(Material material, string enchantment, byte graphic = 47,
-            double volume = 0.0125, bool hollow = false)
-            : base(material, enchantment, graphic, volume, hollow)
-        {
-        }
-
         public Axe() : base()
         {
         }
 
 
         // FUNCTIONS
-
-        public override void Activate(Creature user)
-        {
-            return;
-        }
 
         public override string DetermineWeaponName()
         {

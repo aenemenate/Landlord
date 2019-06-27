@@ -10,24 +10,12 @@ namespace Landlord
         {
         }
 
-        public Mace(Material material, string enchantment, byte graphic = 47,
-            double volume = 0.01, bool hollow = false)
-            : base(material, enchantment, graphic, volume, hollow)
-        {
-
-        }
-
         public Mace() : base()
         {
         }
 
 
         // FUNCTIONS
-
-        public override void Activate(Creature user)
-        {
-            return;
-        }
 
         public override string DetermineWeaponName()
         {

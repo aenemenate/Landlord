@@ -128,7 +128,6 @@ namespace Landlord
         }
     }
 
-
     static class Riverfinder
     {
         public static List<Point> FindPath( Point start, Point end, float[,] heightMap )

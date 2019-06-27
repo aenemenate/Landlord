@@ -41,8 +41,9 @@ namespace Landlord
 
         public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, DietType diet, string faction,
             bool solid, bool opaque, BlockType type = BlockType.Creature, bool interactive = true, bool enterable = false) 
-                : base (graphic, name, type, solid, opaque, interactive, enterable) {
-            id = (UInt64)((DateTime.Now - new DateTime(year: 2019, month: 5, day: 15)).TotalSeconds * 100);
+                : base (graphic, name, type, solid, opaque, interactive, enterable)
+        {
+            id = (UInt64)((DateTime.Now - new DateTime(year: 2019, month: 6, day: 27)).TotalSeconds * 100);
             inventory = new List<Item>();
             visiblePoints = new List<Point>();
             body = new Body();
@@ -100,7 +101,7 @@ namespace Landlord
             Random rng = new Random();
 
             if (Class.MajorSkills.Contains(Skill.HeavyWeapons))
-                Body.MainHand = new Axe(true);
+                Body.MainHand = new Mace(true);
             else if (Class.MajorSkills.Contains(Skill.LongBlades))
                 Body.MainHand = new Sword(true);
             else if (Class.MajorSkills.Contains(Skill.ShortBlade))
@@ -109,6 +110,8 @@ namespace Landlord
                 Body.MainHand = new Spear(true);
             if (Class.MajorSkills.Contains(Skill.Block) || Class.MinorSkills.Contains(Skill.Block))
                 Body.OffHand = new Shield(true);
+            if (Class.MajorSkills.Contains(Skill.Marksmanship) || Class.MinorSkills.Contains(Skill.Marksmanship))
+                Inventory.Add(new Bow(true));
 
             // determine valid Materials
             Skill armorSkill = Skill.Alchemy;
@@ -248,8 +251,8 @@ namespace Landlord
             return false;
         }
 
-
         // changing resources //
+
         public void ChangeResource(Resource resource, int effect)
         {
             Stats.Resources[resource] += effect;
@@ -263,7 +266,8 @@ namespace Landlord
                 Die();
         }
 
-        public void ApplyActionCost( int maxNumOfSeconds ) {
+        public void ApplyActionCost( int maxNumOfSeconds )
+        {
             double granularity = stats.Attributes[Attribute.Agility] / 300;
             int timeToAdd = (int)(maxNumOfSeconds * (1 - granularity));
             nextActionTime.AddTime(timeToAdd);
@@ -273,13 +277,11 @@ namespace Landlord
                 ChangeResource(Resource.HP, -1);
         }
 
-
         // get values //
 
         private int GetArmorSkill(Armor armor)
         {
-            if (armor != null)
-            {
+            if (armor != null) {
                 if (armor.Material == Material.Brass || armor.Material == Material.Bronze || armor.Material == Material.Copper
                     || armor.Material == Material.Iron || armor.Material == Material.Platinum || armor.Material == Material.Steel)
                     return Stats.Skills[Skill.HeavyArmor];
@@ -304,8 +306,7 @@ namespace Landlord
             int tempVal = 0;
 
             int i = 0;
-            foreach (Armor armorPiece in armorPieces)
-            {
+            foreach (Armor armorPiece in armorPieces) {
                 if (dmgType == DamageType.Blunt)
                     tempVal = (int)(Physics.ImpactYields[armorPiece.Material] * armorPercents[i] + .5);
                 else if (dmgType == DamageType.Shear)
@@ -316,7 +317,6 @@ namespace Landlord
                         tempVal += (int)(enchant.Effect * armorPercents[i]);
 
                 armorVal += (int)(tempVal * (.5 + ((double)GetArmorSkill(armorPiece) / 200)));
-
                 i++;
             }
 
@@ -325,10 +325,8 @@ namespace Landlord
 
         private int GetWeaponSkill(Item weapon)
         {
-            if (weapon != null)
-            {
-                if (weapon is MeleeWeapon)
-                {
+            if (weapon != null) {
+                if (weapon is MeleeWeapon) {
                     if (weapon is Sword)
                         return Stats.Skills[Skill.LongBlades];
                     else if (weapon is Dagger)
@@ -348,10 +346,8 @@ namespace Landlord
 
         private int GetWeaponCost(Item weapon)
         {
-            if (weapon != null)
-            {
-                if (weapon is MeleeWeapon)
-                {
+            if (weapon != null) {
+                if (weapon is MeleeWeapon) {
                     if (weapon is Sword)
                         return 8 - (GetWeaponSkill(weapon) / 25);
                     else if (weapon is Dagger)
@@ -375,8 +371,7 @@ namespace Landlord
         {
             int damage;
             // determine the damage value
-            if (weapon != null)
-            {
+            if (weapon != null) {
                 // minimum skill deals half dmg, max skill deals full damage
                 damage = (int)(weapon.Damage * (.5 + (double)GetWeaponSkill(weapon) / 200));
             }
@@ -410,20 +405,6 @@ namespace Landlord
 
             return nearbyPointsOfType;
         }
-
-        private Point GetNearbyTreePos(Tree tree)
-        {
-            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
-            int width = Program.WorldMap.TileWidth;
-            for (int i = Position.X - 1; i <= Position.X + 1; i++) {
-                for (int j = Position.Y - 1; j <= Position.Y + 1; j++) {
-                    if (blocks[i * width + j] is Tree foundTree && foundTree.Thickness == tree.Thickness)
-                        return new Point(i, j);
-                }
-            }
-            return new Point();
-        }
-
 
         // behaviors //
         public void UpdateFOV()
@@ -519,6 +500,11 @@ namespace Landlord
                 ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
             else
                 ChangeResource( Resource.SP, -8 );
+        }
+
+        public void Shoot(Point pos)
+        {
+
         }
 
         private void LvlWeaponSkill( Item weapon, int amount )

@@ -11,7 +11,7 @@ namespace Landlord
     {
         private DateTime lastMovement = DateTime.Now;
         private bool selectingActDir = false; // whether or not the player is currently choosing the direction to act
-        private bool cancelMove = false;
+        private bool aimingMode = false; // whether or not the player is currently aiming
 
         // INPUT HANDLING
 
@@ -37,6 +37,7 @@ namespace Landlord
 
             bool waitPressed = SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.NumPad5) || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.W);
             bool actionPressed = SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Enter) || SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Space);
+            bool firePressed = SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F);
 
             Point nextPos = new Point();
 
@@ -47,6 +48,12 @@ namespace Landlord
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+            if (firePressed && Program.Player.Body.MainHand is RangedWeapon)
+                aimingMode = !aimingMode;
+
+            if (aimingMode)
+                return;
 
             if (actionPressed && !selectingActDir) // if you pressed action
             {
@@ -156,13 +163,11 @@ namespace Landlord
             Point mapPos = Program.WorldMap[worldIndex.X, worldIndex.Y].GetMousePos(mousePos);
             bool mouseIsOnMap = !(mousePos.X < InventoryPanel.Width || mousePos.X >= Program.Console.Width - StatusPanel.Width);
 
-            if (!SadConsole.Global.MouseState.IsOnScreen || !(DateTime.Now - lastMovement > new TimeSpan( TimeSpan.TicksPerSecond / 3 )))
+            if (!SadConsole.Global.MouseState.IsOnScreen || !(DateTime.Now - lastMovement > new TimeSpan( TimeSpan.TicksPerSecond / 10 )))
                 return;
 
             if (SadConsole.Global.MouseState.LeftButtonDown)
                 HandleLeftClicked(mapPos, mouseIsOnMap);
-            else if (SadConsole.Global.MouseState.RightClicked)
-                HandleRightClicked(mapPos, mouseIsOnMap);
         }
 
         private void HandleLeftClicked(Point mapPos, bool mouseIsOnMap)
@@ -170,15 +175,19 @@ namespace Landlord
             int currentFloor = Program.Player.CurrentFloor;
             Point worldIndex = Program.Player.WorldIndex;
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
-            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+            int width = Program.WorldMap.TileWidth;
+            if (Program.Player.Path != null)
+                Program.Player.Path = null;
 
-            if (!cancelMove && mouseIsOnMap) {
+            if (mouseIsOnMap)
+            {
+                aimingMode = false;
                 if (Menus.ClickedDialog)
                     Menus.ClickedDialog = false;
-                else if (SadConsole.Global.MouseState.RightButtonDown)
-                    cancelMove = true;
-                else if (Program.Player.Path != null)
-                    Program.Player.Path = null;
+                else if (aimingMode) {
+                    Program.Player.Shoot(mapPos);
+                    aimingMode = false;
+                }
                 else {
                     if (blocks[mapPos.X * width + mapPos.Y] is Player) {
                         bool movedMaps = CreaturePlacementHelper.HandleMapSwitching(Program.Player);
@@ -205,23 +214,25 @@ namespace Landlord
             }
         }
 
-        private void HandleRightClicked(Point mapPos, bool mouseIsOnMap)
+        public void HandleRightClicked()
         {
             int currentFloor = Program.Player.CurrentFloor;
             Point worldIndex = Program.Player.WorldIndex;
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
-            if (cancelMove)
-                cancelMove = false;
-            else if (mouseIsOnMap)
+            Point mousePos = new Point(SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
+                SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y);
+            Point mapPos = Program.WorldMap[worldIndex.X, worldIndex.Y].GetMousePos(mousePos);
+            bool mouseIsOnMap = !(mousePos.X < InventoryPanel.Width || mousePos.X >= Program.Console.Width - StatusPanel.Width);
+
+            aimingMode = false;
+
+            if (mouseIsOnMap)
                 if (blocks[mapPos.X * width + mapPos.Y].Explored && blocks[mapPos.X * width + mapPos.Y].Solid == false && mapPos.Y < 100)
                     Program.Player.SetPath(mapPos);
         }
 
-
-        // CHECKS FOR FUNCTIONS
-        
         public List<Point> GetNearbyInteractiveBlocks(Point position)
         {
             int currentFloor = Program.Player.CurrentFloor;
@@ -237,13 +248,10 @@ namespace Landlord
             return interactivePoints;
         }
 
-
-        // PROPERTIES //
-
-        public bool CancelMove
+        public bool AimingMode
         {
-            get { return cancelMove; }
+            get { return aimingMode; }
+            set { aimingMode = value; }
         }
-
     }
 }

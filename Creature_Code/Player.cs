@@ -85,10 +85,8 @@ namespace Landlord
 
         public override void DetermineAction()
         {
-
-            if (!Alive) {
+            if (!Alive)
                 return;
-            }
 
             if (Program.CurrentState is Play play) {
                 if (play.PlayMode == PlayMode.Roguelike) {
@@ -101,7 +99,6 @@ namespace Landlord
                         Program.CurrentState = new CraftMenu();
                     else {
                         pausePathing = inputModule.HandleInput(true, true);
-
                         if (!pausePathing)
                             FollowPath();
                     }

@@ -10,24 +10,12 @@ namespace Landlord
         {
         }
 
-        public Dagger(Material material, string enchantment, byte graphic = 45,
-            double volume = 0.0026, bool hollow = false)
-            : base(material, enchantment, graphic, volume, hollow)
-        {
-
-        }
-
         public Dagger() : base()
         {
         }
 
 
         // FUNCTIONS
-
-        public override void Activate(Creature user)
-        {
-            return;
-        }
 
         public override string DetermineWeaponName()
         {

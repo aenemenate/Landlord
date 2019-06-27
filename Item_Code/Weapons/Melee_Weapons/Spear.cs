@@ -10,25 +10,12 @@ namespace Landlord
         {
         }
 
-        public Spear(Material material, string enchantment, byte graphic = 47,
-            double volume = 0.15, bool hollow = false)
-            : base(material, enchantment, graphic, volume, hollow)
-        {
-
-        }
-
         public Spear() : base()
         {
         }
 
 
         // FUNCTIONS
-
-        public override void Activate(Creature user)
-        {
-            //user.Wield(this);
-            return;
-        }
 
         public override string DetermineWeaponName()
         {

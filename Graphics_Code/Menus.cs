@@ -21,7 +21,6 @@ namespace Landlord
 
         static public class MenuScreens
         {
-
             static private List<string> title = new List<string>()
             {
                 @"___/\\\__________________________________________________/\\\__                  ",
@@ -243,7 +242,7 @@ namespace Landlord
                 List<Point> dungeonSpots = new List<Point>();
 
                 // Functions //
-                bool TileNextToExploredPlains(Point point)
+                bool TileNextToExploredArea(Point point)
                 {
                     List<Point> adjacentPoints = new List<Point>();
                     List<Point> blackListedPoints = new List<Point>();
@@ -264,7 +263,7 @@ namespace Landlord
                     foreach (Point adjacentPoint in adjacentPoints)
                     {
                         //bool adjacentPointInSameTile = adjacentPoint.X / plotSize == point.X / plotSize && adjacentPoint.Y / plotSize == point.Y / plotSize;
-                        if (worldView[adjacentPoint.X, adjacentPoint.Y] is Grass || worldView[adjacentPoint.X, adjacentPoint.Y] is PlayerWorld)
+                        if (worldView[adjacentPoint.X, adjacentPoint.Y] is DirtFloor || worldView[adjacentPoint.X, adjacentPoint.Y] is Water || worldView[adjacentPoint.X, adjacentPoint.Y] is Grass || worldView[adjacentPoint.X, adjacentPoint.Y] is PlayerWorld)
                         {
                             //if (adjacentPointInSameTile || explored == true)
                             return true;
@@ -291,8 +290,8 @@ namespace Landlord
                     int plains = 0, dirt = 0, mountains = 0, lakes = 0, unexplored = 0, explored = 0;
                     int iLimit = (x + 1) * granularity;
                     int jLimit = (y + 1) * granularity;
-                    for (int i = x * granularity; i < iLimit; i += 2) {
-                        for (int j = y * granularity; j < jLimit; j += 2) {
+                    for (int i = x * granularity; i < iLimit; i += 1) {
+                        for (int j = y * granularity; j < jLimit; j += 1) {
                             worldIndex = new Point(i / hectareWidth, j / hectareHeight);
                             Point localPos = new Point(i - (worldIndex.X * hectareWidth), j - (worldIndex.Y * hectareHeight));
 
@@ -349,7 +348,7 @@ namespace Landlord
                     for (int j = 0; j < 4; j++)
                         if (Program.WorldMap[i, j].DungeonEntrance != null) {
                             Point dungEntrance = new Point(Program.WorldMap[i, j].DungeonEntrance.X + (i * hectareWidth), Program.WorldMap[i, j].DungeonEntrance.Y + (j * hectareHeight));
-                            bool tileVisible = TileNextToExploredPlains(new Point(dungEntrance.X / granularity, dungEntrance.Y / granularity));
+                            bool tileVisible = TileNextToExploredArea(new Point(dungEntrance.X / granularity, dungEntrance.Y / granularity));
                             if (tileVisible)
                                 worldView[(Program.WorldMap[i, j].DungeonEntrance.X + (i * hectareWidth)) / granularity,
                                     (Program.WorldMap[i, j].DungeonEntrance.Y + (j * hectareHeight)) / granularity] = new DownStair(Material.Stone);
@@ -357,7 +356,7 @@ namespace Landlord
 
                 // set visibility of mountainous terrain
                 foreach (Point point in mountainSpots)
-                    if (!TileNextToExploredPlains(point))
+                    if (!TileNextToExploredArea(point))
                         worldView[point.X, point.Y] = new Unexplored();
 
                 // set the player

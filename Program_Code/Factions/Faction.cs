@@ -12,10 +12,10 @@ namespace Landlord
         private Dictionary<string, int> relations;
         private List<string> ideologies;
 
-        public Faction (string name, Dictionary<string, int> relations, List<string> ideologies) {
+        public Faction (string name, Dictionary<string, int> relations, List<string> ideologies = null) {
             this.name = name;
             this.relations = relations;
-            this.ideologies = ideologies;
+            this.ideologies = ideologies ?? new List<string>();
         }
 
         public string Name {

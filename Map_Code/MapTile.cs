@@ -86,8 +86,7 @@ namespace Landlord
                 heightMultiplierFore = 0F;
                 heightMultiplierBack = 0F;
             }
-            else
-            {
+            else {
                 float cellHeight = Program.WorldMap.HeightMap[x + 100 * Program.Player.WorldIndex.X, y + 100 * Program.Player.WorldIndex.Y];
                 float playerHeight = Program.WorldMap.HeightMap[Program.Player.Position.X + 100 * Program.Player.WorldIndex.X, Program.Player.Position.Y + 100 * Program.Player.WorldIndex.Y];
                 heightMultiplierFore = ((90F - cellHeight) / 128F) * 0.25F;
@@ -104,8 +103,7 @@ namespace Landlord
                 if (!tiles[x * width + y].Explored)
                     Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, Color.Black, Color.Black);
                 else
-                    switch (tiles[x * width + y].Visible)
-                    {
+                    switch (tiles[x * width + y].Visible) {
                         case (false):
                             Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, floorForeColor * nonVisibleMultiplierFore, floorBackColor * nonVisibleMultiplierBack);
                             break;
@@ -118,31 +116,12 @@ namespace Landlord
             void RenderBlock()
             {
                 Block block = blocks[x * width + y];
-                Color blockForeColor = block.ForeColor;
-                Color blockBackColor = block.BackColor;
-
-                // this code changed the block color to match that of the tile underneath a creature/item
-                if (block.BackColor == Color.Pink)
-                {
-                    if (block.Type == BlockType.Creature)
-                    {
-                        Creature creature = (Creature)block;
-                        bool creatureIsOnColoredBlock = creature != null && creature.CurrentBlock.Type != BlockType.Empty && creature.CurrentBlock.BackColor != Color.Pink;
-                        blockBackColor = creatureIsOnColoredBlock ? creature.CurrentBlock.BackColor : floorBackColor;
-                    }
-                    else
-                        blockBackColor = floorBackColor;
-                }
-                // this code prevents a creature you can't see from being rendered
                 bool blockIsUnseenCreature = block is Creature && block.Visible == false;
-                if (blockIsUnseenCreature)
-                {
+                if (blockIsUnseenCreature) {
                     Creature creature = (Creature)block;
-                    if (creature.Alive)
-                    {
+                    if (creature.Alive) {
                         bool creatureIsInEmptySpace = creature.CurrentBlock.Type == BlockType.Empty;
-                        if (creatureIsInEmptySpace)
-                        {
+                        if (creatureIsInEmptySpace) {
                             RenderFloorTile();
                             return;
                         }
@@ -150,11 +129,25 @@ namespace Landlord
                             block = creature.CurrentBlock;
                     }
                 }
+
+
+                Color blockForeColor = block.ForeColor;
+                Color blockBackColor = block.BackColor;
+
+                if (block.BackColor == Color.Pink) {
+                    if (block.Type == BlockType.Creature) {
+                        Creature creature = (Creature)block;
+                        bool creatureIsOnColoredBlock = creature != null && creature.CurrentBlock.Type != BlockType.Empty && creature.CurrentBlock.BackColor != Color.Pink;
+                        blockBackColor = creatureIsOnColoredBlock ? creature.CurrentBlock.BackColor : floorBackColor;
+                    }
+                    else
+                        blockBackColor = floorBackColor;
+                }
+
                 if (block.Explored == false)
                         Program.Console.SetGlyph( x - startPoint.X, y - startPoint.Y, block.Graphic, Color.Black, Color.Black );
                 else
-                    switch (block.Visible)
-                    {
+                    switch (block.Visible) {
                         case (false):
                             if (memoryMap[x * width + y] == null)
                                 Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, block.Graphic, blockForeColor * nonVisibleMultiplierFore, blockBackColor * nonVisibleMultiplierBack);

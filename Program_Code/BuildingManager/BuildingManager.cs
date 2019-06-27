@@ -340,11 +340,12 @@ namespace Landlord
             if (!nextToTree)
                 PathToPoint(closestTree);
             else {
-                for (int i = 0; i < Program.Player.Inventory.Count; i++) {
-                    Item I = Program.Player.Inventory[i];
-                    if (I is Axe || I is Sword)
-                        Program.Player.Wield(i, true);
-                }
+                if (Program.Player.Body.MainHand != null && Program.Player.Body.MainHand is Axe == false)
+                    for (int i = 0; i < Program.Player.Inventory.Count; i++) {
+                        Item I = Program.Player.Inventory[i];
+                        if (I is Axe || I is Sword)
+                            Program.Player.Wield(i, true);
+                    }
                 Program.Player.ChopTree(closestTree);
             }
 

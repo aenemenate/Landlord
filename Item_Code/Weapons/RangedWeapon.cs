@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Landlord
 {
-    abstract class MeleeWeapon : Item
+    abstract class RangedWeapon : Item
     {
         public int maxEnchantments;
         private string weaponName;
         public List<WeaponEnchantment> enchantments;
-        
+
         // CONSTRUCTORS
 
-        public MeleeWeapon(byte graphic, double volume, bool hollow, DamageType damageType, ItemType type = ItemType.MeleeWeapon)
+        public RangedWeapon(byte graphic, double volume, bool hollow, DamageType damageType, ItemType type = ItemType.MeleeWeapon)
                 : base(graphic, type, volume, hollow, damageType)
         {
             enchantments = new List<WeaponEnchantment>();
@@ -21,12 +23,12 @@ namespace Landlord
             Rarity = DetermineRarity();
             weaponName = DetermineWeaponName();
 
-            ForeColor = Physics.MaterialColors[Material];
+            ForeColor = Physics.MaterialColors[Material]; // Color
 
             Identify(); // this is only to be called while weapon identification hasn't been implemented
         }
 
-        public MeleeWeapon() : base()
+        public RangedWeapon() : base()
         {
         }
 
@@ -42,13 +44,16 @@ namespace Landlord
 
         public override Material DetermineMaterial()
         {
-            int rand = Program.RNG.Next(0, 401);
+        #pragma warning disable CS0219 // Variable is assigned but its value is never used
+            int woodChance = 200, copperChance = 50, brassChance = 25, bronzeChance = 20, ironChance = 10, steelChance = 5, platinumChance = 2;
+        #pragma warning restore CS0219 // Variable is assigned but its value is never used
+            int rand = Program.RNG.Next(0, woodChance + copperChance + brassChance + bronzeChance + ironChance + steelChance + platinumChance + 1);
 
-#pragma warning disable CS0219 // Variable is assigned but its value is never used
-            int copperChance = 180, brassChance = 75, bronzeChance = 65, ironChance = 40, steelChance = 25, platinumChance = 15;
-#pragma warning restore CS0219 // Variable is assigned but its value is never used
-            
-            int chance = copperChance;
+
+            int chance = woodChance;
+            if (rand <= chance)
+                return Material.Wood;
+            chance += copperChance;
             if (rand <= chance)
                 return Material.Copper;
             chance += brassChance;
@@ -63,7 +68,6 @@ namespace Landlord
             chance += steelChance;
             if (rand <= chance)
                 return Material.Steel;
-            // if (rand <= platinumChance)
             return Material.Platinum;
         }
 
@@ -107,14 +111,16 @@ namespace Landlord
 
                 return description;
             }
-            
+
 
         }
 
         public override string DetermineName(bool identifying)
         {
             if (enchantments != null && enchantments.Count > 0)
+            {
                 return enchantments[0].PartName + ' ' + Physics.MaterialNames[Material] + ' ' + weaponName;
+            }
             return Physics.MaterialNames[Material] + ' ' + weaponName;
         }
 
@@ -158,18 +164,7 @@ namespace Landlord
 
         public Skill GetWeaponSkill()
         {
-            if (this is Axe || this is Mace)
-                return Skill.HeavyWeapons;
-            else if (this is Dagger)
-                return Skill.ShortBlade;
-            else if (this is Shield)
-                return Skill.Block;
-            else if (this is Spear)
-                return Skill.Spear;
-            else if (this is Sword)
-                return Skill.LongBlades;
-            else
-                return Skill.Brawling;
+                return Skill.Marksmanship;
         }
 
 

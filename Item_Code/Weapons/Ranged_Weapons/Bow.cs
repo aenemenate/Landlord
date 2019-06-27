@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Landlord
 {
-    class Shield : MeleeWeapon
+    class Bow : RangedWeapon
     {
-        public Shield(bool instantiating, byte graphic = 9, double volume = 0.125, bool hollow = true, DamageType damageType = DamageType.Blunt)
+        public Bow(bool instantiating, byte graphic = 40, double volume = 0.003, bool hollow = false, DamageType damageType = DamageType.Blunt)
                 : base(graphic, volume, hollow, damageType)
         {
         }
 
-        public Shield() : base()
+        public Bow() : base()
         {
         }
 
@@ -24,10 +24,9 @@ namespace Landlord
         {
             List<string> names = new List<string>()
             {
-                "shield",
-                "targa",
-                "buckler",
-                "parma"
+                "bow",
+                "war bow",
+                "short bow"
             };
             return names[Program.RNG.Next(0, names.Count)];
         }

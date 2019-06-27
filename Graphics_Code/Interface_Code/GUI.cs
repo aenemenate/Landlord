@@ -1333,7 +1333,7 @@ namespace Landlord
                    SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y);
             Point mapPos = new Point(mapStart.X + ( mousePos.X ), mapStart.Y + mousePos.Y);
 
-            if ((mousePos.X < InventoryPanel.Width || mousePos.X > windowWidth - StatusPanel.Width - 1) || !SadConsole.Global.MouseState.IsOnScreen || Program.Player.InputModule.CancelMove) {
+            if ((mousePos.X < InventoryPanel.Width || mousePos.X > windowWidth - StatusPanel.Width - 1) || !SadConsole.Global.MouseState.IsOnScreen) {
                 path = null;
                 return path;
             }

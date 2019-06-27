@@ -13,25 +13,12 @@ namespace Landlord
         {
         }
 
-        public Sword(Material material, string enchantment, byte graphic = 47,
-            double volume = 0.004, bool hollow = false)
-            : base(material, enchantment, graphic, volume, hollow)
-        {
-
-        }
-
         public Sword() : base()
         {
         }
 
 
         // FUNCTIONS
-
-        public override void Activate(Creature user)
-        {
-            //user.Wield(this);
-            return;
-        }
 
         public override string DetermineWeaponName()
         {

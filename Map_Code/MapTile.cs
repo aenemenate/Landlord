@@ -67,48 +67,46 @@ namespace Landlord
                         cost += 1000F;
                 }
         }
-        public void DrawCell(int x, int y)
+        public void DrawCell(int x, int y, Player player, SadConsole.Console console, Window window)
         {
-            Point startPoint = Program.Window.CalculateMapStartPoint();
+            Point startPoint = window.CalculateMapStartPoint();
 
-            int currentFloor = Program.Player.CurrentFloor;
-            Point worldIndex = Program.Player.WorldIndex;
-            Block[] blocks = currentFloor >= 0 ? Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
-            Tile[] tiles = currentFloor >= 0 ? Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
-            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+            int currentFloor = player.CurrentFloor;
+            Block[] blocks = currentFloor >= 0 ? Dungeon.Floors[currentFloor].Blocks : map;
+            Tile[] tiles = currentFloor >= 0 ? Dungeon.Floors[currentFloor].Floor : floor;
+            int width = Program.WorldMap.TileWidth;
 
             Color floorForeColor = tiles[x * width + y].ForeColor;
             Color floorBackColor = tiles[x * width + y].BackColor;
 
             float nonVisibleMultiplierFore, nonVisibleMultiplierBack, visibleMultiplierFore, visibleMultiplierBack, heightMultiplierFore, heightMultiplierBack;
 
-            if (Program.Player.CurrentFloor >= 0 == true) {
+            if (player.CurrentFloor >= 0 == true) {
                 heightMultiplierFore = 0F;
                 heightMultiplierBack = 0F;
             }
             else {
-                float cellHeight = Program.WorldMap.HeightMap[x + 100 * Program.Player.WorldIndex.X, y + 100 * Program.Player.WorldIndex.Y];
-                float playerHeight = Program.WorldMap.HeightMap[Program.Player.Position.X + 100 * Program.Player.WorldIndex.X, Program.Player.Position.Y + 100 * Program.Player.WorldIndex.Y];
+                float cellHeight = Program.WorldMap.HeightMap[x + 100 * player.WorldIndex.X, y + 100 * player.WorldIndex.Y];
                 heightMultiplierFore = ((90F - cellHeight) / 128F) * 0.25F;
                 heightMultiplierBack = ((90F - cellHeight) / 128F) * 0.1F;
             }
 
-            nonVisibleMultiplierFore = 0.85F - heightMultiplierFore;
-            nonVisibleMultiplierBack = 0.9F - heightMultiplierBack;
-            visibleMultiplierFore = 0.95F - heightMultiplierFore;
-            visibleMultiplierBack = 1F - heightMultiplierBack;
+            nonVisibleMultiplierFore = 0.82F - heightMultiplierFore;
+            nonVisibleMultiplierBack = 0.91F - heightMultiplierBack;
+            visibleMultiplierFore = 0.96F - heightMultiplierFore;
+            visibleMultiplierBack = 1.02F - heightMultiplierBack;
 
             void RenderFloorTile()
             {
                 if (!tiles[x * width + y].Explored)
-                    Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, Color.Black, Color.Black);
+                    console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, Color.Black, Color.Black);
                 else
                     switch (tiles[x * width + y].Visible) {
                         case (false):
-                            Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, floorForeColor * nonVisibleMultiplierFore, floorBackColor * nonVisibleMultiplierBack);
+                            console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, floorForeColor * nonVisibleMultiplierFore, floorBackColor * nonVisibleMultiplierBack);
                             break;
                         case (true):
-                            Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, floorForeColor * visibleMultiplierFore, floorBackColor * visibleMultiplierBack);
+                            console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, floorForeColor * visibleMultiplierFore, floorBackColor * visibleMultiplierBack);
                             break;
                     }
             }
@@ -145,17 +143,17 @@ namespace Landlord
                 }
 
                 if (block.Explored == false)
-                        Program.Console.SetGlyph( x - startPoint.X, y - startPoint.Y, block.Graphic, Color.Black, Color.Black );
+                        console.SetGlyph( x - startPoint.X, y - startPoint.Y, block.Graphic, Color.Black, Color.Black );
                 else
                     switch (block.Visible) {
                         case (false):
                             if (memoryMap[x * width + y] == null)
-                                Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, block.Graphic, blockForeColor * nonVisibleMultiplierFore, blockBackColor * nonVisibleMultiplierBack);
+                                console.SetGlyph(x - startPoint.X, y - startPoint.Y, block.Graphic, blockForeColor * nonVisibleMultiplierFore, blockBackColor * nonVisibleMultiplierBack);
                             else
-                                Program.Console.SetGlyph( x - startPoint.X, y - startPoint.Y, memoryMap[x * width + y].Graphic, memoryMap[x * width + y].ForeColor * nonVisibleMultiplierFore, floorBackColor * nonVisibleMultiplierBack );
+                                console.SetGlyph( x - startPoint.X, y - startPoint.Y, memoryMap[x * width + y].Graphic, memoryMap[x * width + y].ForeColor * nonVisibleMultiplierFore, floorBackColor * nonVisibleMultiplierBack );
                             break;
                         case (true):
-                            Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, block.Graphic, blockForeColor * visibleMultiplierFore, blockBackColor * visibleMultiplierBack);
+                            console.SetGlyph(x - startPoint.X, y - startPoint.Y, block.Graphic, blockForeColor * visibleMultiplierFore, blockBackColor * visibleMultiplierBack);
                             break;
                     }
             }

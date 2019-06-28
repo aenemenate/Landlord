@@ -78,15 +78,14 @@ namespace Landlord
 
             if (Program.CurrentState is DialogWindow)
                 Program.CurrentState = Menus.PrevGameState;
-            else if (Program.CurrentState is ViewItem       || Program.CurrentState is ViewLoot 
-                  || Program.CurrentState is ViewEquipment  || Program.CurrentState is CraftMenu)
-            {
-                Play.RenderMap();
+            else if (Program.CurrentState is ViewItem || Program.CurrentState is ViewLoot
+                  || Program.CurrentState is ViewEquipment || Program.CurrentState is CraftMenu) {
+                Play.RenderMap(Program.Player, Program.Console, Program.Window);
                 Program.MsgConsole.Render();
             }
 
             Program.CurrentState.ClientSizeChanged();
-            GUI.Console = new SadConsole.Console( width, height );
+            GUI.Console = new SadConsole.Console(width, height);
         }
 
         public Point CalculateMapStartPoint()

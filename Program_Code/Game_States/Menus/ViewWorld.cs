@@ -16,7 +16,7 @@ namespace Landlord
             StatusPanel.HandleStatus();
         }
 
-        public override void Render()
+        public override void Render(ref SadConsole.Console console, ref Window window)
         {
             Menus.WorldMap.View();
         }

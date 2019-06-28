@@ -5,8 +5,6 @@ namespace Landlord
 {
     static class Scheduler
     {
-        private static DateTime lastUpdate = DateTime.Now;
-        private static TimeSpan updateTimeSpan = new TimeSpan(1250000 / 30);
 
 
         // FUNCTIONS //
@@ -18,42 +16,30 @@ namespace Landlord
                 Program.WorldMap.UpdatePlants();
             }
         }
-        public static void HandleRoguelikeScheduling()
+        public static void HandleRoguelikeScheduling(Player player)
         {
-            if (DateTime.Now - updateTimeSpan < lastUpdate)
-                return;
-            lastUpdate = DateTime.Now;
+            int currentFloor = player.CurrentFloor;
+            Point worldIndex = player.WorldIndex;
 
-            if (SadConsole.Global.MouseState.RightClicked)
-                Program.Player.InputModule.HandleRightClicked();
+            UpdateCreatureList(Program.WorldMap[worldIndex.X, worldIndex.Y]);
 
-            if (Program.Player.NextActionTime.IsLessThan(Program.TimeHandler.CurrentTime) || Program.Player.NextActionTime.Equals(Program.TimeHandler.CurrentTime)) {
-                Program.Player.DetermineAction();
-                return;
-            }
-            Program.TimeHandler.CurrentTime.AddTime(1);
-
-            int currentFloor = Program.Player.CurrentFloor;
-            Point worldIndex = Program.Player.WorldIndex;
-
-            UpdateCreatureList(Program.WorldMap[worldIndex.X, worldIndex.Y], currentFloor);
             List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
+            creatures.Sort();
 
-            for (int i = 0; i < creatures.Count; i++)
-                if (creatures[i].NextActionTime.IsLessThan(Program.TimeHandler.CurrentTime) || creatures[i].NextActionTime.Equals(Program.TimeHandler.CurrentTime)) {
-                    if (creatures[i] is Player)
-                        creatures[i] = Program.Player;
-                    else
-                        creatures[i].DetermineAction();
+            for (int i = 0; i < creatures.Count; i++) {
+                Program.TimeHandler.CurrentTime = creatures[i].NextActionTime;
+                if (creatures[i] is Player) {
+                    player.DetermineAction();
+                    creatures[i] = player;
+                    break;
                 }
+                creatures[i].DetermineAction();
+            }
 
             CheckUpdates();
         }
         public static void HandleBuildModeScheduling()
         {
-            if (DateTime.Now - updateTimeSpan < lastUpdate)
-                return;
-            lastUpdate = DateTime.Now;
 
             if (BuildingManager.Paused == false)
                 Program.TimeHandler.CurrentTime.AddTime(4);
@@ -62,7 +48,6 @@ namespace Landlord
             
             int currentFloor = Program.Player.CurrentFloor;
             Point worldIndex = Program.Player.WorldIndex;
-
             UpdateCreatureList(Program.WorldMap[worldIndex.X, worldIndex.Y], currentFloor);
             List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
             
@@ -157,12 +142,6 @@ namespace Landlord
                             map.Dungeon.Floors[i].Creatures[j].NextActionTime = new Time(Program.TimeHandler.CurrentTime);
                 }
 
-        }
-
-        // PROPERTIES //
-        public static DateTime LastUpdate {
-            get { return lastUpdate; }
-            set { lastUpdate = value; }
         }
     }
 }

@@ -10,7 +10,6 @@ namespace Landlord
         private List<Point> path = null;
         private bool pausePathing = false;
         private int dangerCount = 0;
-        private PlayerInput inputModule = new PlayerInput();
         private List<Creature> localCreatures = new List<Creature>();
 
         // CONSTRUCTORS
@@ -61,11 +60,11 @@ namespace Landlord
                     tiles[point.X * width + point.Y].Explored = true;
                 }
 
-                // add items to memory map, remove them if there is a mismatch between memory map and local map
-                if (blocks[point.X * width + point.Y] is Item)
-                    Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = blocks[point.X * width + point.Y];
-                else if (Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] != null)
-                    Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = null;
+                //// add items to memory map, remove them if there is a mismatch between memory map and local map
+                //if (blocks[point.X * width + point.Y] is Item)
+                //    Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = blocks[point.X * width + point.Y];
+                //else if (Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] != null)
+                //    Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = null;
                 
                 if (blocks[point.X * width + point.Y] is Monster monster && (monster.Faction.Equals(Faction) == false && monster.Alive))
                     localDangerCount++;
@@ -90,18 +89,9 @@ namespace Landlord
 
             if (Program.CurrentState is Play play) {
                 if (play.PlayMode == PlayMode.Roguelike) {
-                    if (Body.MainHand is BlueprintPouch) {
-                        play.PlayMode = PlayMode.BuildMode;
-                        BuildingManager.Paused = true;
-                        Program.MsgConsole.WriteLine("You entered Build Mode!");
-                    }
-                    else if (Body.MainHand is RecipePouch)
-                        Program.CurrentState = new CraftMenu();
-                    else {
-                        pausePathing = inputModule.HandleInput(true, true);
-                        if (!pausePathing)
-                            FollowPath();
-                    }
+                    pausePathing = PlayerInput.HandleInput(true, true);
+                    if (!pausePathing)
+                        FollowPath();
                 }
                 else
                     FollowPath();
@@ -149,9 +139,6 @@ namespace Landlord
         {
             get { return dangerCount; }
             set { dangerCount = value; }
-        }
-        public PlayerInput InputModule {
-            get { return inputModule; }
         }
         public List<Creature> LocalCreatures {
             get { return localCreatures; }

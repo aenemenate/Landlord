@@ -272,7 +272,7 @@ namespace Landlord
             while (true)
             {
                 Point startPoint = Program.Window.CalculateMapStartPoint();
-                Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DrawCell(cursor.X + startPoint.X, cursor.Y + startPoint.Y);
+                Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DrawCell(cursor.X + startPoint.X, cursor.Y + startPoint.Y, Program.Player, Program.Console, Program.Window);
 
                 if (dir.X == 1 && cursor.X == rightLimit) {
                     dir = new Point(0, 1);
@@ -393,7 +393,7 @@ namespace Landlord
             while (true)
             {
                 Point startPoint = Program.Window.CalculateMapStartPoint();
-                Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DrawCell(cursor.X + startPoint.X - InventoryPanel.Width, cursor.Y + startPoint.Y);
+                Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].DrawCell(cursor.X + startPoint.X - InventoryPanel.Width, cursor.Y + startPoint.Y, Program.Player, Program.Console, Program.Window);
 
                 if (dir.X == 1 && cursor.X == rightLimit)
                 {

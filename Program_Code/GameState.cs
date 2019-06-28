@@ -19,7 +19,7 @@ namespace Landlord
         {
         }
         public abstract void Update();
-        public abstract void Render();
+        public abstract void Render(ref SadConsole.Console console, ref Window window);
         public abstract void ClientSizeChanged();
     }
 

@@ -29,8 +29,7 @@ namespace Landlord
             }
             else if (KeyboardState.IsKeyReleased(cycleDisplay) && Program.CurrentState is Play)
                 InventoryPanel.Displaying = !InventoryPanel.Displaying;
-            else if (KeyboardState.IsKeyReleased(openCraftMenu))
-            {
+            else if (KeyboardState.IsKeyReleased(openCraftMenu)) {
                 if (Program.CurrentState is Play play && play.PlayMode == PlayMode.Roguelike && Program.Player.Inventory.Exists(i => i.Name == "recipe pouch"))
                     Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == "recipe pouch"), true);
             }
@@ -44,9 +43,7 @@ namespace Landlord
                 else if (Program.CurrentState is CharacterSheet cs)
                     Program.CurrentState = new Play();
             }
-            else if (KeyboardState.IsKeyReleased(devFunc1))
-            {
-
+            else if (KeyboardState.IsKeyReleased(devFunc1)) {
                 int currentFloor = Program.Player.CurrentFloor;
                 Point worldIndex = Program.Player.WorldIndex;
                 List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
@@ -56,25 +53,29 @@ namespace Landlord
             }
             else if (KeyboardState.IsKeyReleased(esc)) {
                 if (Program.CurrentState is ViewWorld) {
-                    Program.AudioEngine.PlaySound( Program.AudioEngine.CachedSoundFX["closeMap"] );
+                    Program.AudioEngine.PlaySound(Program.AudioEngine.CachedSoundFX["closeMap"]);
                     Program.CurrentState = new Play();
-                } else if (Program.CurrentState is ViewLoot)
-                    Program.Animations.Add( new CloseLootView() );
+                }
+                else if (Program.CurrentState is ViewLoot)
+                    Program.Animations.Add(new CloseLootView());
                 else if (Program.CurrentState is CraftMenu)
-                    Program.Animations.Add( new CloseCraftMenu() );
+                    Program.Animations.Add(new CloseCraftMenu());
                 else if (Program.CurrentState is DialogWindow) {
-                    CurrentScreen.Children.Remove( Program.ControlsConsole );
+                    CurrentScreen.Children.Remove(Program.ControlsConsole);
                     Program.CurrentState = Menus.PrevGameState;
-                } else if (Program.CurrentState is CharacterSheet)
+                }
+                else if (Program.CurrentState is CharacterSheet)
                     Program.CurrentState = new Play();
                 else if (Program.CurrentState is Play play) {
                     if (play.PlayMode == PlayMode.Roguelike)
                         Menus.PauseMenu();
                     else if (play.PlayMode == PlayMode.BuildMode) {
-                        Program.Player.Unequip( Program.Player.Body.MainHand );
+                        Program.Player.Unequip(Program.Player.Body.MainHand);
                         play.PlayMode = PlayMode.Roguelike;
                     }
                 }
+                else if (PlayerInput.AimingMode)
+                    PlayerInput.AimingMode = false;
             }
         }
     }

@@ -29,21 +29,23 @@ namespace Landlord
         // * means it's a SadConsole construct
         static private Window window; // contains code for manipulating window properties during gameplay
         static private Console console; // * buffer that characters are drawn to, displayed on window
+        static private GameState currentState;
+        static private AudioPlaybackEngine audioEngine; // uses NAudio mixer code I found in their tutorials on their website
+        static private MusicHandler musicHandler;
+        private static DateTime lastUpdate = DateTime.Now;
+        private static TimeSpan updateTimeSpan = new TimeSpan(TimeSpan.TicksPerSecond / 60);
         static private ControlsConsole controlsConsole; // * for menus that have buttons
         static private MsgConsole msgConsole; // for displaying messages
+        static private Random rng;
         static private WorldMap worldMap; // contains all block and character data
         static private Identification identification; // keeps track of what's been identified in current playthrough
         static private TimeHandler timeHandler; // keeps track of time
         static private List<Faction> factions; // keeps track of the properties of game factions that the player has discovered
-
         static private Player player;
-        static private GameState currentState;
+
         static private List<Animation> queuedAnimations; // animations to be played asap go here
         static private List<Animation> animations; // running animations go here
         static private List<Animation> finishedAnims; // animations are placed here when done
-        static private Random rng;
-        static private AudioPlaybackEngine audioEngine; // uses NAudio mixer code I found in their tutorials on their website
-        static private MusicHandler musicHandler;
 
 
         // FUNCTIONS //
@@ -102,22 +104,25 @@ namespace Landlord
         }
         private static void Update(GameTime time)
         {
-            Render();
-            currentState.Update();
-            UserInterfaceInput.HandleKeys();
-            musicHandler.Update();
+            bool cooldownReached = DateTime.Now - lastUpdate > updateTimeSpan;
+            if (cooldownReached) {
+                Render();
+                currentState.Update();
+                UserInterfaceInput.HandleKeys();
+                musicHandler.Update();
+            }
         }
         private static void Render()
         {
             if (currentState is Play && 
-                    !(Program.Console.Children.Contains(msgConsole.Console) && Program.Console.Children.Contains(GUI.Console))) {
-                Program.Console.Children.Remove(msgConsole.Console);
-                Program.Console.Children.Remove(GUI.Console);
-                Program.Console.Children.Add(msgConsole.Console);
-                Program.Console.Children.Add(GUI.Console);
+                    !(console.Children.Contains(msgConsole.Console) && console.Children.Contains(GUI.Console))) {
+                console.Children.Remove(msgConsole.Console);
+                console.Children.Remove(GUI.Console);
+                console.Children.Add(msgConsole.Console);
+                console.Children.Add(GUI.Console);
             }
 
-            currentState.Render();
+            currentState.Render(ref console, ref window);
             if ((currentState is DialogWindow) == false) {
                 foreach (Animation anim in animations)
                     anim.Play();
@@ -163,8 +168,7 @@ namespace Landlord
             get { return player; }
             set { player = value; }
         }
-        public static List<Animation> QueuedAnimations
-        {
+        public static List<Animation> QueuedAnimations {
             get { return queuedAnimations; }
             set { queuedAnimations = value; }
         }

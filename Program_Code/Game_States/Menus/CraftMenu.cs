@@ -16,17 +16,15 @@ namespace Landlord
             StatusPanel.HandleStatus();
             InventoryPanel.HandleInventory();
 
-            if (Program.Animations.Count == 0)
-            {
-                Play.RenderMap();
-                Program.MsgConsole.Render();
-            }
-            
             GUI.CraftMenu.HandleCraftMenu();
         }
 
-        public override void Render()
+        public override void Render(ref SadConsole.Console console, ref Window window)
         {
+            if (Program.Animations.Count == 0) {
+                Play.RenderMap(Program.Player, Program.Console, Program.Window);
+                Program.MsgConsole.Render();
+            }
         }
 
         public override void ClientSizeChanged()

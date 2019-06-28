@@ -287,30 +287,32 @@ namespace Landlord
                 {
                     Point worldIndex;
 
-                    int plains = 0, dirt = 0, mountains = 0, lakes = 0, unexplored = 0, explored = 0;
+                    int plains = 0, trees = 0, dirt = 0, mountains = 0, lakes = 0, unexplored = 0, explored = 0;
                     int iLimit = (x + 1) * granularity;
                     int jLimit = (y + 1) * granularity;
-                    for (int i = x * granularity; i < iLimit; i += 1) {
-                        for (int j = y * granularity; j < jLimit; j += 1) {
+                    for (int i = x * granularity; i < iLimit; i++) {
+                        for (int j = y * granularity; j < jLimit; j++) {
                             worldIndex = new Point(i / hectareWidth, j / hectareHeight);
                             Point localPos = new Point(i - (worldIndex.X * hectareWidth), j - (worldIndex.Y * hectareHeight));
 
                             switch (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Explored) {
                                 case (true):
-                                    explored += 1;
+                                    explored++;
                                     break;
                                 case (false):
-                                    unexplored += 1;
+                                    unexplored++;
                                     break;
                             }
                             if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Type == BlockType.Wall)
-                                mountains += 1;
+                                mountains++;
                             else if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y].Type == BlockType.Plant)
-                                plains += 1;
+                                plains++;
+                            else if (Program.WorldMap[worldIndex.X, worldIndex.Y][localPos.X, localPos.Y] is Tree)
+                                trees++;
                             else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y] is DirtFloor)
-                                dirt += 1;
+                                dirt++;
                             else if (Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[localPos.X * Program.WorldMap.TileWidth + localPos.Y] is Water)
-                                lakes += 1;
+                                lakes++;
                         }
                     }
                     bool mountainous = false;
@@ -325,6 +327,8 @@ namespace Landlord
                     }
                     else if (dirt >= plains && dirt >= lakes && dirt >= mountains)
                         worldView[x, y] = new DirtFloor();
+                    if (trees > 3)
+                        worldView[x, y] = new ForestTile(worldView[x, y].BackColor);
                     if (unexplored > explored && !mountainous)
                         worldView[x, y] = new Unexplored();
                 }
@@ -395,7 +399,7 @@ namespace Landlord
                     return;
                 }
 
-                Play.RenderMap();
+                Play.RenderMap(Program.Player, Program.Console, Program.Window);
                 Program.MsgConsole.Render();
 
                 Point mousePos = new Point(SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
@@ -753,7 +757,7 @@ namespace Landlord
         {
 
             prevGameState = Program.CurrentState;
-            Play.RenderMap();
+            Play.RenderMap(Program.Player, Program.Console, Program.Window);
             Program.MsgConsole.Render();
 
             Program.ControlsConsole = new BorderedConsole(Program.Console.Width / 4, Program.Console.Height / 4)

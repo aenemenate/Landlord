@@ -23,14 +23,14 @@ namespace Landlord
 
             if (Program.Animations.Count == 0)
             {
-                Play.RenderMap();
+                Play.RenderMap(Program.Player, Program.Console, Program.Window);
                 Program.MsgConsole.Render();
             }
 
             GUI.CharacterSheet.HandleLevelUp( selectedAttribute );
         }
 
-        public override void Render()
+        public override void Render(ref SadConsole.Console console, ref Window window)
         {
             selectedAttribute = GUI.CharacterSheet.RenderLevelUp( character, lvlProgress );
         }

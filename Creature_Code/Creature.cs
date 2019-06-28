@@ -35,8 +35,6 @@ namespace Landlord
 
         private Time nextActionTime;
         
-
-
         // CONSTRUCTORS //
 
         public Creature (Block[] map, Point position, Point worldIndex, int currentFloor, int sightDist, byte graphic, string name, string gender, DietType diet, string faction,
@@ -93,7 +91,7 @@ namespace Landlord
 
         public bool Equals(Creature other)
         {
-            return Name.Equals(other.Name) && Position.Equals(other.Position);
+            return id.Equals(other.ID);
         }
         
         public void DetermineEquipment()
@@ -142,7 +140,7 @@ namespace Landlord
 
         public int CompareTo(Creature other)
         {
-            return NextActionTime.Minus(other.NextActionTime);
+            return nextActionTime.Minus(other.NextActionTime);
         }
         
 
@@ -878,6 +876,15 @@ namespace Landlord
                 if (body.MainHand != null)
                     inventory.Add(body.MainHand);
                 body.MainHand = inventory[itemIndex];
+                if (this is Player && Program.CurrentState is Play play && play.PlayMode == PlayMode.Roguelike) {
+                    if (body.MainHand is BlueprintPouch) {
+                        play.PlayMode = PlayMode.BuildMode;
+                        BuildingManager.Paused = true;
+                        Program.MsgConsole.WriteLine("You entered Build Mode!");
+                    }
+                    else if (body.MainHand is RecipePouch)
+                        Program.CurrentState = new CraftMenu();
+                }
             }
             else {
                 if (body.OffHand != null)

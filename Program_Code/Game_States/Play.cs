@@ -22,15 +22,17 @@ namespace Landlord
 
         public override void Update()
         {
-            Point worldIndex = Program.Player.WorldIndex;
-            if (playMode == PlayMode.Roguelike) {
-                Scheduler.HandleRoguelikeScheduling();
-                StatusPanel.HandleStatus();
-            }
-            else {
-                Scheduler.HandleBuildModeScheduling();
-                GUI.BuildPanel.HandleBuildPanel();
-                BuildingManager.HandleInput();
+            switch (playMode)
+            {
+                case (PlayMode.Roguelike):
+                    Scheduler.HandleRoguelikeScheduling(Program.Player);
+                    StatusPanel.HandleStatus();
+                    break;
+                case (PlayMode.BuildMode):
+                    Scheduler.HandleBuildModeScheduling();
+                    GUI.BuildPanel.HandleBuildPanel();
+                    BuildingManager.HandleInput();
+                    break;
             }
 
             InventoryPanel.HandleInventory();
@@ -39,24 +41,26 @@ namespace Landlord
 
         // RENDERING FUNCS
 
-        public override void Render()
+        public override void Render(ref SadConsole.Console console, ref Window window)
         {
-            RenderMap();
+            RenderMap(Program.Player, console, window);
             RenderGUI();
             Program.MsgConsole.Render();
         }
 
-        public static void RenderMap()
+        public static void RenderMap(Player player, SadConsole.Console console, Window window)
         {
-            Point worldIndex = Program.Player.WorldIndex;
-            Point startPoint = Program.Window.CalculateMapStartPoint();
+            Point worldIndex = player.WorldIndex;
+            Point startPoint = window.CalculateMapStartPoint();
             for (int i = startPoint.X; i - startPoint.X < GUI.MapWidth; i++)
-                for (int j = startPoint.Y; j - startPoint.Y < Program.Window.Height; j++)
-                    Program.WorldMap[worldIndex.X, worldIndex.Y].DrawCell(i, j);
+                for (int j = startPoint.Y; j - startPoint.Y < window.Height; j++)
+                    Program.WorldMap[worldIndex.X, worldIndex.Y].DrawCell(i, j, player, console, window);
         }
 
         public override void ClientSizeChanged()
         {
+            RenderMap(Program.Player, Program.Console, Program.Window);
+            Program.MsgConsole.Render();
         }
 
         private void RenderGUI()
@@ -66,12 +70,12 @@ namespace Landlord
             else
                 RenderBuildModeGUI();
 
-            GUI.DrawFPS();
+            //GUI.DrawFPS();
         }
         
         private void RenderRoguelikeGUI()
         {
-            if (SadConsole.Global.MouseState.RightButtonDown || Program.Player.InputModule.AimingMode)
+            if (SadConsole.Global.MouseState.RightButtonDown || PlayerInput.AimingMode)
                 RenderPath();
             RenderInteractivity();
         }
@@ -81,7 +85,7 @@ namespace Landlord
             int currentFloor = Program.Player.CurrentFloor;
             Point worldIndex = Program.Player.WorldIndex;
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
-            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+            int width = Program.WorldMap.TileWidth;
 
             Color interactiveColor = Color.RoyalBlue;
 
@@ -113,7 +117,7 @@ namespace Landlord
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
             Point startPoint = Program.Window.CalculateMapStartPoint();
-            if (Program.Player.InputModule.AimingMode == false)
+            if (PlayerInput.AimingMode == false)
             {
                 List<Point> guiPath = GUI.CalculatePath(startPoint, Program.Window.Width);
                 if (guiPath != null) {
@@ -143,9 +147,9 @@ namespace Landlord
                 Point mapPos = new Point(startPoint.X + (mousePos.X), startPoint.Y + mousePos.Y);
                 bool Plot(int x, int y)
                 {
-                    if (Program.Player.Position.Equals(new Point(x, y)))
+                    if (new Point(x, y).Equals(Program.Player.Position))
                         return true;
-                    if (blocks[x * width + y].Solid)
+                    if (blocks[x * width + y].Solid || x > width || y > height || x < 0 || y < 0)
                         return false;
                     Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, new Point(x, y).Equals(mapPos) ? 88 : blocks[x * width + y].Graphic,
                             new Point(x, y).Equals(mapPos) ? Color.DarkRed * 0.98F : blocks[x * width + y].ForeColor, Color.Red);

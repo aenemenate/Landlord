@@ -15,7 +15,7 @@ namespace Landlord
                 "on the long journey to riches!", Program.Window.Width - 40);
         }
 
-        public override void Render()
+        public override void Render(ref SadConsole.Console console, ref Window window)
         {
         }
 

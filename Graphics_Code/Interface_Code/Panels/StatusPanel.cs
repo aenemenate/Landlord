@@ -57,13 +57,16 @@ namespace Landlord
 
             // FUNCTIONS //
 
+
             void PrintLookFunc()
             {
-                Point worldIndex = Program.Player.WorldIndex;
                 int currentFloor = Program.Player.CurrentFloor;
+                Point worldIndex = Program.Player.WorldIndex;
                 Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
                 Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
-                int width = Program.WorldMap[worldIndex.X, worldIndex.Y].Width;
+                int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+
                 Point mapPos = Program.WorldMap[worldIndex.X, worldIndex.Y].GetMousePos(mousePos);
 
                 bool mouseIsOnMap = !(mousePos.X < 0 || mousePos.X >= Program.Console.Width - StatusPanel.Width);
@@ -71,11 +74,27 @@ namespace Landlord
                 Program.Window.Print(StartX + 1, Program.Window.Height - 3, "                  ", 18);
                 Program.Window.Print(StartX + 1, Program.Window.Height - 2, "                  ", 18);
 
-                if (Program.CurrentState is Play && Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos) && mouseIsOnMap && blocks[mapPos.X * width + mapPos.Y].Explored) {
-                    if (blocks[mapPos.X * width + mapPos.Y] is Item i) // print item name
-                        Program.Window.Print(StartX + 1, Program.Window.Height - 3, i.Name, 18);
-                    else if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty) // print block name
-                        Program.Window.Print(StartX + 1, Program.Window.Height - 3, blocks[mapPos.X * width + mapPos.Y].Name, 18);
+                if (Program.CurrentState is Play && Program.WorldMap[worldIndex.X, worldIndex.Y].PointWithinBounds(mapPos) && mouseIsOnMap && blocks[mapPos.X * width + mapPos.Y].Explored)
+                {
+                    if (blocks[mapPos.X * width + mapPos.Y].Type != BlockType.Empty) {
+                        if (blocks[mapPos.X * width + mapPos.Y] is Item item) {
+                            Program.Window.Print(StartX + 1, Program.Window.Height - (2 + item.Name.Length / 17), item.Name, 17);
+                            Tuple<byte, Color> comparisonArrow = GUI.GetItemArrow(item);
+                            int arrowX = StartX + 1 + item.Name.Length + 2, arrowY = Program.Window.Height - 2;
+                            for (int i = StartX + 1; i < Program.Window.Width; i++) {
+                                if (Program.Console.GetGlyph(i - 1, Program.Window.Height - 2) == 32 && Program.Console.GetGlyph(i, Program.Window.Height - 2) == 32) {
+                                    arrowX = i;
+                                    break;
+                                }
+                            }
+                            if (comparisonArrow.Item1 != 0)
+                                Program.Console.SetGlyph(arrowX, arrowY, comparisonArrow.Item1, comparisonArrow.Item2);
+                        }
+                        else if (blocks[mapPos.X * width + mapPos.Y] is Player player)
+                            Program.Window.Print(StartX + 1, Program.Window.Height - 3, $"You, on {player.CurrentBlock.Name}.", 18);
+                        else
+                            Program.Window.Print(StartX + 1, Program.Window.Height - 3, blocks[mapPos.X * width + mapPos.Y].Name, 18);
+                    }
                     else
                         Program.Window.Print(StartX + 1, Program.Window.Height - 3, tiles[mapPos.X * width + mapPos.Y].Name, 18);
                 }

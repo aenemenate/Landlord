@@ -423,7 +423,7 @@ namespace Landlord
             bool droppedItems = false;
             for (int i = Program.Player.Inventory.Count - 1; i >= 0; i--) {
                 Item I = Program.Player.Inventory[i];
-                if (I is MeleeWeapon == false && I is RecipePouch == false && I is Potion == false && I is Food == false && I is BlueprintPouch == false && !I.ToComponent().Equals(nextComponent)) {
+                if (I is MeleeWeapon == false && I is RangedWeapon == false && I is RecipePouch == false && I is Potion == false && I is Food == false && I is BlueprintPouch == false && !I.ToComponent().Equals(nextComponent)) {
                     List<Point> nearbyChests = Program.Player.GetNearbyBlocksOfType( BlockType.Chest );
                     if (nearbyChests.Count > 0) {
                         int currentFloor = Program.Player.CurrentFloor;

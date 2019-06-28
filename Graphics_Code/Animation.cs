@@ -101,6 +101,8 @@ namespace Landlord
             {
                 if (Program.CurrentState is ViewItem || Program.CurrentState is ViewEquipment)
                     Program.CurrentState = new Play();
+                else if (Program.CurrentState is ViewLoot)
+                    Program.QueuedAnimations.Add(new OpenLootView());
                 Delete();
                 return;
             }
@@ -215,28 +217,22 @@ namespace Landlord
 
         public override void Play()
         {
-            while (true)
-            {
+            while (true) {
                 Program.Console.SetGlyph(cursor.X, cursor.Y, ' ', Color.Black, InventoryPanel.darkerColor);
-
-                if (dir.X == -1 && cursor.X == leftLimit)
-                {
+                if (dir.X == -1 && cursor.X == leftLimit) {
                     dir = new Point(0, -1);
                     leftLimit--;
                 }
-                else if (dir.Y == -1 && cursor.Y == upLimit)
-                {
+                else if (dir.Y == -1 && cursor.Y == upLimit) {
                     dir = new Point(1, 0);
                     if (upLimit > GUI.LootMenu.StartY)
                         upLimit--;
                 }
-                else if (dir.X == 1 && cursor.X == rightLimit)
-                {
+                else if (dir.X == 1 && cursor.X == rightLimit) {
                     dir = new Point(0, 1);
                     rightLimit++;
                 }
-                else if (dir.Y == 1 && cursor.Y == downLimit)
-                {
+                else if (dir.Y == 1 && cursor.Y == downLimit) {
                     dir = new Point(-1, 0);
                     if (downLimit < GUI.LootMenu.StartY + GUI.LootMenu.Height - 1)
                         downLimit++;
@@ -244,10 +240,8 @@ namespace Landlord
                 }
 
                 cursor = new Point(cursor.X + dir.X, cursor.Y + dir.Y);
-
                 // the animation ends once the cursor is less than the leftBoundary
-                if (cursor.X < leftBoundary)
-                {
+                if (cursor.X < leftBoundary) {
                     Delete();
                     break;
                 }

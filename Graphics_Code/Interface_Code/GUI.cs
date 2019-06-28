@@ -376,8 +376,7 @@ namespace Landlord
 
                 void TakeAll()
                 {
-                    for (int i = iItemList.ContainerInventory.Count - 1; i >= 0; i--)
-                    {
+                    for (int i = iItemList.ContainerInventory.Count - 1; i >= 0; i--) {
                         bool itemAdded = Program.Player.AddItem(iItemList.ContainerInventory[i]);
                         if (itemAdded) iItemList.ContainerInventory.RemoveAt(i);
                     }
@@ -385,8 +384,7 @@ namespace Landlord
 
                 void TakeAllOfItem(Item item)
                 {
-                    for (int i = iItemList.ContainerInventory.Count - 1; i >= 0; i--)
-                    {
+                    for (int i = iItemList.ContainerInventory.Count - 1; i >= 0; i--) {
                         if (iItemList.ContainerInventory[i].CompareTo(item) == 0)
                         {
                             bool itemAdded = Program.Player.AddItem(iItemList.ContainerInventory[i]);
@@ -405,10 +403,17 @@ namespace Landlord
                 bool clickedInventory = Program.Window.MousePos.X < InventoryPanel.Width;
                 bool clickedTakeAll = Program.Window.MousePos.X >= TakeAllPos.X && Program.Window.MousePos.X < TakeAllPos.X + "Take All".Length && Program.Window.MousePos.Y == TakeAllPos.Y;
 
+                if (clickedContainer)
+                    switch (SadConsole.Global.MouseState.LeftButtonDown) {
+                        case (true):
+                            return;
+                        case (false):
+                            clickedContainer = false;
+                            return;
+                    }
 
-                if (SadConsole.Global.MouseState.LeftClicked && !clickedContainer) {
-                    if (iItemList.MouseOnItem)
-                    {
+                if (SadConsole.Global.MouseState.LeftClicked) {
+                    if (iItemList.MouseOnItem) {
                         bool determined = iItemList.DetermineClickedItem();
                         if (!determined)
                             return;
@@ -426,7 +431,6 @@ namespace Landlord
                     else if (clickedTakeAll)
                         TakeAll();
                 }
-                clickedContainer = false;
             }
 
 
@@ -476,6 +480,15 @@ namespace Landlord
             {
                 if (Program.Animations.Count > 0)
                     return;
+
+                if (LootMenu.ClickedContainer)
+                    switch (SadConsole.Global.MouseState.LeftButtonDown) {
+                        case (true):
+                            return;
+                        case (false):
+                            LootMenu.ClickedContainer = false;
+                            return;
+                    }
 
                 Point mousePos = new Point(SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
                     SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y);
@@ -561,8 +574,7 @@ namespace Landlord
 
                 if (SadConsole.Global.MouseState.LeftClicked)
                 {
-                    if (mouseOutsideOfWindow && !mouseOverInventory)
-                    {
+                    if (mouseOutsideOfWindow && !mouseOverInventory) {
                         Program.Animations.Add(new CloseCraftMenu());
                         currentlyViewedRecipe = null;
                     }

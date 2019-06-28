@@ -38,6 +38,7 @@ namespace Landlord
 
         static private Player player;
         static private GameState currentState;
+        static private List<Animation> queuedAnimations; // animations to be played asap go here
         static private List<Animation> animations; // running animations go here
         static private List<Animation> finishedAnims; // animations are placed here when done
         static private Random rng;
@@ -81,6 +82,7 @@ namespace Landlord
             msgConsole = new MsgConsole(0, new TimeSpan(0, 0, 5));
             GUI.Console = new SadConsole.Console( Program.Window.Width, Program.Window.Height );
 
+            queuedAnimations = new List<Animation>();
             animations = new List<Animation>();
             finishedAnims = new List<Animation>();
             
@@ -108,17 +110,22 @@ namespace Landlord
         private static void Render()
         {
             if (currentState is Play && 
-                !(Program.Console.Children.Contains(msgConsole.Console) && Program.Console.Children.Contains( GUI.Console ) ) ) {
-                Program.Console.Children.Remove( msgConsole.Console );
-                Program.Console.Children.Remove( GUI.Console );
-                Program.Console.Children.Add( msgConsole.Console );
-                Program.Console.Children.Add( GUI.Console );
+                    !(Program.Console.Children.Contains(msgConsole.Console) && Program.Console.Children.Contains(GUI.Console))) {
+                Program.Console.Children.Remove(msgConsole.Console);
+                Program.Console.Children.Remove(GUI.Console);
+                Program.Console.Children.Add(msgConsole.Console);
+                Program.Console.Children.Add(GUI.Console);
             }
 
             currentState.Render();
             if ((currentState is DialogWindow) == false) {
                 foreach (Animation anim in animations)
                     anim.Play();
+                for (int i = queuedAnimations.Count - 1; i > 0; i--) {
+                    Animation anim = queuedAnimations[i];
+                    animations.Add(anim);
+                    queuedAnimations.RemoveAt(i);
+                }
                 foreach (Animation anim in finishedAnims)
                     animations.Remove(anim);
                 finishedAnims = new List<Animation>();
@@ -155,6 +162,11 @@ namespace Landlord
         public static Player Player {
             get { return player; }
             set { player = value; }
+        }
+        public static List<Animation> QueuedAnimations
+        {
+            get { return queuedAnimations; }
+            set { queuedAnimations = value; }
         }
         public static List<Animation> Animations {
             get { return animations; }

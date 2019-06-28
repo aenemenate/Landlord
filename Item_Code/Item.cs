@@ -21,7 +21,9 @@ namespace Landlord
         Stone,
         Coal,
         Plank,
-        Wheel
+        Wheel,
+        Arrow,
+        Bolt,
     }
     
     public enum Rarity

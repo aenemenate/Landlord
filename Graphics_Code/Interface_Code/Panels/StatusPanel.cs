@@ -33,10 +33,10 @@ namespace Landlord
                     Program.CurrentState = new CharacterSheet(curCreature);
                 }
                 else {
-                    bool mouseOverTabs = mousePos.Y >= tabStartY - 3 && mousePos.Y <= tabStartY - 1;
+                    bool mouseOverTabs = mousePos.Y >= tabStartY - 3 && mousePos.Y <= tabStartY - 1 && mousePos.X > StartX;
                     if (mouseOverTabs)
                     {
-                        if (mousePos.X > StartX && mousePos.X < StartX + 7)
+                        if (mousePos.X < StartX + 7)
                             selectedTab = 0;
                         else if (mousePos.X > StartX + 7 && mousePos.X < StartX + 14)
                             selectedTab = 1;

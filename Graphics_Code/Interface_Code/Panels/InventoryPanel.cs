@@ -187,7 +187,6 @@ namespace Landlord
             }
             return true;
         } // input handling
-
         public static bool RenderInventory() // display handling
         {
             int heightOfItems = inventoryItems.Count;
@@ -529,7 +528,6 @@ namespace Landlord
             return PrintInventory() | PrintEquipment();
         }
 
-
         public static void HandleItemView( bool highlighting )
         {
             Point mousePos = new Point( SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
@@ -542,6 +540,7 @@ namespace Landlord
             bool selectingDrink = mousePos.Y == 27 && mousePos.X >= width + 12 && mousePos.X <= width + 18;
             bool selectingDrop = mousePos.Y == 29 && mousePos.X >= width + 1 && mousePos.X <= width + 6;
             bool selectingEquip = mousePos.Y == 29 && mousePos.X >= width + 12 && mousePos.X <= width + 18;
+            bool selectingOpen = mousePos.Y == 31 && mousePos.X >= width + 1 && mousePos.X <= width + 6;
 
             bool mouseOutsideOfItemWindow = ( mousePos.X > width || mousePos.X < width );
 
@@ -561,12 +560,26 @@ namespace Landlord
                     else
                         Program.Player.Equip((Armor)currentlyViewedItem);
                 }
+                else if (selectingOpen) {
+                    List<Item> inventory = new List<Item>();
+                    if (currentlyViewedItem is BlueprintPouch bp)
+                        foreach (Blueprint b in bp.Blueprints)
+                            inventory.Add(b);
+                    else if (currentlyViewedItem is RecipePouch rp)
+                        foreach (CraftingRecipe cr in rp.Recipes)
+                            inventory.Add(cr);
+                    if (inventory.Count == 0) {
+                        Program.MsgConsole.WriteLine($"You can't open the {currentlyViewedItem.Name}");
+                        return;
+                    }
+                    Program.Animations.Add(new CloseItemView());
+                    Program.CurrentState = new ViewLoot(inventory, currentlyViewedItem.Name);
+                }
                 currentlyViewedItem = null;
                 if (Program.CurrentState is DialogWindow == false)
                     Program.Animations.Add( new CloseItemView() );
             }
         }
-
         public static void RenderItemView()
         {
             if (currentlyViewedItem == null)
@@ -625,36 +638,28 @@ namespace Landlord
                 color = Color.Orange;
                 Color highlightingColor = Color.Green;
                 bool highlightingAction = false;
-                string action = "";
-
                 bool thisIsTheFirstIteration = x == width + 1;
-                if (thisIsTheFirstIteration)
-                    action = "[eat]";
-                else
-                    action = "[drink]";
 
+                string action = thisIsTheFirstIteration ? "[eat]" : "[drink]";
                 if (Program.Window.MousePos.Y == 27 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
                     highlightingAction = true;
-
-                if (highlightingAction)
-                    GUI.Console.Print( x, 27, action, highlightingColor, lighterColor );
-                else
-                    GUI.Console.Print( x, 27, action, color, lighterColor );
+                GUI.Console.Print( x, 27, action, highlightingAction ? highlightingColor : color, lighterColor );
 
                 highlightingAction = false;
-                if (thisIsTheFirstIteration)
-                    action = "[drop]";
-                else
-                    action = "[equip]";
+                action = thisIsTheFirstIteration ? "[drop]" : "[equip]";
                 if (Program.Window.MousePos.Y == 29 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
                     highlightingAction = true;
-                if (highlightingAction)
-                    GUI.Console.Print( x, 29, action, highlightingColor, lighterColor );
-                else
-                    GUI.Console.Print( x, 29, action, color, lighterColor );
+                GUI.Console.Print( x, 29, action, highlightingAction ? highlightingColor : color, lighterColor );
+
+                if (thisIsTheFirstIteration) {
+                    highlightingAction = false;
+                    action = "[open]";
+                    if (Program.Window.MousePos.Y == 31 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
+                        highlightingAction = true;
+                    GUI.Console.Print(x, 31, action, highlightingAction ? highlightingColor : color, lighterColor);
+                }
             }
         }
-
 
         public static void HandleEquipmentView( bool highlighting )
         {
@@ -681,7 +686,6 @@ namespace Landlord
                 Program.Animations.Add( new CloseItemView() );
             }
         }
-
         public static void RenderEquipmentView( Point mousePos )
         {
             Item item = currentlyViewedItem;

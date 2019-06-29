@@ -21,6 +21,7 @@ namespace Landlord
         private Block[] memoryMap;
         private Tile[] floor;
         private List<Creature> creatures;
+        private List<Projectile> projectiles;
         private PatrolMaps patrolMaps;
         private List<Point> patrolPoints;
 
@@ -32,6 +33,7 @@ namespace Landlord
             memoryMap = new Block[width * height];
             floor = new Tile[width * height];
             creatures = new List<Creature>();
+            projectiles = new List<Projectile>();
             patrolPoints = new List<Point>();
         }
         public DungeonFloor()
@@ -46,7 +48,7 @@ namespace Landlord
             {
                 case (DungeonType.RoomPlacement_s):
                     roomPlacementAlgo = new RoomPlacementAlgorithm(this, monsterTypes);
-                    roomPlacementAlgo.GenerateDungeon(250, 15, floor, worldIndex);
+                    roomPlacementAlgo.GenerateDungeon(250, 20, floor, worldIndex);
                     break;
                 case (DungeonType.RoomPlacement_l):
                     roomPlacementAlgo = new RoomPlacementAlgorithm(this, monsterTypes );
@@ -118,6 +120,11 @@ namespace Landlord
         {
             get { return creatures; }
             set { creatures = value; }
+        }
+        public List<Projectile> Projectiles
+        {
+            get { return projectiles; }
+            set { projectiles = value; }
         }
         public PatrolMaps PatrolMaps
         {

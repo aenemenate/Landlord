@@ -17,7 +17,7 @@ namespace Landlord
 
         public static bool HandleInput(bool allowMouseInput, bool allowKeysInput)
         {
-            if (allowKeysInput && SadConsole.Global.KeyboardState.KeysDown.Count > 0)
+            if (allowKeysInput)
                 HandleKeys();
             if (!selectingActDir && allowMouseInput)
                 HandleMouse();
@@ -183,7 +183,6 @@ namespace Landlord
 
             if (mouseIsOnMap)
             {
-                aimingMode = false;
                 if (Menus.ClickedDialog)
                     Menus.ClickedDialog = false;
                 else if (aimingMode) {
@@ -223,9 +222,8 @@ namespace Landlord
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth;
 
-            aimingMode = false;
-            if (mouseIsOnMap)
-                if (blocks[mapPos.X * width + mapPos.Y].Explored && blocks[mapPos.X * width + mapPos.Y].Solid == false && mapPos.Y < 100)
+            if (aimingMode) { aimingMode = false; return; }
+            if (mouseIsOnMap && blocks[mapPos.X * width + mapPos.Y].Explored && blocks[mapPos.X * width + mapPos.Y].Solid == false && mapPos.Y < 100)
                     Program.Player.SetPath(mapPos);
         }
 

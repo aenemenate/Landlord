@@ -62,7 +62,7 @@ namespace Landlord
 
 
             const int chanceToSpawnCloserThanMinDist = 20;
-            int desiredItemCount = itemSpots.Count / 50;
+            int desiredItemCount = itemSpots.Count / 100;
             int itemsPlaced = 0;
 
             while (itemsPlaced < desiredItemCount)
@@ -99,7 +99,7 @@ namespace Landlord
                 }
 
             int creaturesSpawned = 0;
-            int desiredcreatureCount = creatureSpots.Count / 150;
+            int desiredcreatureCount = creatureSpots.Count / 125;
             while (creaturesSpawned < desiredcreatureCount) {
                 int index = Program.RNG.Next(0, creatureSpots.Count);
                 Point next = creatureSpots[index];

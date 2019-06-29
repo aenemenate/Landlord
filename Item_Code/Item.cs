@@ -24,14 +24,15 @@ namespace Landlord
         Wheel,
         Arrow,
         Bolt,
+        Quiver
     }
     
     public enum Rarity
     {
         Common = 1,
         Uncommon = 3,
-        Rare = 5,
-        Legendary = 8
+        Rare = 6,
+        Legendary = 9
     }
 
     public enum DamageType

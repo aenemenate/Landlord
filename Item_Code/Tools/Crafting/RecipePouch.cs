@@ -5,7 +5,7 @@ namespace Landlord
 {
     class RecipePouch : Item
     {
-        private List<CraftingRecipe> recipes;
+        private List<Item> recipes;
 
         public RecipePouch(bool instantiating, byte graphic = 11, ItemType type = ItemType.RecipePouch, double volume = 0.02, bool hollow = true, DamageType damageType = DamageType.Blunt)
                : base(graphic, type, volume, hollow, damageType)
@@ -24,7 +24,7 @@ namespace Landlord
 
         public void Init(bool addBasicRecipes)
         {
-            recipes = new List<CraftingRecipe>();
+            recipes = new List<Item>();
             if (addBasicRecipes)
             {
                 recipes.Add( new ProcessLogRecipe( true ) );
@@ -61,7 +61,7 @@ namespace Landlord
 
         // PROPERTIES //
 
-        public List<CraftingRecipe> Recipes
+        public List<Item> Recipes
         {
             get { return recipes; }
             set { recipes = value; }

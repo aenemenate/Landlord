@@ -575,6 +575,7 @@ namespace Landlord
         static public class LoadSave
         {
             static private bool loading = false;
+            static private DateTime startLoad = DateTime.Now;
             static private System.Threading.Thread loadThread;
 
             // FUNCTIONS //
@@ -659,9 +660,11 @@ namespace Landlord
             }
             static public void GenerateDungeonScreen()
             {
+                bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerSecond * 5);
                 if (ClickedDialog)
                     ClickedDialog = !ClickedDialog;
-                if (!loading) {
+                if (!loading || loadingFailed) {
+                    startLoad = DateTime.Now;
                     Program.Console.Clear();
                     loading = true;
                     Program.WorldMap[Program.Player.WorldIndex.X, Program.Player.WorldIndex.Y].Dungeon = DataReader.GetNextDungeon(Program.Player.Stats.Level.Lvl);

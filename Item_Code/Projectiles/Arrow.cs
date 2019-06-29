@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Landlord.Item_Code.Projectiles
+namespace Landlord
 {
     class Arrow : Item
     {

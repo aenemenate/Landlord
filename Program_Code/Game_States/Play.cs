@@ -149,7 +149,7 @@ namespace Landlord
                 {
                     if (new Point(x, y).Equals(Program.Player.Position))
                         return true;
-                    if (blocks[x * width + y].Solid || x > width || y > height || x < 0 || y < 0)
+                    if (x > width || y > height || x < 0 || y < 0 || !SadConsole.Global.MouseState.IsOnScreen || mousePos.X >= StatusPanel.StartX || blocks[x * width + y].Solid )
                         return false;
                     Program.Console.SetGlyph(x - startPoint.X, y - startPoint.Y, new Point(x, y).Equals(mapPos) ? 88 : blocks[x * width + y].Graphic,
                             new Point(x, y).Equals(mapPos) ? Color.DarkRed * 0.98F : blocks[x * width + y].ForeColor, Color.Red);

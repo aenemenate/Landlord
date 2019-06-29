@@ -190,7 +190,7 @@ namespace Landlord
         public static bool RenderInventory() // display handling
         {
             int heightOfItems = inventoryItems.Count;
-            int itemPortHeight = Program.Console.Height - 8 - ( displayingEquipment ? equipmentStartY : equipmentHeight );
+            int itemPortHeight = Program.Console.Height - 7 - ( displayingEquipment ? equipmentStartY : equipmentHeight );
             itemsPerPage = itemPortHeight / padding;
 
             Point mousePos = new Point( SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
@@ -304,10 +304,9 @@ namespace Landlord
             {
 
                 // fill the background
-                if (!GUI.Console.GetBackground( 0, 0 ).Equals( bgColor ))
-                    for (int i = 0; i < width; i++)
-                        for (int j = 0; j < Program.Console.Height; j++)
-                            GUI.Console.SetGlyph( i, j, ' ', bgColor, bgColor );
+                for (int i = 0; i < width; i++)
+                    for (int j = 0; j < Program.Console.Height; j++)
+                        GUI.Console.SetGlyph( i, j, ' ', bgColor, bgColor );
                 // print the header
                 GUI.Console.Print( width / 2 - "INVENTORY".Length / 2, 1, "INVENTORY", textColor );
 
@@ -410,7 +409,6 @@ namespace Landlord
                     equipmentTitle = (char)31 + equipmentTitle + (char)31;
                 else
                     equipmentTitle = (char)30 + equipmentTitle + (char)30;
-                GUI.Console.Print(0, equipmentStartY - 3, "                      ", textColor);
                 GUI.Console.Print( width / 2 - "  EQUIPMENT  ".Length / 2, equipmentStartY - 2, equipmentTitle, textColor );
 
                 if (!displayingEquipment)
@@ -561,19 +559,18 @@ namespace Landlord
                         Program.Player.Equip((Armor)currentlyViewedItem);
                 }
                 else if (selectingOpen) {
-                    List<Item> inventory = new List<Item>();
-                    if (currentlyViewedItem is BlueprintPouch bp)
-                        foreach (Blueprint b in bp.Blueprints)
-                            inventory.Add(b);
-                    else if (currentlyViewedItem is RecipePouch rp)
-                        foreach (CraftingRecipe cr in rp.Recipes)
-                            inventory.Add(cr);
-                    if (inventory.Count == 0) {
+                    if (!(currentlyViewedItem is BlueprintPouch 
+                        || currentlyViewedItem is RecipePouch
+                          || currentlyViewedItem is Quiver)) {
                         Program.MsgConsole.WriteLine($"You can't open the {currentlyViewedItem.Name}");
                         return;
                     }
                     Program.Animations.Add(new CloseItemView());
-                    Program.CurrentState = new ViewLoot(inventory, currentlyViewedItem.Name);
+                    Program.CurrentState = new ViewLoot(currentlyViewedItem is RecipePouch 
+                                                          ? ((RecipePouch)currentlyViewedItem).Recipes 
+                                                            : ((currentlyViewedItem is Quiver) 
+                                                              ? ((Quiver)currentlyViewedItem).Arrows 
+                                                                : ((BlueprintPouch)currentlyViewedItem).Blueprints), currentlyViewedItem.Name);
                 }
                 currentlyViewedItem = null;
                 if (Program.CurrentState is DialogWindow == false)

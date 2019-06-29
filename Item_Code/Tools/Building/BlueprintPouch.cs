@@ -5,7 +5,7 @@ namespace Landlord
 {
     class BlueprintPouch : Item
     {
-        private List<Blueprint> blueprints;
+        private List<Item> blueprints;
 
         public BlueprintPouch(bool instantiating, byte graphic = 11, ItemType type = ItemType.BlueprintPouch, double volume = 0.02, bool hollow = true, DamageType damageType = DamageType.Blunt)
                : base(graphic, type, volume, hollow, damageType)
@@ -24,7 +24,7 @@ namespace Landlord
 
         public void Init(bool addBasicBlueprints)
         {
-            blueprints = new List<Blueprint>();
+            blueprints = new List<Item>();
             if (addBasicBlueprints)
             {
                 blueprints.Add( new WoodWallBlueprint( true ) );
@@ -65,7 +65,7 @@ namespace Landlord
 
         // PROPERTIES //
 
-        public List<Blueprint> Blueprints
+        public List<Item> Blueprints
         {
             get { return blueprints; }
             set { blueprints = value; }

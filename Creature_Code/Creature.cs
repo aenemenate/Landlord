@@ -93,23 +93,28 @@ namespace Landlord
         {
             return id.Equals(other.ID);
         }
-        
+        public int CompareTo(Creature other)
+        {
+            return nextActionTime.Minus(other.NextActionTime);
+        }
+
         public void DetermineEquipment()
         {
             Random rng = new Random();
 
             if (Class.MajorSkills.Contains(Skill.HeavyWeapons))
-                Body.MainHand = new Mace(true);
+                body.MainHand = new Mace(true);
             else if (Class.MajorSkills.Contains(Skill.LongBlades))
-                Body.MainHand = new Sword(true);
+                body.MainHand = new Sword(true);
             else if (Class.MajorSkills.Contains(Skill.ShortBlade))
-                Body.MainHand = new Dagger(true);
+                body.MainHand = new Dagger(true);
             else if (Class.MajorSkills.Contains(Skill.Spear))
-                Body.MainHand = new Spear(true);
+                body.MainHand = new Spear(true);
             if (Class.MajorSkills.Contains(Skill.Block) || Class.MinorSkills.Contains(Skill.Block))
-                Body.OffHand = new Shield(true);
+                body.OffHand = new Shield(true);
             if (Class.MajorSkills.Contains(Skill.Marksmanship) || Class.MinorSkills.Contains(Skill.Marksmanship))
-                Inventory.Add(new Bow(true));
+                    { inventory.Add(new Bow(true)); inventory.Add(new Quiver(false)); }
+                
 
             // determine valid Materials
             Skill armorSkill = Skill.Alchemy;
@@ -128,23 +133,16 @@ namespace Landlord
 
             // create the armor with chosen materials
             if (rng.Next(0, 100) < 50)
-            do { Body.Helmet = new Helmet(true); } while (validMaterials.Contains(Body.Helmet.Material) == false);
+            do { body.Helmet = new Helmet(true); } while (validMaterials.Contains(body.Helmet.Material) == false);
             if (rng.Next(0, 100) < 50)
-                do { Body.ChestPiece = new ChestPiece(true); } while (validMaterials.Contains(Body.ChestPiece.Material) == false);
-            do { Body.Shirt = new Shirt(true); } while (validMaterials.Contains(Body.Shirt.Material) == false);
+                do { body.ChestPiece = new ChestPiece(true); } while (validMaterials.Contains(body.ChestPiece.Material) == false);
+            do { body.Shirt = new Shirt(true); } while (validMaterials.Contains(body.Shirt.Material) == false);
             if (rng.Next(0, 100) < 50)
-                do { Body.Gauntlets = new Gauntlets(true); } while (validMaterials.Contains(Body.Gauntlets.Material) == false);
-            do { Body.Leggings = new Leggings(true); } while (validMaterials.Contains(Body.Leggings.Material) == false);
-            do { Body.Boots = new Boots(true); } while (validMaterials.Contains(Body.Boots.Material) == false);
-        }
-
-        public int CompareTo(Creature other)
-        {
-            return nextActionTime.Minus(other.NextActionTime);
+                do { Body.Gauntlets = new Gauntlets(true); } while (validMaterials.Contains(body.Gauntlets.Material) == false);
+            do { body.Leggings = new Leggings(true); } while (validMaterials.Contains(body.Leggings.Material) == false);
+            do { body.Boots = new Boots(true); } while (validMaterials.Contains(body.Boots.Material) == false);
         }
         
-
-        // moving maps //
         public bool MoveMaps(Point to, int xDir, int yDir)
         {
             int width = Program.WorldMap.TileWidth;
@@ -170,7 +168,6 @@ namespace Landlord
             ApplyActionCost(8);
             return true;
         }
-
         public void TakeStairsDown()
         {
             if (!Program.WorldMap[worldIndex.X, worldIndex.Y].Owned && this is Player) {
@@ -210,7 +207,6 @@ namespace Landlord
             }
             
         }
-
         public void TakeStairsUp()
         {
             ApplyActionCost(12);
@@ -233,9 +229,6 @@ namespace Landlord
             }
         }
 
-        
-        // checks //
-
         public bool CanCarryItem(Item item)
         {
             double carrying = 0;
@@ -249,8 +242,6 @@ namespace Landlord
             return false;
         }
 
-        // changing resources //
-
         public void ChangeResource(Resource resource, int effect)
         {
             Stats.Resources[resource] += effect;
@@ -263,7 +254,6 @@ namespace Landlord
             if (Stats.Resources[Resource.HP] == 0)
                 Die();
         }
-
         public void ApplyActionCost( int maxNumOfSeconds )
         {
             double granularity = stats.Attributes[Attribute.Agility] / 300;
@@ -271,11 +261,9 @@ namespace Landlord
             nextActionTime.AddTime(timeToAdd);
             if (new Random().Next(0, 100) <= 2)
                 ChangeResource(Resource.HV, -(timeToAdd / 4));
-            if (Stats.Resources[Resource.HV] == 0 && new Random().Next(0, 100) <= 4)
+            if (Stats.Resources[Resource.HV] == 0 && new Random().Next(0, 100) <= 1)
                 ChangeResource(Resource.HP, -1);
         }
-
-        // get values //
 
         private int GetArmorSkill(Armor armor)
         {
@@ -291,7 +279,6 @@ namespace Landlord
             else
                 return Stats.Skills[Skill.Unarmored];
         }
-
         private int GetDefenseValue(DamageType dmgType)
         {
             double helmetPer = .15, chestPer = .35, shirtPer = .1, gauntletsPer = .1, leggingsPer = .2, bootsPer = .1;
@@ -320,11 +307,11 @@ namespace Landlord
 
             return armorVal;
         }
-
-        private int GetWeaponSkill(Item weapon)
+        public int GetWeaponSkill(Item weapon)
         {
             if (weapon != null) {
-                if (weapon is MeleeWeapon) {
+                if (weapon is MeleeWeapon)
+                {
                     if (weapon is Sword)
                         return Stats.Skills[Skill.LongBlades];
                     else if (weapon is Dagger)
@@ -335,61 +322,14 @@ namespace Landlord
                         return Stats.Skills[Skill.Spear];
                     else return -1;
                 }
-                else
-                    return 20;
+                else if (weapon is RangedWeapon)
+                    return Stats.Skills[Skill.Marksmanship];
+                return 0;
             }
             else
                 return Stats.Skills[Skill.Brawling];
         }
 
-        private int GetWeaponCost(Item weapon)
-        {
-            if (weapon != null) {
-                if (weapon is MeleeWeapon) {
-                    if (weapon is Sword)
-                        return 8 - (GetWeaponSkill(weapon) / 25);
-                    else if (weapon is Dagger)
-                        return 6 - (GetWeaponSkill(weapon) / 33);
-                    else if (weapon is Mace)
-                        return 16 - (GetWeaponSkill(weapon) / 12);
-                    else if (weapon is Axe)
-                        return 16 - (GetWeaponSkill(weapon) / 12);
-                    else if (weapon is Spear)
-                        return 8 - (GetWeaponSkill(weapon) / 25);
-                    else return -1;
-                }
-                else
-                    return 8 - (GetWeaponSkill(weapon) / 25);
-            }
-            else
-                return 4 - (Stats.Skills[Skill.Brawling] / 25);
-        }
-
-        public int GetWepDmg(Item weapon)
-        {
-            int damage;
-            // determine the damage value
-            if (weapon != null) {
-                // minimum skill deals half dmg, max skill deals full damage
-                damage = (int)(weapon.Damage * (.5 + (double)GetWeaponSkill(weapon) / 200));
-            }
-            else // the damage type is bone, for your fist
-                damage = (int)(Physics.ShearYields[Material.Bone] * (.5 + (double)Stats.Skills[Skill.Brawling] / 200));
-            return damage;
-
-        }
-
-        public DamageType GetWepDmgType(Item weapon)
-        {
-            DamageType dmgType = DamageType.Blunt;
-            if (weapon != null)
-                dmgType = weapon.DamageType;
-
-            return dmgType;
-        }
-        
-
-        // get positions //
         public List<Point> GetNearbyBlocksOfType(BlockType type)
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
@@ -404,7 +344,6 @@ namespace Landlord
             return nearbyPointsOfType;
         }
 
-        // behaviors //
         public void UpdateFOV()
         {
             visiblePoints = RayCaster.CalculateFOV(sightDist, this).ToList();
@@ -463,13 +402,13 @@ namespace Landlord
             // START
             DetermineWeapon();
             
-            ApplyActionCost(GetWeaponCost(weapon));
+            ApplyActionCost(weapon.GetWeaponCost(this));
 
             bool attackLanded = DetermineIfAttackLanded();
             if (attackLanded) {
-                int damage = GetWepDmg(weapon);
+                int damage = weapon.GetWepDmg(this);
 
-                DamageType dmgType = GetWepDmgType(weapon);
+                DamageType dmgType = weapon.GetWepDmgType();
 
                 int dmgDealt = defender.DefendAgainstDmg(dmgType, damage);
 
@@ -502,13 +441,66 @@ namespace Landlord
 
         public void Shoot(Point pos)
         {
+            Random rng = new Random();
+            Item weapon = body.MainHand;
 
+            bool DetermineIfAttackLanded()
+            {
+                double attackersHitRate =
+                (GetWeaponSkill(this.Body.MainHand) + (this.Stats.Attributes[Attribute.Dexterity] / 5) + (rng.Next(0, this.Stats.Attributes[Attribute.Luck]) / 10))
+                    * (0.75 + 0.5 * this.Stats.Resources[Resource.SP] / this.Stats.Resources[Resource.MaxSP]);
+
+                double maxMissChance = 150;
+                double chanceToMiss = maxMissChance - attackersHitRate;
+
+                int diceRoll = rng.Next(0, (int)maxMissChance);
+                if (diceRoll <= chanceToMiss)
+                {
+                    LvlWeaponSkill(weapon, 5);
+                    return false;
+                }
+
+                LvlWeaponSkill(weapon, 25);
+                return true;
+            }
+
+            Item GetArrow()
+            {
+                Quiver q = null;
+                for(int i = inventory.Count - 1; i >= 0; i--) {
+                    Item item = inventory[i];
+                    if (item is Arrow /* || item is Bolt */) { inventory.RemoveAt(i); return item; }
+                    else if (item is Quiver) q = (Quiver)item;
+                }
+                if (q != null && q.Arrows.Exists(it => it is Arrow)) { int index = q.Arrows.FindIndex(it => it is Arrow); Item item = q.Arrows[index]; q.Arrows.RemoveAt(index); return item; }
+                return null;
+            }
+            Item arrow = GetArrow();
+            if (body.MainHand is RangedWeapon rw && arrow != null) {
+                List<Projectile> projectiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Projectiles : Program.WorldMap[worldIndex.X, worldIndex.Y].Projectiles;
+                Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+                int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
+
+                bool shotTrue = DetermineIfAttackLanded();
+                if (!shotTrue)
+                    pos = pos.GetAdjacentPoints()[rng.Next(0, 8)];
+                projectiles.Add(new Projectile(blocks, width, height, position, pos, arrow));
+                if (this is Player) Program.MsgConsole.WriteLine(shotTrue ? $"Shot the {arrow.Name}" : $"Clumsily shot the {arrow.Name}");
+                ChangeResource(Resource.SP, -(int)(rw.Weight * 10));
+                ApplyActionCost(6);
+            }
+            else if (this is Player) {
+                if (body.MainHand is RangedWeapon == false) Program.MsgConsole.WriteLine("Nothing to shoot with!");
+                else if (arrow == null) Program.MsgConsole.WriteLine("Out of arrows!");
+            }
         }
 
         private void LvlWeaponSkill( Item weapon, int amount )
         {
             if (weapon is MeleeWeapon mWeapon)
                 Stats.LvlSkill( mWeapon.GetWeaponSkill(), amount, this );
+            else if (weapon is RangedWeapon)
+                Stats.LvlSkill(Skill.Marksmanship, amount, this);
         }
 
         private void LvlArmorSkill(int amount)
@@ -687,8 +679,8 @@ namespace Landlord
             if (weapon is Axe || weapon is Sword) {
                 Random rng = new Random();
                 Tree tree = (Tree)Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y];
-                tree.Thickness -= GetWepDmg(weapon);
-                ApplyActionCost(GetWeaponCost(weapon));
+                tree.Thickness -= weapon.GetWepDmg(this);
+                ApplyActionCost(weapon.GetWeaponCost(this));
                 if (rng.Next(0, 100) < 10)
                     LvlWeaponSkill(weapon, 5);
                 // deplete stamina
@@ -712,7 +704,7 @@ namespace Landlord
             if (!plant.Name.Equals("grass") || this is Animal || (weapon is Dagger || weapon is Sword || weapon is Axe)) {
                 Random rng = new Random();
                 if (weapon != null) {
-                    ApplyActionCost(GetWeaponCost(weapon));
+                    ApplyActionCost(weapon.GetWeaponCost(this));
                     if (rng.Next(0, 100) < 10)
                         LvlWeaponSkill(weapon, 5);
                     ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
@@ -733,7 +725,7 @@ namespace Landlord
             if (Body.MainHand is Axe axe && axe.WeaponName == "pickaxe")
             {
                 Program.MsgConsole.WriteLine( $"{Name} struck the {wall.Name}" );
-                ApplyActionCost( GetWeaponCost( axe ) );
+                ApplyActionCost(axe.GetWeaponCost(this) );
                 if (rng.Next( 0, 100 ) < 10)
                     LvlWeaponSkill( axe, 5 );
                 ChangeResource( Resource.SP, -(int)( axe.Weight * 2 ) );

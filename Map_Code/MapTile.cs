@@ -13,9 +13,10 @@ namespace Landlord
         private int width, height;
         private Point worldIndex;
         private Block[] map; // x * width + y
-        private Block[] memoryMap; // x * width + y
+        //private Block[] memoryMap; // x * width + y
         private Tile[] floor; // x * width + y
         private List<Creature> creatures;
+        private List<Projectile> projectiles;
         private DijkstraMaps dijkstraMaps;
 
         private bool owned;
@@ -33,9 +34,10 @@ namespace Landlord
             height = size.Y;
             this.worldIndex = worldIndex;
             map = new Block[width * height];
-            memoryMap = new Block[width * height];
+            //memoryMap = new Block[width * height];
             floor = new Tile[width * height];
             creatures = new List<Creature>();
+            projectiles = new List<Projectile>();
             dijkstraMaps = new DijkstraMaps(width, height);
             Init(new Random(), worldIndex, heightMap, plantTypes, creatureTypes, containsDungeon);
             owned = false;
@@ -74,6 +76,8 @@ namespace Landlord
             int currentFloor = player.CurrentFloor;
             Block[] blocks = currentFloor >= 0 ? Dungeon.Floors[currentFloor].Blocks : map;
             Tile[] tiles = currentFloor >= 0 ? Dungeon.Floors[currentFloor].Floor : floor;
+            List<Projectile> projectiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Projectiles : Program.WorldMap[worldIndex.X, worldIndex.Y].Projectiles;
+            Projectile p = projectiles.Find(pr => pr.Position.Equals(new Point(x, y)));
             int width = Program.WorldMap.TileWidth;
 
             Color floorForeColor = tiles[x * width + y].ForeColor;
@@ -147,10 +151,7 @@ namespace Landlord
                 else
                     switch (block.Visible) {
                         case (false):
-                            if (memoryMap[x * width + y] == null)
-                                console.SetGlyph(x - startPoint.X, y - startPoint.Y, block.Graphic, blockForeColor * nonVisibleMultiplierFore, blockBackColor * nonVisibleMultiplierBack);
-                            else
-                                console.SetGlyph( x - startPoint.X, y - startPoint.Y, memoryMap[x * width + y].Graphic, memoryMap[x * width + y].ForeColor * nonVisibleMultiplierFore, floorBackColor * nonVisibleMultiplierBack );
+                            console.SetGlyph(x - startPoint.X, y - startPoint.Y, block.Graphic, blockForeColor * nonVisibleMultiplierFore, blockBackColor * nonVisibleMultiplierBack);
                             break;
                         case (true):
                             console.SetGlyph(x - startPoint.X, y - startPoint.Y, block.Graphic, blockForeColor * visibleMultiplierFore, blockBackColor * visibleMultiplierBack);
@@ -158,8 +159,14 @@ namespace Landlord
                     }
             }
 
+            void RenderProjectile()
+            {
+                console.SetGlyph(x - startPoint.X, y - startPoint.Y, p.Item.Graphic, p.Item.ForeColor * visibleMultiplierFore, floorBackColor * visibleMultiplierBack);
+            }
 
-            if (blocks[x * width + y].Type == BlockType.Empty)
+            if (tiles[x * width + y].Visible && p != null)
+                RenderProjectile();
+            else if (blocks[x * width + y].Type == BlockType.Empty)
                 RenderFloorTile();
             else
                 RenderBlock();
@@ -170,7 +177,7 @@ namespace Landlord
             Random rng = new Random();
             for (int i = 0; i < Width; i++)
                 for (int j = 0; j < Height; j++)
-                    if (Blocks[i * width + j] is Plant p && plantsInterval % p.GrowthInterval == 0)
+                    if (map[i * width + j] is Plant p && plantsInterval % p.GrowthInterval == 0)
                         p.Grow(this, new Point(i, j), rng);
         }
         // check functions
@@ -245,10 +252,8 @@ namespace Landlord
             List<Point> grassTiles = new List<Point>();
             for (int i = 0; i < Width; i++)
                 for (int j = 0; j < Height; j++)
-                {
                     if (Floor[i * width + j] is DirtFloor)
                         grassTiles.Add(new Point(i, j));
-                }
             return grassTiles;
         }
         internal Point GetMousePos(Point mousePos)
@@ -269,10 +274,10 @@ namespace Landlord
             get { return map; }
             set { map = value; }
         }
-        public Block[] MemoryMap {
-            get { return memoryMap; }
-            set { memoryMap = value; }
-        }
+        //public Block[] MemoryMap {
+        //    get { return memoryMap; }
+        //    set { memoryMap = value; }
+        //}
         public Tile[] Floor {
             get { return floor; }
             set { floor = value; }
@@ -300,6 +305,10 @@ namespace Landlord
         public List<Creature> Creatures {
             get { return creatures; }
             set { creatures = value; }
+        }
+        public List<Projectile> Projectiles {
+            get { return projectiles; }
+            set { projectiles = value; }
         }
         public DijkstraMaps DijkstraMaps {
             get { return dijkstraMaps; }

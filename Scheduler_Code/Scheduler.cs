@@ -22,12 +22,14 @@ namespace Landlord
             Point worldIndex = player.WorldIndex;
 
             UpdateCreatureList(Program.WorldMap[worldIndex.X, worldIndex.Y]);
-
             List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
+            List<Projectile> projectiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Projectiles : Program.WorldMap[worldIndex.X, worldIndex.Y].Projectiles;
             creatures.Sort();
 
             for (int i = 0; i < creatures.Count; i++) {
                 Program.TimeHandler.CurrentTime = creatures[i].NextActionTime;
+                if (projectiles.Count > 0)
+                    break;
                 if (creatures[i] is Player) {
                     player.DetermineAction();
                     creatures[i] = player;
@@ -36,13 +38,17 @@ namespace Landlord
                 creatures[i].DetermineAction();
             }
 
+            UpdateProjectiles(currentFloor, worldIndex);
+
             CheckUpdates();
         }
+
+
         public static void HandleBuildModeScheduling()
         {
 
             if (BuildingManager.Paused == false)
-                Program.TimeHandler.CurrentTime.AddTime(4);
+                Program.TimeHandler.CurrentTime.AddTime(2);
             else
                 return;
             
@@ -142,6 +148,15 @@ namespace Landlord
                             map.Dungeon.Floors[i].Creatures[j].NextActionTime = new Time(Program.TimeHandler.CurrentTime);
                 }
 
+        }
+        private static void UpdateProjectiles(int currentFloor, Point worldIndex)
+        {
+            List<Projectile> projectiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Projectiles : Program.WorldMap[worldIndex.X, worldIndex.Y].Projectiles;
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            for (int i = projectiles.Count - 1; i >= 0; i--) {
+                bool deleted = projectiles[i].Update(blocks, Program.WorldMap.TileWidth);
+                if (deleted) projectiles.RemoveAt(i);
+            }
         }
     }
 }

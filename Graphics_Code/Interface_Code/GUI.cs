@@ -506,7 +506,7 @@ namespace Landlord
 
             public static void HandleSelectingRecipe(Point mousePos)
             {
-                List<CraftingRecipe> recipes = ((RecipePouch)Program.Player.Body.MainHand).Recipes;
+                List<Item> recipes = ((RecipePouch)Program.Player.Body.MainHand).Recipes;
 
                 bool DetermineCurrentItem()
                 {
@@ -514,9 +514,9 @@ namespace Landlord
                     if (mousePos.Y >= StartY + 3)
                     {
                         index = (mousePos.Y - (StartY + 3)) / 3 + (invCurrentPage * itemsPerPage);
-                        if (recipes.Count <= index || index < 0)
+                        if (recipes.Count <= index || index < 0 || recipes[index] is CraftingRecipe == false)
                             return false;
-                        currentlyViewedRecipe = recipes[index];
+                        currentlyViewedRecipe = (CraftingRecipe)recipes[index];
                     }
                     return true;
                 }
@@ -629,8 +629,8 @@ namespace Landlord
 
 
                 RecipePouch rp = (RecipePouch)Program.Player.Body.MainHand;
-                List<CraftingRecipe> recipes =
-                    rp.Recipes.FindAll( rc => ( noWorkbenchRequirement( rc ) || craftingTableRequirementMet( rc ) || stoneMillRequirementMet( rc ) ) );
+                List<Item> recipes =
+                    rp.Recipes.FindAll( rc => ( rc is CraftingRecipe && (noWorkbenchRequirement((CraftingRecipe)rc) || craftingTableRequirementMet((CraftingRecipe)rc) || stoneMillRequirementMet((CraftingRecipe)rc))));
 
                 int padding = 3;
                 int heightOfItems = recipes.Count;
@@ -838,7 +838,7 @@ namespace Landlord
         {
             static private int blueprintsCurrentPage = 0;
             static private int blueprintsPages = 1;
-            static private List<Blueprint> blueprints = new List<Blueprint>();
+            static private List<Item> blueprints = new List<Item>();
             static private int blueprintsStartY = 8;
 
             static private Blueprint currentlySelectedBlueprint = null;
@@ -867,9 +867,9 @@ namespace Landlord
                     if (mousePos.Y >= blueprintsStartY && itemSelected)
                     {
                         index = (mousePos.Y - blueprintsStartY) / 3;
-                        if (index > blueprints.Count || index < 0)
+                        if (index > blueprints.Count || index < 0 || blueprints[index] is Blueprint == false)
                             return false;
-                        currentlySelectedBlueprint = blueprints[index];
+                        currentlySelectedBlueprint = (Blueprint)blueprints[index];
                     }
                     else
                         return false;
@@ -907,7 +907,7 @@ namespace Landlord
                 }
 
                 Color color = Color.AntiqueWhite, highlightedColor = panelColorLighter * 1.25F, highlightedBgColor = panelColor, bgColor = panelColorDarker;
-                blueprints = new List<Blueprint>();
+                blueprints = new List<Item>();
 
                 AddBlueprints();
 
@@ -1082,16 +1082,15 @@ namespace Landlord
 
                         if (blueprints.Any() && !indexGreaterThanPlayersItems)
                         {
-                            Blueprint blueprint = blueprints[index];
+                            if (blueprints[index] is Blueprint == false) { i--; continue; }
+                            Blueprint blueprint = (Blueprint)blueprints[index];
                             name = blueprint.Name;
 
                             string pt2 = "";
                             Tuple<string, string> nameParts = Window.SplitNameIfGreaterThanLength(name, pt2, StatusPanel.Width - 2);
                             name = nameParts.Item1;
-                            if (name[name.Length - 1] == ' ')
-                                name = name.Substring(0, name.Length - 1);
-                            if (nameParts.Item2 != "")
-                                pt2 = nameParts.Item2;
+                            if (name[name.Length - 1] == ' ') { name = name.Substring(0, name.Length - 1); }
+                            pt2 = nameParts.Item2;
 
                             // check if the mouse is on the item that is currently being drawn
                             if (mousePos.Y >= 3 && mousePos.X >= StartX + 1 && mousePos.X <= (Program.Console.Width - 2))
@@ -1107,9 +1106,7 @@ namespace Landlord
                                 bgColor = highlightedBgColor;
                             
                             string spaces = "";
-
-                            for (int c = 0; c < ( StatusPanel.Width - 2) - name.Length; c++)
-                                spaces += ' ';
+                            for (int c = 0; c < ( StatusPanel.Width - 2) - name.Length; c++) spaces += ' ';
 
                             if (highlighted)
                             {

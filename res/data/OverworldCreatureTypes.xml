@@ -35,7 +35,7 @@ SpawnZones:
     <class>
       <major_skills>
         <skill>Unarmored</skill>
-        <skill>Sneak</skill>
+        <skill>Sneaking</skill>
       </major_skills>
       <minor_skills>
         <skill>Acrobatics</skill>
@@ -66,7 +66,7 @@ SpawnZones:
     <class>
       <major_skills>
         <skill>Unarmored</skill>
-        <skill>Sneak</skill>
+        <skill>Sneaking</skill>
       </major_skills>
       <minor_skills>
         <skill>Restoration</skill>
@@ -79,7 +79,37 @@ SpawnZones:
     </class>
 
   </creature>
-  
+
+  <creature name="elk" ascii_char="101" faction="elk" sight_dist="8">
+
+    <color r="240" g="246" b="218"/>
+
+    <weapon name="elk horn" type="spear" material="Bone" effect=""/>
+
+    <diet>Herbivore</diet>
+
+    <base_desires>
+      <desire_type name="Treasure" value="0"/>
+      <desire_type name="Flee" value="1"/>
+      <desire_type name="Eat" value="3"/>
+    </base_desires>
+
+    <class>
+      <major_skills>
+        <skill>Unarmored</skill>
+        <skill>Spear</skill>
+      </major_skills>
+      <minor_skills>
+      </minor_skills>
+      <major_attributes>
+        <attribute>Endurance</attribute>
+        <attribute>Strength</attribute>
+        <attribute>Dexterity</attribute>
+      </major_attributes>
+    </class>
+
+  </creature>
+
   <!--
   <creature name="wolf" ascii_char="119" faction="wolves" sight_dist="7">
 
@@ -106,36 +136,6 @@ SpawnZones:
       <major_attributes>
         <attribute>Endurance</attribute>
         <attribute>Agility</attribute>
-        <attribute>Dexterity</attribute>
-      </major_attributes>
-    </class>
-
-  </creature>
-
-  <creature name="elk" ascii_char="101" faction="null" sight_dist="7">
-
-    <color r="240" g="246" b="218"/>
-
-    <weapon name="elk horn" type="spear" material="Bone" effect=""/>
-
-    <diet>Herbivore</diet>
-
-    <base_desires>
-      <desire_type name="Treasure" value="0"/>
-      <desire_type name="Flee" value="1"/>
-      <desire_type name="Eat" value="3"/>
-    </base_desires>
-
-    <class>
-      <major_skills>
-        <skill>Unarmored</skill>
-        <skill>Spear</skill>
-      </major_skills>
-      <minor_skills>
-      </minor_skills>
-      <major_attributes>
-        <attribute>Endurance</attribute>
-        <attribute>Strength</attribute>
         <attribute>Dexterity</attribute>
       </major_attributes>
     </class>

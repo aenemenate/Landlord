@@ -10,10 +10,8 @@ namespace Landlord
     {
         public static int GetWeaponCost(this Item weapon, Creature c)
         {
-            if (weapon != null)
-            {
-                if (weapon is MeleeWeapon)
-                {
+            if (weapon != null) {
+                if (weapon is MeleeWeapon) {
                     if (weapon is Sword)
                         return 8 - (c.GetWeaponSkill(weapon) / 25);
                     else if (weapon is Dagger)

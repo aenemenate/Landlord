@@ -18,7 +18,6 @@ namespace Landlord
 
         private int width, height;
         private Block[] map;
-        private Block[] memoryMap;
         private Tile[] floor;
         private List<Creature> creatures;
         private List<Projectile> projectiles;
@@ -30,16 +29,12 @@ namespace Landlord
             width = size.X;
             height = size.Y;
             map = new Block[width * height];
-            memoryMap = new Block[width * height];
             floor = new Tile[width * height];
             creatures = new List<Creature>();
             projectiles = new List<Projectile>();
             patrolPoints = new List<Point>();
         }
-        public DungeonFloor()
-        {
-
-        }
+        public DungeonFloor() { }
 
         public void Init(DungeonType dungeonType, List<string> monsterTypes, Point worldIndex, int floor)
         {
@@ -96,53 +91,39 @@ namespace Landlord
         }
 
         // ACCESSORS //
-        public Block this[int x, int y]
-        {
+        public Block this[int x, int y] {
             get { if (!new Point(x, y).Equals(new Point())) return map[x * Program.WorldMap.TileWidth + y]; else return null; }
             set { map[x * Program.WorldMap.TileWidth + y] = value; }
         }
-        public Block[] Blocks
-        {
+        public Block[] Blocks {
             get { return map; }
             set { map = value; }
         }
-        public Block[] MemoryMap
-        {
-            get { return memoryMap; }
-            set { memoryMap = value; }
-        }
-        public Tile[] Floor
-        {
+        public Tile[] Floor {
             get { return floor; }
             set { floor = value; }
         }
-        public List<Creature> Creatures
-        {
+        public List<Creature> Creatures {
             get { return creatures; }
             set { creatures = value; }
         }
-        public List<Projectile> Projectiles
-        {
+        public List<Projectile> Projectiles {
             get { return projectiles; }
             set { projectiles = value; }
         }
-        public PatrolMaps PatrolMaps
-        {
+        public PatrolMaps PatrolMaps {
             get { return patrolMaps; }
             set { patrolMaps = value; }
         }
-        public List<Point> PatrolPoints
-        {
+        public List<Point> PatrolPoints {
             get { return patrolPoints; }
             set { patrolPoints = value; }
         }
-        public int Width
-        {
+        public int Width {
             get { return width; }
             set { width = value; }
         }
-        public int Height
-        {
+        public int Height {
             get { return height; }
             set { height = value; }
         }

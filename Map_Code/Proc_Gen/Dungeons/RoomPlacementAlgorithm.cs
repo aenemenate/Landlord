@@ -80,7 +80,6 @@ namespace Landlord
                         dungeonFloor.Blocks[i * dungeonFloor.Width + j] = new Air();
                 }
         }
-        
         private void PlaceRoom(Block[,] room)
         {
             int[] direction = new int[2];
@@ -123,8 +122,7 @@ namespace Landlord
                 }
             }
 
-            if (rooms.Count == 0)
-            {
+            if (rooms.Count == 0) {
                 // place the first room. It can't go out of bounds if the player is on the edge of the map,
                 // so place it so that it will touch the edge while containing the player
                 Point tempPos = new Point(firstRoomPos.X - room.GetLength(0) / 2, firstRoomPos.Y - room.GetLength(1) / 2);
@@ -138,8 +136,7 @@ namespace Landlord
                     tempPos.Y = 1;
                 AddRoom(room, tempPos);
             }
-            else
-            {
+            else {
                 int attempts = 0;
                 while (attempts < maxRoomPlaceAttempts)
                 {
@@ -149,8 +146,7 @@ namespace Landlord
                     while (startPos.Equals(new Point()))
                     {
                         Point randRoomPos = new Point(rng.Next(0, room.GetLength(0)), rng.Next(0, room.GetLength(1)));
-                        if (room[randRoomPos.X, randRoomPos.Y] is Air)
-                        {
+                        if (room[randRoomPos.X, randRoomPos.Y] is Air) {
                             startPos.X = potentialPos.X - randRoomPos.X;
                             startPos.Y = potentialPos.Y - randRoomPos.Y;
                         }
@@ -158,9 +154,7 @@ namespace Landlord
                     for (int tunnelLength = 0; tunnelLength < maxTunnelLength; tunnelLength++)
                     {
                         Point possibleRoomPos = new Point(startPos.X + direction[0] * tunnelLength, startPos.Y + direction[1] * tunnelLength);
-
-                        if (RoomPlacementValid(possibleRoomPos, room) && TunnelPlacementValid(potentialPos, tunnelLength))
-                        {
+                        if (RoomPlacementValid(possibleRoomPos, room) && TunnelPlacementValid(potentialPos, tunnelLength)) {
                             AddRoom(room, possibleRoomPos);
                             AddTunnel(potentialPos, tunnelLength, direction);
                             return;
@@ -170,7 +164,6 @@ namespace Landlord
                 }
             }
         }
-
         private void AddTunnel(Point startPos, int tunnelLength, int[] direction)
         {
             int x = startPos.X;
@@ -183,8 +176,7 @@ namespace Landlord
             {
                 x = startPos.X + direction[0] * i;
                 y = startPos.Y + direction[1] * i;
-                if (dungeonFloor[x, y].Solid == false)
-                {
+                if (dungeonFloor[x, y].Solid == false) {
                     if (rng.Next(0, 100) < 40 && !(dungeonFloor[x - direction[0] * 2, y - direction[1] * 2] is Door)
                          && dungeonFloor[x + direction[1], y + direction[0]].Solid && dungeonFloor[x - direction[1], y - direction[0]].Solid)
                         dungeonFloor[x - direction[0], y - direction[1]] = new Door(Material.Wood);
@@ -193,7 +185,6 @@ namespace Landlord
                 dungeonFloor[x, y] = new Air();
             }
         }
-
         private void AddRoom(Block[,] room, Point pos)
         {
             for (int i = 0; i < room.GetLength(0); i++)
@@ -220,7 +211,6 @@ namespace Landlord
                 return GenerateAutomataRoom();
             else return null;
         }
-
         private Block[,] GenerateAutomataRoom()
         {
             while (true)
@@ -253,7 +243,6 @@ namespace Landlord
                             return room;
             }
         }
-
         private Block[,] FloodFill(Block[,] room)
         {
             bool ListContains(Point point, List<Point> list)
@@ -305,13 +294,12 @@ namespace Landlord
 
             return room;
         }
-
         private Block[,] GenerateCrossRoom()
         {
-            int roomHorWidth = (rng.Next(minCrossRoomSize+ 2, maxCrossRoomSize)) / 2 * 2;
-            int roomVerHeight = (rng.Next(minCrossRoomSize + 2, maxCrossRoomSize)) / 2 * 2;
-            int roomHorHeight = (rng.Next(minCrossRoomSize, roomVerHeight - 2)) / 2 * 2;
-            int roomVerWidth = (rng.Next(minCrossRoomSize, roomHorWidth - 2)) / 2 * 2;
+            int roomHorWidth = (rng.Next(minCrossRoomSize+ 2, maxCrossRoomSize));
+            int roomVerHeight = (rng.Next(minCrossRoomSize + 2, maxCrossRoomSize));
+            int roomHorHeight = (rng.Next(minCrossRoomSize, roomVerHeight - 2));
+            int roomVerWidth = (rng.Next(minCrossRoomSize, roomHorWidth - 2));
             Block[,] room = new Block[roomHorWidth, roomVerHeight];
             
             for (int i = 0; i < room.GetLength(0); i++)
@@ -319,7 +307,6 @@ namespace Landlord
                     room[i, j] = new Wall(Material.Stone);
 
             int verOffset = roomVerHeight / 2 - roomHorHeight / 2;
-
             for (int i = 0; i < roomHorWidth; i++)
                 for (int j = verOffset; j < roomHorHeight + verOffset; j++)
                     room[i, j] = new Air();
@@ -331,7 +318,6 @@ namespace Landlord
 
             return room;
         }
-
         private Block[,] GenerateRectRoom()
         {
             Point size = new Point(rng.Next(minCrossRoomSize, maxCrossRoomSize), rng.Next(minCrossRoomSize, maxCrossRoomSize));
@@ -341,7 +327,6 @@ namespace Landlord
                     room[i, j] = new Air();
             return room;
         }
-
         private Block[,] GenerateCavern()
         {
             throw new NotImplementedException();
@@ -351,8 +336,7 @@ namespace Landlord
         private bool RoomPlacementValid(Point pos, Block[,] room)
         {
             for (int i = -1; i <= room.GetLength(0); i++)
-                for (int j = -1; j <= room.GetLength(1); j++)
-                {
+                for (int j = -1; j <= room.GetLength(1); j++) {
                     if (!dungeonFloor.PointWithinBounds(new Point(i + pos.X, j + pos.Y)) || dungeonFloor.PointOnEdge(new Point(i + pos.X, j + pos.Y)))
                         return false;
                     if (dungeonFloor[i + pos.X, j + pos.Y].Solid == false)
@@ -365,8 +349,7 @@ namespace Landlord
         {
             List<Point> potentialPositions = new List<Point>();
             for (int i = 1; i < dungeonFloor.Width - 1; i ++)
-                for (int j = 1; j < dungeonFloor.Height - 1; j ++)
-                {
+                for (int j = 1; j < dungeonFloor.Height - 1; j ++) {
                     if (dungeonFloor[i, j].Solid == true
                         && dungeonFloor[i + direction[0], j + direction[1]].Solid == true
                           && dungeonFloor[i - direction[0], j - direction[1]].Solid == false)

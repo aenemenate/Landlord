@@ -28,8 +28,6 @@ namespace Landlord
             if (addBasicRecipes)
             {
                 recipes.Add( new ProcessLogRecipe( true ) );
-                recipes.Add( new GlueWheelRecipe( true ) );
-                recipes.Add( new ShapeWheelRecipe( true ) );
             }
             Identify();
         }

@@ -60,7 +60,6 @@ namespace Landlord
                 for (int j = 0; j < dungeonFloor.Height; j++)
                     maxValue = (placementMap[i * dungeonFloor.Width + j] > maxValue && placementMap[i * dungeonFloor.Width + j] != 100000) ? placementMap[i * dungeonFloor.Width + j] : maxValue;
 
-
             const int chanceToSpawnCloserThanMinDist = 20;
             int desiredItemCount = itemSpots.Count / 100;
             int itemsPlaced = 0;
@@ -118,24 +117,25 @@ namespace Landlord
         // GetItemOrChest returns a random item. It has a chance to return a chest if spawnChests is set to true.
         private static Block GetItemOrChest(bool spawnChests = true)
         {
-            int rand = Program.RNG.Next(0, 3);
+            int rand = Program.RNG.Next(0, 6);
             int chestChance = Program.RNG.Next(1, 101);
             if (chestChance > 5 || spawnChests == false)
             {
-                switch (rand)
-                {
+                switch (rand) {
                     case (0):
                         return new Potion(true);
                     case (1):
                         return GetArmor();
                     case (2):
                         return GetWeapon();
+                    case (3):
+                        return new Quiver(false);
+                    case (4):
+                        return GetBlueprintOrRecipe();
                 }
             }
             else
-            {
                 return GetChest();
-            }
 
             return null;
         }
@@ -175,7 +175,7 @@ namespace Landlord
         // GetWeapon returns a random weapon.
         private static Item GetWeapon()
         {
-            int rand = Program.RNG.Next(0, 6);
+            int rand = Program.RNG.Next(0, 7);
             switch (rand)
             {
                 case (0):
@@ -190,6 +190,27 @@ namespace Landlord
                     return new Spear(true);
                 case (5):
                     return new Shield(true);
+                case (6):
+                    return new Bow(true);
+                default:
+                    return null;
+            }
+        }
+
+        private static Item GetBlueprintOrRecipe()
+        {
+            int rand = Program.RNG.Next(0, 5);
+            switch (rand) {
+                case (0):
+                    return new GlueWheelRecipe(true);
+                case (1):
+                    return new ShapeWheelRecipe(true);
+                case (2):
+                    return new WoodCraftingTableBlueprint(true);
+                case (3):
+                    return new WoodStoneMillBlueprint(true);
+                case (4):
+                    return new WoodCartBlueprint(true);
                 default:
                     return null;
             }

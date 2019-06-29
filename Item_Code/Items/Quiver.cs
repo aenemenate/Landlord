@@ -28,8 +28,7 @@ namespace Landlord
 
         public void Init(bool fillWithArrows)
         {
-            if (!fillWithArrows)
-                return;
+            if (!fillWithArrows) return;
             int arrowCount = new Random().Next(7, 22);
             for (int i = 0; i < arrowCount; i++)
                 arrows.Add(new Arrow(true));
@@ -47,17 +46,20 @@ namespace Landlord
 
         public override string DetermineName(bool identifying)
         {
-            return "quiver";
+            return Physics.MaterialNames[Material] + " quiver";
         }
 
         public override Material DetermineMaterial()
         {
-            return Material.Leather;
+            if (new Random().Next(1, 101) > 66)
+                return Material.Leather;
+            else
+                return Material.Cloth;
         }
 
         public override Rarity DetermineRarity()
         {
-            return Rarity.Uncommon;
+            return Rarity.Common;
         }
 
         // PROPERTIES //

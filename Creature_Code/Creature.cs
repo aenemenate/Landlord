@@ -126,10 +126,8 @@ namespace Landlord
                     armorSkill = skill;
 
             List<Material> validMaterials;
-            if (armorSkill == Skill.Alchemy)
-                validMaterials = new List<Material>() { Material.Cloth };
-            else
-                validMaterials = Physics.GetArmorSkillMaterials(armorSkill);
+            if (armorSkill == Skill.Alchemy) return; // skip generating armor
+            else  validMaterials = Physics.GetArmorSkillMaterials(armorSkill);
 
             // create the armor with chosen materials
             if (rng.Next(0, 100) < 50)

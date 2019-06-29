@@ -27,13 +27,10 @@ namespace Landlord
             blueprints = new List<Item>();
             if (addBasicBlueprints)
             {
-                blueprints.Add( new WoodWallBlueprint( true ) );
-                blueprints.Add( new WoodFloorBlueprint( true ) );
-                blueprints.Add( new WoodDoorBlueprint( true ) );
-                blueprints.Add( new WoodChestBlueprint( true ) );
-                blueprints.Add( new WoodCraftingTableBlueprint( true ) );
-                blueprints.Add( new WoodStoneMillBlueprint( true ) );
-                blueprints.Add( new WoodCartBlueprint( true ) );
+                blueprints.Add( new WoodWallBlueprint(true));
+                blueprints.Add( new WoodFloorBlueprint(true));
+                blueprints.Add( new WoodDoorBlueprint(true));
+                blueprints.Add( new WoodChestBlueprint(true));
             }
             Identify();
         }

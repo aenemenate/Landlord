@@ -9,7 +9,7 @@ namespace Landlord
         public Arrow(bool instantiating, byte graphic = 94, ItemType type = ItemType.Arrow, double volume = 0.0005, bool hollow = true, DamageType damageType = DamageType.Shear)
                : base(graphic, type, volume, hollow, damageType)
         {
-            ForeColor = Color.AntiqueWhite;
+            ForeColor = Physics.MaterialColors[Material];
             Identify();
         }
 
@@ -37,9 +37,9 @@ namespace Landlord
 
         public override Material DetermineMaterial()
         {
-#pragma warning disable CS0219 // Variable is assigned but its value is never used
+    #pragma warning disable CS0219 // Variable is assigned but its value is never used
             int copperChance = 200, brassChance = 50, bronzeChance = 40, ironChance = 25, steelChance = 15, platinumChance = 5;
-#pragma warning restore CS0219 // Variable is assigned but its value is never used
+    #pragma warning restore CS0219 // Variable is assigned but its value is never used
 
             int rand = Program.RNG.Next(0, copperChance + brassChance + bronzeChance + ironChance + steelChance + platinumChance);
 

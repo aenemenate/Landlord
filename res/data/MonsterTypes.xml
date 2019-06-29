@@ -28,7 +28,7 @@ DesireTypes:
       <major_skills>
         <skill>ShortBlade</skill>
         <skill>Unarmored</skill>
-        <skill>Sneak</skill>
+        <skill>Sneaking</skill>
       </major_skills>
 
       <minor_skills>
@@ -64,7 +64,7 @@ DesireTypes:
       <major_skills>
         <skill>ShortBlade</skill>
         <skill>Unarmored</skill>
-        <skill>Sneak</skill>
+        <skill>Sneaking</skill>
       </major_skills>
 
       <minor_skills>
@@ -169,7 +169,7 @@ DesireTypes:
       <major_skills>
         <skill>ShortBlade</skill>
         <skill>Unarmored</skill>
-        <skill>Sneak</skill>
+        <skill>Sneaking</skill>
       </major_skills>
 
       <minor_skills>
@@ -305,22 +305,23 @@ DesireTypes:
     
     <class>
       
-      <major_attributes>
-        <attribute>Agility</attribute>
-        <attribute>Dexterity</attribute>
-        <attribute>Luck</attribute>
-      </major_attributes>
-      
       <major_skills>
         <skill>ShortBlade</skill>
         <skill>LightArmor</skill>
-        <skill>Sneak</skill>
+        <skill>Sneaking</skill>
       </major_skills>
       
       <minor_skills>
         <skill>Lockpick</skill>
       </minor_skills>
-      
+
+      <major_attributes>
+        <attribute>Agility</attribute>
+        <attribute>Dexterity</attribute>
+        <attribute>Luck</attribute>
+      </major_attributes>
+
+
     </class>
 
   </monster>

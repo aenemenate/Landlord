@@ -73,7 +73,6 @@ namespace Landlord
                 int treesThisGen = treeSpots.Count;
                 for (int j = 0; j < treesThisGen; j++) {
                     Point currentTree = treeSpots[j];
-                    nextSpot = new Point(rng.Next(Math.Max(currentTree.X - 8, 0), Math.Min(currentTree.X + 8, map.Width - 1)), rng.Next(Math.Max(currentTree.Y - 8, 0), Math.Min(currentTree.Y + 8, map.Height - 1)));
                     int count = 0;
                     do {
                         count++;
@@ -151,7 +150,7 @@ namespace Landlord
         private static void GenerateCreatures( MapTile map, Random rng, List<string> creatureTypes )
         {
             List<Point> availableSpots = map.Blocks.GetAllTraversablePoints(new Point(map.Width, map.Height));
-            int desiredCreatureCount = availableSpots.Count / 750, placedCreatures = 0;
+            int desiredCreatureCount = rng.Next(1, 7), placedCreatures = 0;
 
             while (placedCreatures < desiredCreatureCount) {
                 Point nextPoint = availableSpots[rng.Next(0, availableSpots.Count)];
@@ -186,22 +185,19 @@ namespace Landlord
             }
         }
 
-        // funcs that work on entire world map
-
         public static void GenerateRivers( Random rng, int width, int height, float[,] heightMap )
         {
-            Point leftPoint = new Point( 1, rng.Next( 2, 397 ) );
-            Point rightPoint = new Point( 398, rng.Next( 2, 397 ) );
-            while (leftPoint.Y % 100 == 0 || rightPoint.Y % 100 == 0 ||
-                    heightMap[leftPoint.X, leftPoint.Y] >= StoneCutoff ||
-                      heightMap[rightPoint.X, rightPoint.Y] >= StoneCutoff)
-            {
-                leftPoint = new Point( 1, rng.Next( 2, 397) );
-                rightPoint = new Point( 398, rng.Next( 2, 397) );
-            }
+            Point leftPoint;
+            Point rightPoint;
+            do {
+                leftPoint = new Point(1, rng.Next(2, 397));
+                rightPoint = new Point(398, rng.Next(2, 397));
+            } while (leftPoint.Y % 100 > 90 || leftPoint.Y % 100 < 10 || rightPoint.Y % 100 > 90 || rightPoint.Y % 100 < 10 ||
+                     heightMap[leftPoint.X, leftPoint.Y] >= StoneCutoff ||
+                       heightMap[rightPoint.X, rightPoint.Y] >= StoneCutoff);
             Generate5x5River( leftPoint, rightPoint, heightMap );
 
-            int numOfRivers = 10;
+            int numOfRivers = 8;
             bool CheckedCanSpawnRiverHere( int i, int j )
             {
                 if (heightMap[i, j] >= StoneCutoff)
@@ -256,7 +252,6 @@ namespace Landlord
                     Generate3x3River( potentialRiverSprings[springIndex], potentialRiverDeposits[depositIndex], heightMap );
             }
         }
-
         private static void Generate1x1River( Point start, Point end, float[,] heightMap )
         {
             List<Point> path = Riverfinder.FindPath( start, end, heightMap );
@@ -266,7 +261,6 @@ namespace Landlord
                     heightMap[point.X, point.Y] = WaterCutoff - 1;
             }
         }
-
         private static void Generate3x3River( Point start, Point end, float[,] heightMap )
         {
             List<Point> path = Riverfinder.FindPath( start, end, heightMap );
@@ -284,7 +278,6 @@ namespace Landlord
                     heightMap[point.X, point.Y - 1] = WaterCutoff - 1;
             }
         }
-
         private static void Generate5x5River( Point start, Point end, float[,] heightMap )
         {
             List<Point> path = Riverfinder.FindPath( start, end, heightMap );

@@ -42,8 +42,7 @@ namespace Landlord
             if (startIndex == path.Count - 1 
                   || (blocks[path[startIndex + 1].X * width + path[startIndex + 1].Y].Solid 
                         & blocks[path[startIndex + 1].X * width + path[startIndex + 1].Y] is Creature == false)
-                     )
-            {
+                     ) {
                 DropItem(path[startIndex], blocks, width);
                 return true;
             }
@@ -60,18 +59,13 @@ namespace Landlord
             Random rng = new Random();
             if (defender.Alive == false)
                 return;
-
             Item arrow = item;
-
-            int damage = (int)arrow.Damage / 2;
-
+            int damage = (int)arrow.Damage;
             DamageType dmgType = arrow.GetWepDmgType();
             int dmgDealt = defender.DefendAgainstDmg(dmgType, damage);
 
             Program.MsgConsole.WriteLine($"The {item.Name} struck {defender.Name} for {dmgDealt} damage!");
-
-            if (defender.Alive == false)
-                Program.MsgConsole.WriteLine($"{defender.Name} died.");
+            if (defender.Alive == false) Program.MsgConsole.WriteLine($"{defender.Name} died.");
         }
 
         private void DropItem(Point pos, Block[] blocks, int width)

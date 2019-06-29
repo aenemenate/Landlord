@@ -13,18 +13,20 @@ namespace Landlord
         Potion,
         MeleeWeapon,
         RangedWeapon,
-        BlueprintPouch,
-        RecipePouch,
         Armor,
+        BlueprintPouch, // Pouch for carrying blueprints
+        RecipePouch,  // Pouch for carrying recipes
+        Blueprint,  // instructions to build
+        Recipe,   // instructions to craft
         Food,
-        Log, 
-        Stone,
-        Coal,
-        Plank,
-        Wheel,
-        Arrow,
-        Bolt,
-        Quiver
+        Log,    // used to build/craft
+        Stone,   //
+        Coal,  //
+        Plank,   //
+        Wheel, //
+        Arrow, // Shoot these
+        Bolt,  
+        Quiver // Hold projectiles
     }
     
     public enum Rarity
@@ -157,8 +159,7 @@ namespace Landlord
             if (Object.ReferenceEquals(this.GetType(), otherItem.GetType()) == false)
                 return Tuple.Create((byte)0, Color.Black);
             int otherVal = 0, thisVal = 0;
-            if (otherItem is Armor otherA && this is Armor selfA)
-            {
+            if (otherItem is Armor otherA && this is Armor selfA) {
                 bool thisIsLightArmor = Physics.GetArmorSkillMaterials(Skill.LightArmor).Contains(selfA.Material), thisIsHeavyArmor = Physics.GetArmorSkillMaterials(Skill.HeavyArmor).Contains(selfA.Material);
                 bool otherIsLightArmor = Physics.GetArmorSkillMaterials(Skill.LightArmor).Contains(otherA.Material), otherIsHeavyArmor = Physics.GetArmorSkillMaterials(Skill.HeavyArmor).Contains(otherA.Material);
                 if (thisIsLightArmor && otherIsHeavyArmor || thisIsHeavyArmor && otherIsLightArmor)
@@ -172,8 +173,7 @@ namespace Landlord
                 foreach (ArmorEnchantment enchant in selfA.Enchantments)
                     thisVal += enchant.Effect;
             }
-            else
-            {
+            else {
                 otherVal = (int)otherItem.Damage;
                 thisVal = (int)this.Damage;
 

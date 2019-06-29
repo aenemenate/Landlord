@@ -8,7 +8,7 @@ namespace Landlord
         private Block blueprintTarget;
         private List<RecipeComponent> recipe;
 
-        public Blueprint(bool instantiating, List<RecipeComponent> recipe, byte graphic = 237, ItemType type = ItemType.Bottle, double volume = 0.02, bool hollow = true, DamageType damageType = DamageType.Blunt)
+        public Blueprint(bool instantiating, List<RecipeComponent> recipe, byte graphic = 237, ItemType type = ItemType.Blueprint, double volume = 0.003, bool hollow = true, DamageType damageType = DamageType.Blunt)
                : base(graphic, type, volume, hollow, damageType)
         {
             ForeColor = Color.Beige;

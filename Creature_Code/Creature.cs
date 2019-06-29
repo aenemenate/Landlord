@@ -553,12 +553,11 @@ namespace Landlord
         {
             if (!alive)
                 return;
-            Graphic = 37;
-            ForeColor = Color.Red;
+            ForeColor = Color.DarkRed;
             Solid = false;
             Opaque = false;
             alive = false;
-            inventory.Add(new Food(DietType.Carnivore, $"{Name} meat slab", 238, 0.25));
+            inventory.Add(new Food(DietType.Carnivore, $"{Name} meat slab", 238, 0.15));
             if (this is Player == false) UnequipAll();
             else Menus.DeathNotification();
         }
@@ -601,13 +600,12 @@ namespace Landlord
             if (this is Player)
                 Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallPlayerMoved(this);
 
-            ApplyActionCost(8);
+            ApplyActionCost(6);
         }
 
         public void Wait()
         {
-            ApplyActionCost(4);
-            ChangeResource(Resource.SP, 2);
+            ApplyActionCost(1);
         }
         // block interactions
         public void OpenDoor( Block door )
@@ -754,19 +752,27 @@ namespace Landlord
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth;
+            bool itemAdded;
+            string containerName = "inventory";
 
             if (blocks[itemPos.X * width + itemPos.Y] is Item item) {
-                bool itemAdded = AddItem(item);
+                if (item is Arrow && inventory.Exists(i => i is Quiver)) {
+                    Quiver q = (Quiver)inventory.Find(i => i is Quiver);
+                    q.Arrows.Add(item);
+                    itemAdded = true;
+                    containerName = q.Name;
+                }
+                itemAdded = AddItem(item);
                 if (itemAdded) {
                     Block replacementBlock = item.BlockPlacedOn ?? new Air();
                     blocks[itemPos.X * width + itemPos.Y] = replacementBlock;
                     if (currentFloor == Program.Player.CurrentFloor && worldIndex.Equals(Program.Player.WorldIndex))
                         Program.WorldMap[worldIndex.X, worldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
                     if (this.Visible)
-                        Program.MsgConsole.WriteLine($"{Name} picked up the {item.Name}");
-                    ApplyActionCost(4);
+                        Program.MsgConsole.WriteLine($"{Name} put the {item.Name} in their {containerName}.");
+                    ApplyActionCost(6);
                 } else
-                    Program.MsgConsole.WriteLine($"{Name} tried to pick up the {item.Name} but didn't have enough space.");
+                    Program.MsgConsole.WriteLine($"{Name} tried to get the {item.Name} but didn't have enough space.");
             }
         }
 

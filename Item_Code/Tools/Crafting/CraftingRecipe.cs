@@ -11,7 +11,7 @@ namespace Landlord
         private int craftTime;
         private BlockType workbenchRequirement;
 
-        public CraftingRecipe(bool instantiating, byte graphic = 237, ItemType type = ItemType.Bottle, double volume = 0.02, bool hollow = true, DamageType damageType = DamageType.Blunt)
+        public CraftingRecipe(bool instantiating, byte graphic = 237, ItemType type = ItemType.Recipe, double volume = 0.003, bool hollow = true, DamageType damageType = DamageType.Blunt)
                : base(graphic, type, volume, hollow, damageType)
         {
             ForeColor = Color.Beige;

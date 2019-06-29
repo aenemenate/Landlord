@@ -452,8 +452,7 @@ namespace Landlord
                 double chanceToMiss = maxMissChance - attackersHitRate;
 
                 int diceRoll = rng.Next(0, (int)maxMissChance);
-                if (diceRoll <= chanceToMiss)
-                {
+                if (diceRoll <= chanceToMiss) {
                     LvlWeaponSkill(weapon, 5);
                     return false;
                 }
@@ -480,8 +479,10 @@ namespace Landlord
                 int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
                 bool shotTrue = DetermineIfAttackLanded();
-                if (!shotTrue)
-                    pos = pos.GetAdjacentPoints()[rng.Next(0, 8)];
+                if (!shotTrue) {
+                    List<Point> otherSpots = pos.GetAdjacentPoints();
+                    pos = otherSpots[rng.Next(0, otherSpots.Count)];
+                }
                 projectiles.Add(new Projectile(blocks, width, height, position, pos, arrow));
                 if (this is Player) Program.MsgConsole.WriteLine(shotTrue ? $"Shot the {arrow.Name}" : $"Clumsily shot the {arrow.Name}");
                 ChangeResource(Resource.SP, -(int)(rw.Weight * 10));

@@ -661,9 +661,11 @@ namespace Landlord
             static public void GenerateDungeonScreen()
             {
                 bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerSecond * 5);
+                if (loadingFailed)
+                    loadThread.Abort();
                 if (ClickedDialog)
                     ClickedDialog = !ClickedDialog;
-                if (!loading || loadingFailed) {
+                if (!loading || !loadThread.IsAlive) {
                     startLoad = DateTime.Now;
                     Program.Console.Clear();
                     loading = true;
@@ -686,9 +688,11 @@ namespace Landlord
             }
             static public void GenerateWorldMapScreen()
             {
-                if (ClickedDialog)
-                    ClickedDialog = !ClickedDialog;
-                if (!loading) {
+                bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerMinute * 2);
+                if (loadingFailed) loadThread.Abort();
+                if (ClickedDialog) ClickedDialog = !ClickedDialog;
+                if (!loading || !loadThread.IsAlive) {
+                    startLoad = DateTime.Now;
                     Program.Console.Clear();
                     loading = true;
                     Program.WorldMap.OnFinishedGenerating += CloseGenerateWorldMapScreen;
@@ -710,11 +714,6 @@ namespace Landlord
 
                 Program.CurrentState = new Play();
                 loading = false;
-            }
-
-            // PROPERTIES //
-            static public bool Loading {
-                set { loading = value; }
             }
         }
 
@@ -1587,17 +1586,12 @@ namespace Landlord
             return temp;
         }
 
-
         // PROPERTIES //
-
-        static public string Name
-        {
+        static public string Name {
             get { return name; }
             set { name = value; }
         }
-
-        static public Class Class
-        {
+        static public Class Class {
             get { return uclass; }
             set { uclass = value; }
         }
@@ -1605,7 +1599,7 @@ namespace Landlord
 
     class BorderedConsole : SadConsole.ControlsConsole
     {
-        SadConsole.Surfaces.BasicSurface borderSurface;
+        private SadConsole.Surfaces.BasicSurface borderSurface;
 
         public BorderedConsole(int width, int height) : base(width, height)
         {

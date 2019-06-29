@@ -106,33 +106,47 @@ namespace Landlord
 
             void HandleInventoryInput()
             {
-                if (shiftPressed && leftClicked && Program.CurrentState is Play)
+                if (shiftPressed 
+                    && leftClicked 
+                      && (Program.CurrentState is Play
+                           || Program.CurrentState is ViewItem
+                              || Program.CurrentState is ViewEquipment))
                 {
                     if (currentlyViewedItem is Potion)
-                        Program.Player.Drink( currentlyViewedItem );
-                    else if (currentlyViewedItem is Item && currentlyViewedItem is Armor == false)
-                        Program.Player.Wield( Program.Player.Inventory.FindIndex( i => i.Name == currentlyViewedItem.Name ), true );
+                        Program.Player.Drink(currentlyViewedItem);
+                    else if (currentlyViewedItem is Food)
+                        Program.Player.Eat(currentlyViewedItem);
                     else if (currentlyViewedItem is Armor armorPiece)
-                        Program.Player.Equip( armorPiece );
+                        Program.Player.Equip(armorPiece);
+                    else if (currentlyViewedItem is BlueprintPouch || currentlyViewedItem is RecipePouch || currentlyViewedItem is Quiver) {
+                        Program.Animations.Add(new OpenLootView());
+                        Program.CurrentState = new ViewLoot(currentlyViewedItem is RecipePouch ? ((RecipePouch)currentlyViewedItem).Recipes : 
+                                                                ((currentlyViewedItem is Quiver) ? ((Quiver)currentlyViewedItem).Arrows :
+                                                                  ((BlueprintPouch)currentlyViewedItem).Blueprints), currentlyViewedItem.Name);
+                    }
+                    else
+                        Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == currentlyViewedItem.Name), true);
                     currentlyViewedItem = null;
-                } else if (leftClicked)
-                {
-                    if (Program.CurrentState is Play || Program.CurrentState is ViewItem || Program.CurrentState is ViewEquipment)
+                }
+                else if (leftClicked) {
+                    if (Program.CurrentState is Play 
+                        || Program.CurrentState is ViewItem 
+                          || Program.CurrentState is ViewEquipment)
                     {
                         if (Program.CurrentState is ViewItem == false)
                             Program.Animations.Add(new OpenItemView(color));
                         else
                             ClearViewArea();
                         Program.CurrentState = new ViewItem();
-                    } else if (Program.CurrentState is ViewLoot viewLoot)
-                    {
+                    }
+                    else if (Program.CurrentState is ViewLoot viewLoot) {
                         // if viewing loot in a container, clicking an item will add it to the container.
                         viewLoot.LootMenu.ContainerInventory.Add( currentlyViewedItem );
                         Program.Player.Inventory.Remove( currentlyViewedItem );
                         currentlyViewedItem = null;
                     }
-                } else if (rightClicked && Program.CurrentState is Play)
-                {
+                }
+                else if (rightClicked && Program.CurrentState is Play) {
                     Program.Player.Drop( currentlyViewedItem );
                     currentlyViewedItem = null;
                 }
@@ -140,16 +154,14 @@ namespace Landlord
 
             void HandleEquipmentInput()
             {
-                if (leftClicked && shiftPressed && Program.CurrentState is Play)
-                {
+                if (leftClicked && shiftPressed && Program.CurrentState is Play) {
                     Program.Player.Unequip( currentlyViewedItem );
                     currentlyViewedItem = null;
-                } else if (leftClicked && ( Program.CurrentState is Play || Program.CurrentState is ViewEquipment || Program.CurrentState is ViewItem))
-                {
+                }
+                else if (leftClicked && ( Program.CurrentState is Play || Program.CurrentState is ViewEquipment || Program.CurrentState is ViewItem)) {
                     if (Program.CurrentState is ViewEquipment == false)
                         Program.Animations.Add( new OpenItemView( color ) );
-                    else
-                        ClearViewArea();
+                    else ClearViewArea();
                     Program.CurrentState = new ViewEquipment();
                 }
             }

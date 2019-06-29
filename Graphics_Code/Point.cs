@@ -84,16 +84,6 @@ namespace Landlord
                         adjacentPoints.Add(new Point(i, j));
             return adjacentPoints;
         }
-        public static Point GetClosestNearbyPos(this Point p1, Point p2, Point worldIndex, int currentFloor)
-        {
-            List<Point> adjacentPoints = GetAdjacentPoints(p1);
-            Point pg = new Point();
-            foreach (Point px in adjacentPoints)
-                if (px.DistFrom(p2) <= pg.DistFrom(p2))
-                    pg = px;
-            return pg;
-        }
-
         public static Point GetClosestNearbyWalkablePos(this Point p1, Point p2, Point worldIndex, int currentFloor)
         {
             List<Point> adjacentPoints = GetAdjacentWalkablePoints(p1, worldIndex, currentFloor);

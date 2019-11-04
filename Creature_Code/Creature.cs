@@ -70,11 +70,8 @@ namespace Landlord
         
         // abstract/override funcs //
         public abstract void DetermineAction();
-
         public abstract void DetermineStats();
-        
         public abstract void HandleVisibility();
-
         public override void Activate(Creature user)
         {
             if (alive) {
@@ -331,12 +328,12 @@ namespace Landlord
         public List<Point> GetNearbyBlocksOfType(BlockType type)
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
-            int width = Program.WorldMap.TileWidth;
+            int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
             List<Point> nearbyPointsOfType = new List<Point>();
-            for (int i = Math.Max(0, Position.X - 1); i <= Math.Min(Program.WorldMap.TileWidth - 1, Position.X + 1); i++)
-                for (int j = Math.Max(0, Position.Y - 1); j <= Math.Min(Program.WorldMap.TileHeight - 1, Position.Y + 1); j++)
-                    if (blocks[i * width + j].Type == type && Position.Equals(new Point(i, j)) == false)
+            for (int i = Math.Max(0, position.X - 1); i <= Math.Min(width - 1, position.X + 1); i++)
+                for (int j = Math.Max(0, position.Y - 1); j <= Math.Min(height - 1, position.Y + 1); j++)
+                    if (blocks[i * width + j].Type == type)
                         nearbyPointsOfType.Add(new Point(i, j));
 
             return nearbyPointsOfType;
@@ -347,8 +344,6 @@ namespace Landlord
             visiblePoints = RayCaster.CalculateFOV(sightDist, this).ToList();
         }
 
-        // actions //
-        // combat
         public void LaunchAttack(Creature defender)
         {
             Random rng = new Random();
@@ -436,7 +431,6 @@ namespace Landlord
             else
                 ChangeResource( Resource.SP, -8 );
         }
-
         public void Shoot(Point pos)
         {
             Random rng = new Random();
@@ -493,7 +487,6 @@ namespace Landlord
                 else if (arrow == null) Program.MsgConsole.WriteLine("Out of arrows!");
             }
         }
-
         private void LvlWeaponSkill( Item weapon, int amount )
         {
             if (weapon is MeleeWeapon mWeapon)
@@ -501,7 +494,6 @@ namespace Landlord
             else if (weapon is RangedWeapon)
                 Stats.LvlSkill(Skill.Marksmanship, amount, this);
         }
-
         private void LvlArmorSkill(int amount)
         {
             List<Armor> equipment = Body.GetArmorList();
@@ -520,7 +512,6 @@ namespace Landlord
             else
                 Stats.LvlSkill( Skill.HeavyArmor, amount, this );
         }
-
         public int DefendAgainstDmg( DamageType dmgType, int dmg )
         {
             // Note: this function will return a negative value if the defender blocked. This is for message handling.
@@ -549,7 +540,6 @@ namespace Landlord
 
             return (int)finalDmg;
         }
-        
         private void Die()
         {
             if (!alive)
@@ -562,7 +552,7 @@ namespace Landlord
             if (this is Player == false) UnequipAll();
             else Menus.DeathNotification();
         }
-        // movement
+
         public void Move( Point to, bool openDoors = true )
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
@@ -603,12 +593,11 @@ namespace Landlord
 
             ApplyActionCost(6);
         }
-
         public void Wait()
         {
             ApplyActionCost(1);
         }
-        // block interactions
+
         public void OpenDoor( Block door )
         {
             string verb;
@@ -628,7 +617,6 @@ namespace Landlord
                 Program.MsgConsole.WriteLine($"{Name} {verb} the {door.Name}");
             ApplyActionCost(4);
         }
-
         public void PushCart( Point oldPos, Point newPos )
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
@@ -691,7 +679,6 @@ namespace Landlord
                 }
             }
         }
-
         public void HarvestPlant( Point pos )
         {
             if (Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y] is Plant == false)
@@ -707,13 +694,17 @@ namespace Landlord
                     ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
                 }
                 ChangeResource(Resource.SP, -20);
-                // deplete stamina
-                Program.MsgConsole.WriteLine($"{Name} harvested the {plant.Name}.");
 
-                plant.DropHarvest(Program.WorldMap[worldIndex.X, worldIndex.Y], pos);
+                Block harvest = plant.DropHarvest(Program.WorldMap[worldIndex.X, worldIndex.Y], pos);
+                if (harvest is Food) {
+                    if (this is Player) { inventory.Add((Item)harvest); Program.MsgConsole.WriteLine($"{Name} harvested the {plant.Name}."); }
+                    else { Eat((Item)harvest); }
+                    Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y] = new Air();
+                }
+                else Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y] = harvest;
+
             }
         }
-
         public void PickWall( Wall wall )
         {
             Random rng = new Random();
@@ -743,17 +734,17 @@ namespace Landlord
                 Program.MsgConsole.WriteLine( $"The {wall.Name} collapsed!" );
             }
         }
-        // npc interactions
+
         public void StartDialog(Creature conversant)
         {
             Console.WriteLine("Initiated an imaginary conversation!");
         }
-        // item interactions
+
         public void GetItem(Point itemPos)
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth;
-            bool itemAdded;
+            bool itemAdded = false;
             string containerName = "inventory";
 
             if (blocks[itemPos.X * width + itemPos.Y] is Item item) {
@@ -763,7 +754,7 @@ namespace Landlord
                     itemAdded = true;
                     containerName = q.Name;
                 }
-                itemAdded = AddItem(item);
+                if (!itemAdded) itemAdded = AddItem(item);
                 if (itemAdded) {
                     Block replacementBlock = item.BlockPlacedOn ?? new Air();
                     blocks[itemPos.X * width + itemPos.Y] = replacementBlock;
@@ -776,7 +767,6 @@ namespace Landlord
                     Program.MsgConsole.WriteLine($"{Name} tried to get the {item.Name} but didn't have enough space.");
             }
         }
-
         public bool AddItem(Item item)
         {
             ApplyActionCost(6);
@@ -800,26 +790,21 @@ namespace Landlord
             if (this.Visible)
                 Program.MsgConsole.WriteLine($"{Name} ate the {food.Name}");
         }
-
         public void Eat(Item item)
         {
-            if (item.ItemType == ItemType.Food)
-            {
+            if (item.ItemType == ItemType.Food) {
                 Food food = (Food)item;
 
                 food.Activate(this);
 
-                inventory.Remove(item);
+                if (inventory.Contains(item))
+                    inventory.Remove(item);
 
-                ApplyActionCost(6);
-
-                if (this.Visible)
-                    Program.MsgConsole.WriteLine($"{Name} ate the {item.Name}");
+                ApplyActionCost(6); 
+                if (this.Visible) Program.MsgConsole.WriteLine($"{Name} ate the {item.Name}");
             }
-            else
-                Menus.DisplayIncorrectUsage("You can't eat that.");
+            else Menus.DisplayIncorrectUsage("You can't eat that.");
         }
-
         public void Drink(Item item)
         {
             if (item.ItemType == ItemType.Potion)
@@ -841,7 +826,6 @@ namespace Landlord
             else
                 Menus.DisplayIncorrectUsage("You can't drink that.");
         }
-
         public void Drop(Item item)
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
@@ -866,7 +850,7 @@ namespace Landlord
 
             Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
         }
-        // equipment interactions
+
         public void Wield(int itemIndex, bool mainHand)
         {
             if (mainHand) {
@@ -894,7 +878,6 @@ namespace Landlord
             inventory.RemoveAt(itemIndex);
             ApplyActionCost(10);
         }
-
         public void Equip(Armor armorPiece)
         {
             if (armorPiece is Helmet helmet) {
@@ -934,7 +917,6 @@ namespace Landlord
             inventory.Remove(armorPiece);
             ApplyActionCost(18);
         }
-
         public void Unequip(Item item)
         {
             if (item is Armor) {
@@ -987,7 +969,6 @@ namespace Landlord
             if (this.Visible && this.Alive)
                 Program.MsgConsole.WriteLine($"{Name} unequipped the {item.Name}");
         }
-
         public void UnequipAll()
         {
             if (body.Helmet != null)
@@ -1007,7 +988,6 @@ namespace Landlord
             if (body.OffHand != null)
                 Unequip(body.OffHand);
         }
-
 
         // PROPERTIES //
         public Point Position {
@@ -1034,7 +1014,6 @@ namespace Landlord
             get { return id; }
             set { id = value; }
         }
-
         public int SightDist {
             get { return sightDist; }
             set { sightDist = value; }

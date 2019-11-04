@@ -13,6 +13,7 @@ namespace Landlord
         private static Microsoft.Xna.Framework.Input.Keys enterBuildMode = Microsoft.Xna.Framework.Input.Keys.B;
         private static Microsoft.Xna.Framework.Input.Keys openCharacterSheet = Microsoft.Xna.Framework.Input.Keys.C;
         private static Microsoft.Xna.Framework.Input.Keys openJournal = Microsoft.Xna.Framework.Input.Keys.J;
+        private static Microsoft.Xna.Framework.Input.Keys fullscreen = Microsoft.Xna.Framework.Input.Keys.F11;
 
         private static Microsoft.Xna.Framework.Input.Keys esc = Microsoft.Xna.Framework.Input.Keys.Escape;
         private static Microsoft.Xna.Framework.Input.Keys devFunc1 = Microsoft.Xna.Framework.Input.Keys.Z;
@@ -82,6 +83,9 @@ namespace Landlord
                         play.PlayMode = PlayMode.Roguelike;
                     }
                 }
+            }
+            else if (KeyboardState.IsKeyReleased(fullscreen)) {
+                SadConsole.Settings.ToggleFullScreen();
             }
         }
     }

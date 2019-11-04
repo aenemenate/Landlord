@@ -25,10 +25,7 @@ namespace Landlord
             this.growthStages = growthStages;
             this.requirement = requirement;
         }
-        public Plant() : base()
-        {
-
-        }
+        public Plant() : base() { }
         public void Grow(MapTile map, Point position, Random rng)
         {
             int currentStage = growthStages.IndexOf(Graphic);
@@ -82,12 +79,10 @@ namespace Landlord
             return requirement != "" && currentStage == growthStages.Count - 1;
         }
 
-        public void DropHarvest(MapTile map, Point position)
+        public Block DropHarvest(MapTile map, Point position)
         {
-            if (IsEdible() == false)
-                map[position.X, position.Y] = new Air();
-            else
-                map[position.X, position.Y] = new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 15 * 16 + 10, .013, ForeColor);
+            if (IsEdible() == false) return new Air();
+            else return new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 15 * 16 + 10, .013, ForeColor);
         }
         public override void Activate(Creature user)
         {

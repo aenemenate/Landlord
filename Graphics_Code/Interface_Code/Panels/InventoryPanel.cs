@@ -141,8 +141,10 @@ namespace Landlord
                     }
                     else if (Program.CurrentState is ViewLoot viewLoot) {
                         // if viewing loot in a container, clicking an item will add it to the container.
-                        viewLoot.LootMenu.ContainerInventory.Add( currentlyViewedItem );
-                        Program.Player.Inventory.Remove( currentlyViewedItem );
+                        if (Program.Animations.Count == 0) {
+                            viewLoot.LootMenu.ContainerInventory.Add(currentlyViewedItem);
+                            Program.Player.Inventory.Remove(currentlyViewedItem);
+                        }
                         currentlyViewedItem = null;
                     }
                 }
@@ -191,18 +193,16 @@ namespace Landlord
             bool mouseInInventory = mousePos.Y < equipmentStartY - 2;
 
             if (mouseInInventory)
-            {
                 HandleInventoryInput();
-            } else
-            {
+            else
                 HandleEquipmentInput();
-            }
+
             return true;
         } // input handling
         public static bool RenderInventory() // display handling
         {
             int heightOfItems = inventoryItems.Count;
-            int itemPortHeight = Program.Console.Height - 7 - ( displayingEquipment ? equipmentStartY : equipmentHeight );
+            int itemPortHeight = Program.Console.Height - 8 - ( displayingEquipment ? equipmentStartY : equipmentHeight );
             itemsPerPage = itemPortHeight / padding;
 
             Point mousePos = new Point( SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,

@@ -1174,7 +1174,12 @@ namespace Landlord
 
             internal static void HandleCharacterSheet()
             {
-
+                Point mousePos = new Point(SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
+                    SadConsole.Global.MouseState.ScreenPosition.Y / SadConsole.Global.FontDefault.Size.Y);
+                if (SadConsole.Global.MouseState.LeftClicked) {
+                    if (mousePos.X < StartX || mousePos.Y < StartY || mousePos.X > StartX + Width || mousePos.Y > StartY + Height)
+                        Program.CurrentState = new Play();
+                }
             }
 
             internal static void RenderCharacterSheet(Creature character)

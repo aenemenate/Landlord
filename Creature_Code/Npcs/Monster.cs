@@ -72,16 +72,14 @@ namespace Landlord
                 }
             }
         }
-
         public override void DetermineAction()
         {
-
             if (!Alive)
                 return;
 
             MapTile map = Program.WorldMap[WorldIndex.X, WorldIndex.Y];
             Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
-            int width = Program.WorldMap[WorldIndex.X, WorldIndex.Y].Width;
+            int width = Program.WorldMap.TileWidth;
 
             Point movePos = GetNextPosition();
 
@@ -98,27 +96,29 @@ namespace Landlord
                 CreaturePlacementHelper.flag = true; // What's going on here?
             }
             else if (itemSpots.Count > 0 && CurrentDesires[DesireType.Treasure] > 0) {
-                if (CanCarryItem((Item)blocks[itemSpots[0].X * width + itemSpots[0].Y]))
+                if (CanCarryItem((Item)blocks[itemSpots[0].X * width + itemSpots[0].Y])) {
                     GetItem(itemSpots[0]);
-                else
-                    CurrentDesires[DesireType.Treasure]--;
+                    CurrentDesires[DesireType.Treasure] = BaseDesires[DesireType.Treasure];
+                }
+                else CurrentDesires[DesireType.Treasure]--;
             }
-            else if (doorSpots.Count > 0 && map.Blocks[doorSpots[0].X * map.Width + doorSpots[0].Y].Solid)
-                map.Blocks[doorSpots[0].X * map.Width + doorSpots[0].Y].Activate(this);
+            else if (doorSpots.Count > 0 && blocks[doorSpots[0].X * width + doorSpots[0].Y].Solid)
+                blocks[doorSpots[0].X * map.Width + doorSpots[0].Y].Activate(this);
             else if (movePos.Equals(Position) == false)
-                Move(movePos, true);
+                Move(movePos);
             else
                 Wait();
 
             UpdateFOV();
             HandleVisibility();
         }
-
         public override void DetermineStats()
         {
             Stats = new Stats(Class);
         }
-        //get funcs
+
+        // other
+
         private Point GetNextPosition()
         {
             Block[] blocks = CurrentFloor >= 0 ? Program.WorldMap[WorldIndex.X, WorldIndex.Y].Dungeon.Floors[CurrentFloor].Blocks : Program.WorldMap[WorldIndex.X, WorldIndex.Y].Blocks;
@@ -162,23 +162,19 @@ namespace Landlord
 
         // PROPERTIES //
 
-        public int CurPatrolDestIndex
-        {
+        public int CurPatrolDestIndex {
             get { return curPatrolDestIndex; }
             set { curPatrolDestIndex = value; }
         }
-        public int Persistence
-        {
+        public int Persistence {
             get { return persistence; }
             set { persistence = value; }
         }
-        public int TurnsSinceAttentionCaught
-        {
+        public int TurnsSinceAttentionCaught {
             get { return turnsSinceAttentionCaught; }
             set { turnsSinceAttentionCaught = value; }
         }
-        public bool Patrolling
-        {
+        public bool Patrolling {
             get { return patrolling; }
             set { patrolling = value; }
         }
@@ -187,8 +183,7 @@ namespace Landlord
             get { return baseDesires; }
             set { baseDesires = value; }
         }
-        public Dictionary<DesireType, int> CurrentDesires
-        {
+        public Dictionary<DesireType, int> CurrentDesires {
             get { return currentDesires; }
             set { currentDesires = value; }
         }

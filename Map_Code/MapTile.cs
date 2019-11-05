@@ -80,9 +80,6 @@ namespace Landlord
             Projectile p = projectiles.Find(pr => pr.Position.Equals(new Point(x, y)));
             int width = Program.WorldMap.TileWidth;
 
-            Color floorForeColor = tiles[x * width + y].ForeColor;
-            Color floorBackColor = tiles[x * width + y].BackColor;
-
             float nonVisibleMultiplierFore, nonVisibleMultiplierBack, visibleMultiplierFore, visibleMultiplierBack, heightMultiplierFore, heightMultiplierBack;
 
             if (player.CurrentFloor >= 0 == true) {
@@ -100,8 +97,15 @@ namespace Landlord
             visibleMultiplierFore = 0.96F - heightMultiplierFore;
             visibleMultiplierBack = 1.02F - heightMultiplierBack;
 
+            Color floorForeColor = tiles[x * width + y].Splattered ? Color.DarkRed : tiles[x * width + y].ForeColor;
+            Color floorBackColor = tiles[x * width + y].BackColor;
+
+            Color blockForeColor = blocks[x * width + y].Splattered ? Color.DarkRed : blocks[x * width + y].ForeColor;
+            Color blockBackColor = blocks[x * width + y].BackColor;
+
             void RenderFloorTile()
             {
+
                 if (!tiles[x * width + y].Explored)
                     console.SetGlyph(x - startPoint.X, y - startPoint.Y, tiles[x * width + y].Graphic, Color.Black, Color.Black);
                 else
@@ -133,8 +137,6 @@ namespace Landlord
                 }
 
 
-                Color blockForeColor = block.ForeColor;
-                Color blockBackColor = block.BackColor;
 
                 if (block.BackColor == Color.Pink) {
                     if (block.Type == BlockType.Creature) {

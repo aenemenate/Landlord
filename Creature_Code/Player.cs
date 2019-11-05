@@ -66,11 +66,12 @@ namespace Landlord
                 //else if (Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] != null)
                 //    Program.WorldMap[WorldIndex.X, WorldIndex.Y].MemoryMap[point.X * width + point.Y] = null;
                 
-                if (blocks[point.X * width + point.Y] is Monster monster && (monster.Faction.Equals(Faction) == false && monster.Alive))
-                    localDangerCount++;
 
-                if (blocks[point.X * width + point.Y] is Creature creature)
-                    localCreatures.Add( creature );
+                if (blocks[point.X * width + point.Y] is Creature creature) {
+                    localCreatures.Add(creature);
+                    if (creature is Monster monster && (monster.Faction.Equals(Faction) == false && monster.Alive))
+                        localDangerCount++;
+                }
             }
 
             if (localDangerCount > 0) {

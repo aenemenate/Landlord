@@ -40,6 +40,8 @@ namespace Landlord
         // tries to place a seed at the specified position
         public void TrySeed(MapTile map, Point position, Random rng)
         {
+            if (!map.PointWithinBounds(position))
+                return;
             bool explored = map.Blocks[position.X * map.Width + position.Y].Explored;
             if (map.Floor[position.X * map.Width + position.Y] is DirtFloor)
                 if ((map.Blocks[position.X * map.Width + position.Y] is Plant && rng.Next(0, 20) <= 5) || map.Blocks[position.X * map.Width + position.Y] is Air)

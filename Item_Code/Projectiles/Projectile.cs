@@ -62,7 +62,7 @@ namespace Landlord
             Item arrow = item;
             int damage = (int)arrow.Damage;
             DamageType dmgType = arrow.GetWepDmgType();
-            int dmgDealt = defender.DefendAgainstDmg(dmgType, damage);
+            int dmgDealt = defender.DefendAgainstDmg(dmgType, damage, position);
 
             Program.MsgConsole.WriteLine($"The {item.Name} struck {defender.Name} for {dmgDealt} damage!");
             if (defender.Alive == false) Program.MsgConsole.WriteLine($"{defender.Name} died.");

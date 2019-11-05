@@ -342,8 +342,7 @@ namespace Landlord
 
             public void RenderLootMenu()
             {
-                if (Program.Animations.Count > 0)
-                    return;
+                if (Program.Animations.Count != 0) return;
 
                 void PrintHeader()
                 {
@@ -366,12 +365,13 @@ namespace Landlord
                 }
                 
                 PrintHeader();
-
                 iItemList.Render(iItemList.ContainerInventory, Color.White, Color.Green, InventoryPanel.color, InventoryPanel.darkerColor);
             }
 
             public void HandleLootMenu()
             {
+                if (Program.Animations.Count != 0) return;
+
                 iItemList.Update();
 
                 void TakeAll()

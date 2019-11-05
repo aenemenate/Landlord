@@ -598,7 +598,8 @@ namespace Landlord
             static public void CloseSaveScreen( object sender, EventArgs e )
             {
                 Program.Console.Clear();
-                Program.FinishedAnims.Add( Program.Animations[0] );
+                if (Program.Animations.Count > 0)
+                    Program.FinishedAnims.Add( Program.Animations[0] );
                 Program.CurrentState = new MainMenu();
                 loading = false;
                 System.GC.Collect();
@@ -624,7 +625,8 @@ namespace Landlord
             {
                 SadConsole.Global.CurrentScreen.Children.Remove( Program.ControlsConsole );
                 Program.Console.Clear();
-                Program.FinishedAnims.Add( Program.Animations[0] );
+                if (Program.Animations.Count > 0)
+                    Program.FinishedAnims.Add(Program.Animations[0]);
                 Program.CurrentState = new Play();
                 ReadWrite.SetObjHoldersToProgram();
                 loading = false;
@@ -681,7 +683,8 @@ namespace Landlord
             static public void CloseGenerateDungeonScreen( object sender, EventArgs e )
             {
                 Program.Console.Clear();
-                Program.FinishedAnims.Add( Program.Animations[0] );
+                if (Program.Animations.Count > 0)
+                    Program.FinishedAnims.Add(Program.Animations[0]);
                 Program.Player.TakeStairsDown();
                 Program.CurrentState = new Play();
                 loading = false;
@@ -706,12 +709,10 @@ namespace Landlord
             static public void CloseGenerateWorldMapScreen(object sender, EventArgs e)
             {
                 Program.Console.Clear();
-                Program.FinishedAnims.Add(Program.Animations[0]);
-
+                if (Program.Animations.Count > 0)
+                    Program.FinishedAnims.Add(Program.Animations[0]);
                 GeneratingWorldMap state = (GeneratingWorldMap)Program.CurrentState;
-
                 CreaturePlacementHelper.PlacePlayer(state.UClass, state.Gender, state.Name);
-
                 Program.CurrentState = new Play();
                 loading = false;
             }

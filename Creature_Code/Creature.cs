@@ -258,6 +258,12 @@ namespace Landlord
                 ChangeResource(Resource.HV, -(timeToAdd / 4));
             if (Stats.Resources[Resource.HV] == 0 && new Random().Next(0, 100) <= 1)
                 ChangeResource(Resource.HP, -1);
+            ApplyEffects();
+        }
+        private void ApplyEffects()
+        {
+            for (int i = 0; i < effects.Count; i++)
+                effects[i].Apply(this);
         }
 
         private int GetArmorSkill(Armor armor)
@@ -403,7 +409,7 @@ namespace Landlord
 
                 DamageType dmgType = weapon.GetWepDmgType();
 
-                int dmgDealt = defender.DefendAgainstDmg(dmgType, damage);
+                int dmgDealt = defender.DefendAgainstDmg(dmgType, damage, position);
 
                 if (dmgDealt <= 0)
                     goto Finish;
@@ -512,7 +518,7 @@ namespace Landlord
             else
                 Stats.LvlSkill( Skill.HeavyArmor, amount, this );
         }
-        public int DefendAgainstDmg( DamageType dmgType, int dmg )
+        public int DefendAgainstDmg( DamageType dmgType, int dmg, Point dmgAngle )
         {
             // Note: this function will return a negative value if the defender blocked. This is for message handling.
             Random rng = new Random();
@@ -536,9 +542,28 @@ namespace Landlord
 
             ChangeResource(Resource.HP, Math.Abs((int)finalDmg) * -1);
 
+            if (finalDmg > 0) SplatterBlood(dmgAngle);
+
             ChangeResource(Resource.SP, Math.Abs((int)finalDmg) * -1);
 
             return (int)finalDmg;
+        }
+        private void SplatterBlood(Point recievingAngle)
+        {
+            Random rng = new Random();
+            for (int i = Math.Max(position.X - 4, 0); i <= Math.Min(position.X + 4, Program.WorldMap[worldIndex.X, worldIndex.Y].Width - 1); i++)
+                for (int j = Math.Max(position.Y - 4, 0); j <= Math.Min(position.Y + 4, Program.WorldMap[worldIndex.X, worldIndex.Y].Height - 1); j++)
+                {
+                    int treeRoll = rng.Next(1, 11), maxChance = 5;
+                    double distFromTree = new Point(i, j).DistFrom(position);
+                    bool pointCloserToDefThanAtt = new Point(i, j).DistFrom(recievingAngle) >= distFromTree;
+                    Block block = Program.WorldMap[worldIndex.X, worldIndex.Y][i, j];
+                    Tile tile = Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[i * Program.WorldMap.TileWidth + j];
+                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToDefThanAtt && visiblePoints.Contains(new Point(i, j))) {
+                        block.Splattered = block.Visible;
+                        tile.Splattered = tile.Visible;
+                    }
+                }
         }
         private void Die()
         {

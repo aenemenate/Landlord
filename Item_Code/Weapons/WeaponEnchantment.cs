@@ -36,7 +36,7 @@ namespace Landlord
 
         public void Apply(Creature user, Creature victim)
         {
-            victim.DefendAgainstDmg(damageType, victimDamage);
+            victim.DefendAgainstDmg(damageType, victimDamage, victim.Position);
 
             if (appliedEffect != null)
             {

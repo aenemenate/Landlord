@@ -100,9 +100,14 @@ namespace Landlord
             plantsInterval++;
             completedUpdateHour = Program.TimeHandler.CurrentTime.Hour;
         }
+        public void CleanSplatters()
+        {
+            for (int i = 0; i < worldMap.GetLength(0); i++)
+                for (int j = 0; j < worldMap.GetLength(1); j++)
+                    worldMap[i, j].CleanSplatters();
+        }
 
         // PROPERTIES //
-
         public MapTile this[int x, int y] {
             get { return worldMap[x,y]; }
             set { worldMap[x,y] = value; }

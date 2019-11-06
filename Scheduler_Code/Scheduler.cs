@@ -5,8 +5,6 @@ namespace Landlord
 {
     static class Scheduler
     {
-
-
         // FUNCTIONS //
         public static void CheckUpdates()
         {
@@ -15,6 +13,8 @@ namespace Landlord
                 (lastPlantUpdate != 0 && Program.TimeHandler.CurrentTime.Hour == 0)) {
                 Program.WorldMap.UpdatePlants();
             }
+            if (Program.TimeHandler.CurrentTime.Minute == 30 || Program.TimeHandler.CurrentTime.Minute == 0)
+                Program.WorldMap.CleanSplatters();
         }
         public static void HandleRoguelikeScheduling(Player player)
         {
@@ -37,13 +37,9 @@ namespace Landlord
                 }
                 creatures[i].DetermineAction();
             }
-
             UpdateProjectiles(currentFloor, worldIndex);
-
             CheckUpdates();
         }
-
-
         public static void HandleBuildModeScheduling()
         {
 

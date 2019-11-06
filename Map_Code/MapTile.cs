@@ -22,12 +22,10 @@ namespace Landlord
         private bool owned;
         private float cost;
         private int sqMeters;
-
         private Point dungeonEntrance;
         private Dungeon dungeon;
 
         // CONSTRUCTOR //
-
 		public MapTile(Point size, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
             width = size.X;
@@ -42,11 +40,9 @@ namespace Landlord
             Init(new Random(), worldIndex, heightMap, plantTypes, creatureTypes, containsDungeon);
             owned = false;
         }
-
         public MapTile()
         {
         }
-
         // FUNCTIONS //
         public void Init(Random rng, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
@@ -173,7 +169,6 @@ namespace Landlord
             else
                 RenderBlock();
         }
-
         public void UpdatePlants(int plantsInterval)
         {
             Random rng = new Random();
@@ -181,6 +176,16 @@ namespace Landlord
                 for (int j = 0; j < Height; j++)
                     if (map[i * width + j] is Plant p && plantsInterval % p.GrowthInterval == 0)
                         p.Grow(this, new Point(i, j), rng);
+        }
+        public void CleanSplatters()
+        {
+            Random rng = new Random();
+            for (int i = 0; i < Width; i++)
+                for (int j = 0; j < Height; j++)
+                    if (map[i * width + j].Splattered || floor[i * width + j].Splattered && rng.Next(0, 10) < 6) {
+                        floor[i * width + j].Splattered = false;
+                        map[i * width + j].Splattered = false;
+                    }
         }
         // check functions
         internal bool PointWithinBounds(Point point)
@@ -262,7 +267,6 @@ namespace Landlord
         {
             return new Point(Program.Window.CalculateMapStartPoint().X + (mousePos.X), Program.Window.CalculateMapStartPoint().Y + mousePos.Y);
         }
-
         // PROPERTIES //
         public Block this[int x, int y] {
             get { return map[x * width + y]; }
@@ -276,7 +280,8 @@ namespace Landlord
             get { return map; }
             set { map = value; }
         }
-        //public Block[] MemoryMap {
+        //public Block[] MemoryMap
+        //{
         //    get { return memoryMap; }
         //    set { memoryMap = value; }
         //}

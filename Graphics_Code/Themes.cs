@@ -11,7 +11,7 @@ namespace Landlord
     static class Themes
     {
         static private Cell defaultButtonNormal = new SadConsole.Cell(Color.AliceBlue, Color.DarkSlateGray * 1.1F);
-        static private Cell defaultButtonDisabled = new SadConsole.Cell(Color.AliceBlue, Color.DarkSlateGray * 1.1F);
+        static private Cell defaultButtonDisabled = new SadConsole.Cell(Color.AliceBlue, Color.DarkSlateGray * 0.8F);
         static private Cell defaultButtonMouseOver = new SadConsole.Cell(Color.AliceBlue, Color.Gray);
         static private Cell defaultButtonMouseClicking = new SadConsole.Cell(Color.Gray, Color.AliceBlue);
         static private Cell defaultButtonFocused = new SadConsole.Cell(Color.AliceBlue, Color.DarkSlateGray * 1.1F);

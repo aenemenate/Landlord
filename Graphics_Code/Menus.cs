@@ -1278,23 +1278,20 @@ namespace Landlord
             int maxSkills = 4;
 
             Menus.PrevGameState = Program.CurrentState;
-            Program.ControlsConsole = new ControlsConsole(Program.Console.Width - 1, Program.Console.Height)
-            {
+            Program.ControlsConsole = new ControlsConsole(Program.Console.Width - 1, Program.Console.Height) {
                 Position = new Microsoft.Xna.Framework.Point(1, 0)
             };
 
             //CHOOSE FOUR MAJOR AND MINOR SKILLS
             int y = 2;
-            var label = new SadConsole.Controls.DrawingSurface(Program.ControlsConsole.Width / 2, 3)
-            {
+            var label = new SadConsole.Controls.DrawingSurface(Program.ControlsConsole.Width / 2, 3) {
                 Position = new Microsoft.Xna.Framework.Point(Program.ControlsConsole.Width / 4, y)
             };
             label.Print((label.Width / 2) - 17, 0, $"CHOOSE FOUR [c:r f:RoyalBlue:5]MAJOR AND [c:r f:ForestGreen:5]MINOR SKILLS");
 
             //ENDURANCE
             y = Program.ControlsConsole.Height / 2 - 8;
-            var enduranceLabel = new SadConsole.Controls.DrawingSurface(Program.ControlsConsole.Width / 7 - 1, 1)
-            {
+            var enduranceLabel = new SadConsole.Controls.DrawingSurface(Program.ControlsConsole.Width / 7 - 1, 1) {
                 Position = new Microsoft.Xna.Framework.Point(0, y)
             };
             enduranceLabel.Print(0, 0, "Endurance:");
@@ -1355,8 +1352,7 @@ namespace Landlord
             
             //DEXTERITY
             y = Program.ControlsConsole.Height / 2 - 8;
-            var dexterityLabel = new SadConsole.Controls.DrawingSurface(Program.ControlsConsole.Width / 7 - 1, 1)
-            {
+            var dexterityLabel = new SadConsole.Controls.DrawingSurface(Program.ControlsConsole.Width / 7 - 1, 1) {
                 Position = new Microsoft.Xna.Framework.Point((Program.ControlsConsole.Width / 7) * 3, y)
             };
             dexterityLabel.Print(0, 0, "Dexterity:");
@@ -1431,10 +1427,8 @@ namespace Landlord
                 Position = new Microsoft.Xna.Framework.Point(Program.ControlsConsole.Width / 3, Program.ControlsConsole.Height - 4),
                 Text = "Play!"
             };
-            playButton.Click += (btn, args) =>
-            {
-                if (numOfMajorSkills == maxSkills && numOfMinorSkills == maxSkills)
-                {
+            playButton.Click += (btn, args) => {
+                if (numOfMajorSkills == maxSkills && numOfMinorSkills == maxSkills) {
                     numOfMajorAttr = 0;
                     numOfMajorSkills = 0;
                     numOfMinorSkills = 0;
@@ -1452,13 +1446,11 @@ namespace Landlord
             };
 
             //BACK TO CHARACTER CREATION
-            var backButton = new SadConsole.Controls.Button(Program.ControlsConsole.Width / 3)
-            {
+            var backButton = new SadConsole.Controls.Button(Program.ControlsConsole.Width / 3) {
                 Position = new Microsoft.Xna.Framework.Point(Program.ControlsConsole.Width / 3, Program.ControlsConsole.Height - 2),
                 Text = "Back"
             };
-            backButton.Click += (btn, args) =>
-            {
+            backButton.Click += (btn, args) => {
                 Menus.ClickedDialog = true;
                 SadConsole.Global.CurrentScreen.Children.Remove(Program.ControlsConsole);
                 Program.CurrentState = new CreateCharacter();
@@ -1466,18 +1458,21 @@ namespace Landlord
             Program.ControlsConsole.Add(label);
 
             Program.ControlsConsole.Add(enduranceLabel);
+            spear.IsEnabled = false;
             Program.ControlsConsole.Add(heavyArmor);
             Program.ControlsConsole.Add(spear);
             Program.ControlsConsole.Add(block);
             Program.ControlsConsole.Add( swimming );
 
             Program.ControlsConsole.Add( strengthLabel );
+            forging.IsEnabled = false;
             Program.ControlsConsole.Add( acrobatics );
             Program.ControlsConsole.Add( brawling );
             Program.ControlsConsole.Add( forging );
             Program.ControlsConsole.Add( heavyWeapons );
 
             Program.ControlsConsole.Add(agilityLabel);
+            stealth.IsEnabled = false;
             Program.ControlsConsole.Add(lightArmor);
             Program.ControlsConsole.Add(unarmored);
             Program.ControlsConsole.Add(shortBlade);
@@ -1490,16 +1485,23 @@ namespace Landlord
             Program.ControlsConsole.Add(crafting);
 
             Program.ControlsConsole.Add(intelligenceLabel);
+            illusion.IsEnabled = false;
+            alchemy.IsEnabled = false;
+            enchant.IsEnabled = false;
             Program.ControlsConsole.Add(illusion);
             Program.ControlsConsole.Add(alchemy);
             Program.ControlsConsole.Add(enchant);
 
             Program.ControlsConsole.Add(willpowerLabel);
+            necromancy.IsEnabled = false;
+            restoration.IsEnabled = false;
+            destruction.IsEnabled = false;
             Program.ControlsConsole.Add(necromancy);
             Program.ControlsConsole.Add(restoration);
             Program.ControlsConsole.Add(destruction);
 
             Program.ControlsConsole.Add(personalityLabel);
+            speechcraft.IsEnabled = false;
             Program.ControlsConsole.Add(mercantile);
             Program.ControlsConsole.Add(speechcraft);
 
@@ -1518,15 +1520,15 @@ namespace Landlord
                 Focused = new SadConsole.Cell(Color.AntiqueWhite, Color.RoyalBlue),
                 Normal = new SadConsole.Cell(Color.AntiqueWhite, Color.RoyalBlue),
                 MouseOver = new SadConsole.Cell(Color.AntiqueWhite, Color.RoyalBlue * 1.2F),
-                MouseClicking = new SadConsole.Cell(Color.RoyalBlue * 1.2F, Color.AntiqueWhite)
+                MouseClicking = new SadConsole.Cell(Color.RoyalBlue * 1.2F, Color.AntiqueWhite),
+                Disabled = new SadConsole.Cell(Color.AntiqueWhite, Color.RoyalBlue * 0.8F)
             };
-            SadConsole.Themes.ButtonTheme minorSkillTheme = new SadConsole.Themes.ButtonTheme()
-            {
+            SadConsole.Themes.ButtonTheme minorSkillTheme = new SadConsole.Themes.ButtonTheme() {
                 Focused = new SadConsole.Cell(Color.AntiqueWhite, Color.ForestGreen),
                 Normal = new SadConsole.Cell(Color.AntiqueWhite, Color.ForestGreen),
                 MouseOver = new SadConsole.Cell(Color.AntiqueWhite, Color.ForestGreen * 1.2F),
                 MouseClicking = new SadConsole.Cell(Color.ForestGreen * 1.2F, Color.AntiqueWhite),
-                Disabled = new SadConsole.Cell( Color.AntiqueWhite, Color.ForestGreen * 0.97F ),
+                Disabled = new SadConsole.Cell( Color.AntiqueWhite, Color.ForestGreen * 0.8F )
             };
 
             var temp = new SadConsole.Controls.Button(width, 1)

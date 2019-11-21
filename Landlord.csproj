@@ -122,6 +122,7 @@
     <Compile Include="Item_Code\Items\Quiver.cs" />
     <Compile Include="Item_Code\Materials\Resources\Food.cs" />
     <Compile Include="Item_Code\Materials\Resources\CoalOre.cs" />
+    <Compile Include="Item_Code\Materials\Resources\Stick.cs" />
     <Compile Include="Item_Code\Materials\Resources\StoneWheel.cs" />
     <Compile Include="Item_Code\Materials\Resources\WoodWheel.cs" />
     <Compile Include="Item_Code\Materials\Resources\Stone.cs" />

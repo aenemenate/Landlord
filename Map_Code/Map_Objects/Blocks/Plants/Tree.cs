@@ -45,8 +45,12 @@ namespace Landlord
                     double distFromTree = new Point(i, j).DistFrom(pos);
                     bool pointCloserToTreeThanfeller = new Point(i, j).DistFrom(user.Position) > distFromTree;
                     Block block = Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j];
-                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToTreeThanfeller && (block is Air || block is Plant))
-                        Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j] = new Log(true);
+                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToTreeThanfeller && (block is Air || block is Plant)) {
+                        if (rng.Next(0, 10) < 6)
+                            Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j] = new Log(true);
+                        else
+                            Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][i, j] = new Stick(true);
+                    }
                 }
 
             Program.WorldMap[user.WorldIndex.X, user.WorldIndex.Y][pos.X, pos.Y] = new Log(true);

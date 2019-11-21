@@ -23,6 +23,7 @@ namespace Landlord
         Stone,   //
         Coal,  //
         Plank,   //
+        Stick,  //
         Wheel, //
         Arrow, // Shoot these
         Bolt,  

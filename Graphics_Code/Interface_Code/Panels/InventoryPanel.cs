@@ -106,26 +106,35 @@ namespace Landlord
 
             void HandleInventoryInput()
             {
-                if (shiftPressed 
-                    && leftClicked 
-                      && (Program.CurrentState is Play
+                if (shiftPressed && leftClicked) {
+                    if ((Program.CurrentState is Play
                            || Program.CurrentState is ViewItem
-                              || Program.CurrentState is ViewEquipment))
-                {
-                    if (currentlyViewedItem is Potion)
-                        Program.Player.Drink(currentlyViewedItem);
-                    else if (currentlyViewedItem is Food)
-                        Program.Player.Eat(currentlyViewedItem);
-                    else if (currentlyViewedItem is Armor armorPiece)
-                        Program.Player.Equip(armorPiece);
-                    else if (currentlyViewedItem is BlueprintPouch || currentlyViewedItem is RecipePouch || currentlyViewedItem is Quiver) {
-                        Program.Animations.Add(new OpenLootView());
-                        Program.CurrentState = new ViewLoot(currentlyViewedItem is RecipePouch ? ((RecipePouch)currentlyViewedItem).Recipes : 
-                                                                ((currentlyViewedItem is Quiver) ? ((Quiver)currentlyViewedItem).Arrows :
-                                                                  ((BlueprintPouch)currentlyViewedItem).Blueprints), currentlyViewedItem.Name);
+                              || Program.CurrentState is ViewEquipment)) {
+                        if (currentlyViewedItem is Potion)
+                            Program.Player.Drink(currentlyViewedItem);
+                        else if (currentlyViewedItem is Food)
+                            Program.Player.Eat(currentlyViewedItem);
+                        else if (currentlyViewedItem is Armor armorPiece)
+                            Program.Player.Equip(armorPiece);
+                        else if (currentlyViewedItem is BlueprintPouch || currentlyViewedItem is RecipePouch || currentlyViewedItem is Quiver) {
+                            Program.Animations.Add(new OpenLootView());
+                            Program.CurrentState = new ViewLoot(currentlyViewedItem is RecipePouch ? ((RecipePouch)currentlyViewedItem).Recipes :
+                                                                    ((currentlyViewedItem is Quiver) ? ((Quiver)currentlyViewedItem).Arrows :
+                                                                      ((BlueprintPouch)currentlyViewedItem).Blueprints), currentlyViewedItem.Name);
+                        }
+                        else Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == currentlyViewedItem.Name), true);
                     }
-                    else
-                        Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == currentlyViewedItem.Name), true);
+                    else if (Program.CurrentState is ViewLoot viewLoot) {
+                        // if viewing loot in a container, clicking an item will add it to the container.
+                        if (Program.Animations.Count == 0) {
+                            for (int i = Program.Player.Inventory.Count - 1; i >= 0; --i) {
+                                if (Program.Player.Inventory[i].Name.Equals(currentlyViewedItem.Name)) {
+                                    viewLoot.LootMenu.ContainerInventory.Add(Program.Player.Inventory[i]);
+                                    Program.Player.Inventory.RemoveAt(i);
+                                }
+                            }
+                        }
+                    }
                     currentlyViewedItem = null;
                 }
                 else if (leftClicked) {

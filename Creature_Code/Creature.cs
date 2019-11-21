@@ -166,7 +166,7 @@ namespace Landlord
         public void TakeStairsDown()
         {
             if (!Program.WorldMap[worldIndex.X, worldIndex.Y].Owned && this is Player) {
-                Menus.DisplayIncorrectUsage("You need to buy this hectare to enter the dungeon. Click a plot on the world map to buy it.");
+                Menus.DisplayIncorrectUsage("You must purchase this plot. Use [m].");
                 return;
             }
 
@@ -550,15 +550,19 @@ namespace Landlord
         }
         private void SplatterBlood(Point recievingAngle)
         {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
+            int tileWidth = Program.WorldMap.TileWidth;
+            int tileHeight = Program.WorldMap.TileHeight;
             Random rng = new Random();
-            for (int i = Math.Max(position.X - 4, 0); i <= Math.Min(position.X + 4, Program.WorldMap[worldIndex.X, worldIndex.Y].Width - 1); i++)
-                for (int j = Math.Max(position.Y - 4, 0); j <= Math.Min(position.Y + 4, Program.WorldMap[worldIndex.X, worldIndex.Y].Height - 1); j++)
+            for (int i = Math.Max(position.X - 4, 0); i <= Math.Min(position.X + 4, tileWidth - 1); i++)
+                for (int j = Math.Max(position.Y - 4, 0); j <= Math.Min(position.Y + 4, tileHeight - 1); j++)
                 {
                     int treeRoll = rng.Next(1, 11), maxChance = 5;
                     double distFromTree = new Point(i, j).DistFrom(position);
                     bool pointCloserToDefThanAtt = new Point(i, j).DistFrom(recievingAngle) >= distFromTree;
-                    Block block = Program.WorldMap[worldIndex.X, worldIndex.Y][i, j];
-                    Tile tile = Program.WorldMap[worldIndex.X, worldIndex.Y].Floor[i * Program.WorldMap.TileWidth + j];
+                    Block block = blocks[i * tileWidth + j];
+                    Tile tile = tiles[i * tileWidth + j];
                     if (treeRoll < maxChance - distFromTree * 2 && pointCloserToDefThanAtt && visiblePoints.Contains(new Point(i, j))) {
                         block.Splattered = block.Visible;
                         tile.Splattered = tile.Visible;

@@ -25,7 +25,7 @@ namespace Landlord
             Inventory.Add( craftPouch );
             Inventory.Add( new Axe( true ) { WeaponName = "pickaxe", Material = Material.Copper } );
 
-            Gold = 6000;
+            Gold = 550;
             Class = uclass;
             DetermineStats();
             DetermineEquipment();

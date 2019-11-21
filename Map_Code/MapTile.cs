@@ -57,13 +57,14 @@ namespace Landlord
             sqMeters = 0;
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < height; j++) {
-                    if (floor[i * width + j] is DirtFloor && map[i * width + j].Solid == false) {
-                        cost += .5F;
+                    if (floor[i * width + j] is Water == false && map[i * width + j].Solid == false) {
+                        cost += .05F;
                         sqMeters += 1;
                     }
                     if (map[i * width + j] is DownStair)
-                        cost += 1000F;
+                        cost += 100F;
                 }
+            cost = (float)(Math.Truncate((double)cost * 100) / 100);
         }
         public void DrawCell(int x, int y, Player player, SadConsole.Console console, Window window)
         {

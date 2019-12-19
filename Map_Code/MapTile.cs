@@ -20,7 +20,7 @@ namespace Landlord
         private DijkstraMaps dijkstraMaps;
 
         private bool owned;
-        private float cost;
+        private double cost;
         private int sqMeters;
         private Point dungeonEntrance;
         private Dungeon dungeon;
@@ -64,7 +64,7 @@ namespace Landlord
                     if (map[i * width + j] is DownStair)
                         cost += 100F;
                 }
-            cost = (float)(Math.Truncate((double)cost * 100) / 100);
+            cost = Math.Round(cost, 2);
         }
         public void DrawCell(int x, int y, Player player, SadConsole.Console console, Window window)
         {
@@ -89,8 +89,8 @@ namespace Landlord
                 heightMultiplierBack = ((90F - cellHeight) / 128F) * 0.1F;
             }
 
-            nonVisibleMultiplierFore = 0.82F - heightMultiplierFore;
-            nonVisibleMultiplierBack = 0.91F - heightMultiplierBack;
+            nonVisibleMultiplierFore = 0.78F - heightMultiplierFore;
+            nonVisibleMultiplierBack = 0.89F - heightMultiplierBack;
             visibleMultiplierFore = 0.96F - heightMultiplierFore;
             visibleMultiplierBack = 1.02F - heightMultiplierBack;
 
@@ -302,7 +302,7 @@ namespace Landlord
             get { return owned; }
             set { owned = value; }
         }
-        public float Cost {
+        public double Cost {
             get { return cost; }
             set { cost = value; }
         }

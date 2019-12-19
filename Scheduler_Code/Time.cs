@@ -24,7 +24,19 @@ namespace Landlord
         public TimeHandler()
         {
         }
-        
+
+        // FUNCS //
+
+        public int GetOutsideSightDist(int creatureSightDist)
+        {
+            if (currentTime.Hour < 5 || currentTime.Hour > 22)
+                return (int)((float)creatureSightDist * 0.7F);
+            if (currentTime.Hour < 7 || currentTime.Hour > 20)
+                return (int)((float)creatureSightDist * 0.8F);
+            if (currentTime.Hour < 8 || currentTime.Hour > 19)
+                return (int)((float)creatureSightDist * 0.9F);
+            return creatureSightDist;
+        }
 
         // PROPERTIES //
 

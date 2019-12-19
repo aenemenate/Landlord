@@ -23,7 +23,7 @@ namespace Landlord
         private int sightDist;
         private List<Point> visiblePoints;
 
-        private float gold;
+        private double gold;
         private List<Item> inventory;
         private string gender;
         private DietType diet;
@@ -258,6 +258,11 @@ namespace Landlord
                 ChangeResource(Resource.HV, -(timeToAdd / 4));
             if (Stats.Resources[Resource.HV] == 0 && new Random().Next(0, 100) <= 1)
                 ChangeResource(Resource.HP, -1);
+            if (stats.Resources[Resource.SP] >= stats.Resources[Resource.SP] * 0.8F && Program.TimeHandler.CurrentTime.Second % 10 == 0) {
+                if (stats.Resources[Resource.HP] < stats.Resources[Resource.MaxHP]) stats.Resources[Resource.HP] += 1;
+            }
+            if (stats.Resources[Resource.HP] > stats.Resources[Resource.MaxHP] * 0.8)
+                this.Splattered = false;
             ApplyEffects();
         }
         private void ApplyEffects()
@@ -347,7 +352,8 @@ namespace Landlord
 
         public void UpdateFOV()
         {
-            visiblePoints = RayCaster.CalculateFOV(sightDist, this).ToList();
+            int effectiveSightDist = (currentFloor < 0) ? Program.TimeHandler.GetOutsideSightDist(sightDist) : (sightDist / 2);
+            visiblePoints = RayCaster.CalculateFOV(effectiveSightDist, this).ToList();
         }
 
         public void LaunchAttack(Creature defender)
@@ -625,6 +631,7 @@ namespace Landlord
         public void Wait()
         {
             ApplyActionCost(1);
+            stats.Resources[Resource.SP]++;
         }
 
         public void OpenDoor( Block door )
@@ -1051,7 +1058,7 @@ namespace Landlord
             get { return visiblePoints; }
             set { visiblePoints = value; }
         }
-        public float Gold {
+        public double Gold {
             get { return gold; }
             set { gold = value; }
         }

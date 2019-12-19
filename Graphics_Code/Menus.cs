@@ -530,7 +530,7 @@ namespace Landlord
                 {
                     clickedDialog = true;
                     SadConsole.Global.CurrentScreen.Children.Remove(Program.ControlsConsole);
-                    Program.CurrentState = prevGameState;
+                    Program.CurrentState = new ViewWorld();
                 };
 
                 Program.ControlsConsole.Add(label);

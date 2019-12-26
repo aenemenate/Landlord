@@ -11,7 +11,7 @@ Features:
  * ranged and melee combat
  * items with materials and enchantments
  * skill system ripped straight from morrowind
- * basic crafting/building
+ * basic crafting/building and recipes/blueprints to discover
  
 Missing:
  * npcs

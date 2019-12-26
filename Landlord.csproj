@@ -169,6 +169,7 @@
     <Compile Include="Map_Code\Map_Objects\Blocks\Corridor.cs" />
     <Compile Include="Map_Code\Proc_Gen\Dungeons\DungeonHelper.cs" />
     <Compile Include="Audio_Code\MusicHandler.cs" />
+    <Compile Include="Map_Code\Proc_Gen\Dungeons\DungeonGenerationAlgorithm.cs" />
     <Compile Include="Program_Code\BuildingManager\BuildingPlaceholder.cs" />
     <Compile Include="Map_Code\Map_Objects\Block.cs" />
     <Compile Include="Creature_Code\RPG_Stuff\Body.cs" />

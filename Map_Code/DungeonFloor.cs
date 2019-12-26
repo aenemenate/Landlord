@@ -38,20 +38,20 @@ namespace Landlord
 
         public void Init(DungeonType dungeonType, List<string> monsterTypes, Point worldIndex, int floor)
         {
-            RoomPlacementAlgorithm roomPlacementAlgo;
+            DungeonGenerationAlgorithm dungeonGenerationAlgorithm;
             switch (dungeonType)
             {
                 case (DungeonType.RoomPlacement_s):
-                    roomPlacementAlgo = new RoomPlacementAlgorithm(this, monsterTypes);
-                    roomPlacementAlgo.GenerateDungeon(250, 20, floor, worldIndex);
+                    dungeonGenerationAlgorithm = new RoomPlacementAlgorithm(this, monsterTypes);
+                    dungeonGenerationAlgorithm.GenerateDungeon(20, floor, worldIndex);
                     break;
                 case (DungeonType.RoomPlacement_l):
-                    roomPlacementAlgo = new RoomPlacementAlgorithm(this, monsterTypes );
-                    roomPlacementAlgo.GenerateDungeon(500, 40, floor, worldIndex);
+                    dungeonGenerationAlgorithm = new RoomPlacementAlgorithm(this, monsterTypes );
+                    dungeonGenerationAlgorithm.GenerateDungeon(40, floor, worldIndex);
                     break;
                 default:
-                    roomPlacementAlgo = new RoomPlacementAlgorithm(this, monsterTypes );
-                    roomPlacementAlgo.GenerateDungeon(250, 15, floor, worldIndex);
+                    dungeonGenerationAlgorithm = new RoomPlacementAlgorithm(this, monsterTypes );
+                    dungeonGenerationAlgorithm.GenerateDungeon(15, floor, worldIndex);
                     break;
             }
             patrolMaps = new PatrolMaps(100, 100, patrolPoints, this);

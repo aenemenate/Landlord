@@ -29,11 +29,8 @@ namespace Landlord
         Room
     }
 
-    class RoomPlacementAlgorithm
+    class RoomPlacementAlgorithm : DungeonGenerationAlgorithm
     {
-        private DungeonFloor dungeonFloor;
-        private List<string> monsterTypes;
-        private Random rng;
         private List<Block[,]> rooms = new List<Block[,]>();
         private Point firstRoomPos;
 
@@ -45,25 +42,22 @@ namespace Landlord
 
         // CONSTRUCTOR
 
-        public RoomPlacementAlgorithm(DungeonFloor dungeonFloor, List<string> monsterTypes)
+        public RoomPlacementAlgorithm(DungeonFloor dungeonFloor, List<string> monsterTypes) : base(dungeonFloor, monsterTypes)
         {
-            this.dungeonFloor = dungeonFloor;
-            this.monsterTypes = monsterTypes;
-            rng = new Random();
         }
 
 
         // FUNCTIONS
 
-        public void GenerateDungeon(int placementAttempts, int maxRoomCount, int floor, Point worldIndex)
+        public override void GenerateDungeon(int size, int floor, Point worldIndex)
         {
             DungeonHelper.InitializeMap(dungeonFloor);
             Block[,] room;
 
             firstRoomPos = floor > 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[floor - 1].GetDownStairPos() : Program.Player.Position;
 
-            for (int c = 0; c < placementAttempts; c++) /* create all rooms */ {
-                if (rooms.Count >= maxRoomCount)
+            for (int c = 0; c < size * 100; c++) /* create all rooms */ {
+                if (rooms.Count >= size)
                     break;
                 room = GenerateRoom(); // generate the first room
                 if (room != null)

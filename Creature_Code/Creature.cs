@@ -862,29 +862,23 @@ namespace Landlord
             else
                 Menus.DisplayIncorrectUsage("You can't drink that.");
         }
-        public void Drop(Item item)
+        public bool Drop(Item item)
         {
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
-
             List<Point> freeDirections = blocks.GetEmptyAdjacentBlocks(new Point(width, height), position); 
             if (freeDirections.Count == 0) {
                 Menus.DisplayIncorrectUsage("There's no space to drop that.");
-                return;
+                return false;
             }
-
             Point point = freeDirections[new Random().Next(0, freeDirections.Count)];
-
             item.BlockPlacedOn = blocks[point.X * width + point.Y];
             blocks[point.X * width + point.Y] = item;
-
             inventory.Remove(item);
-
             Program.MsgConsole.WriteLine($"{Name} dropped the {item.Name}.");
-
             ApplyActionCost(10);
-
             Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
+            return true;
         }
 
         public void Wield(int itemIndex, bool mainHand)

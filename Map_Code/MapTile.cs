@@ -13,7 +13,6 @@ namespace Landlord
         private int width, height;
         private Point worldIndex;
         private Block[] map; // x * width + y
-        //private Block[] memoryMap; // x * width + y
         private Tile[] floor; // x * width + y
         private List<Creature> creatures;
         private List<Projectile> projectiles;
@@ -32,7 +31,6 @@ namespace Landlord
             height = size.Y;
             this.worldIndex = worldIndex;
             map = new Block[width * height];
-            //memoryMap = new Block[width * height];
             floor = new Tile[width * height];
             creatures = new List<Creature>();
             projectiles = new List<Projectile>();
@@ -281,11 +279,6 @@ namespace Landlord
             get { return map; }
             set { map = value; }
         }
-        //public Block[] MemoryMap
-        //{
-        //    get { return memoryMap; }
-        //    set { memoryMap = value; }
-        //}
         public Tile[] Floor {
             get { return floor; }
             set { floor = value; }

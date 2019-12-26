@@ -252,6 +252,7 @@
     <None Include="res\graphics\fonts\Alloy_12x12.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="featurestoadd.txt" />
     <Content Include="res\data\EffectTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

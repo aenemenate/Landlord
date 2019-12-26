@@ -435,8 +435,9 @@ namespace Landlord
                         chest.Inventory.Add( I );
                         Program.Player.Inventory.RemoveAt(i);
                     }
-                    Program.Player.Drop(I);
-                    droppedItems = true;
+                    bool success = Program.Player.Drop(I);
+                    if (!success) playerState = PlayerState.Idle;
+                    else droppedItems = true;
                 }
             }
             return droppedItems;

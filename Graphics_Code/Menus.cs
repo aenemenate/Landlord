@@ -159,11 +159,12 @@ namespace Landlord
                     }
                 }
 
+                Program.Console.Clear();
+
                 PrintTitle();
                 
 
-                Program.ControlsConsole = new ControlsConsole(Program.Console.Width / 8, Program.Console.Height / 4)
-                {
+                Program.ControlsConsole = new ControlsConsole(Program.Console.Width / 8, Program.Console.Height / 4) {
                     Position = new Microsoft.Xna.Framework.Point((Program.Console.Width / 16) * 7, startY)
                 };
 
@@ -279,7 +280,7 @@ namespace Landlord
                         weight = Program.Console.Height - 1;
 
                     granularity = Program.WorldMap.HeightMap.GetLength(1) / (Program.Console.Height - weight);
-                    while (Program.WorldMap.HeightMap.GetLength(1) % granularity != 0)
+                    while (Program.WorldMap.TileHeight % granularity != 0)
                         granularity += 1;
                 }
 
@@ -692,7 +693,11 @@ namespace Landlord
             static public void GenerateWorldMapScreen()
             {
                 bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerMinute * 2);
-                if (loadingFailed) loadThread.Abort();
+                if (loadingFailed) { 
+                    loadThread.Abort();
+                    Program.CurrentState = new MainMenu();
+                    return;
+                }
                 if (ClickedDialog) ClickedDialog = !ClickedDialog;
                 if (!loading || !loadThread.IsAlive) {
                     startLoad = DateTime.Now;

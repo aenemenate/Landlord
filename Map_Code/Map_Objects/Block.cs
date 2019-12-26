@@ -66,7 +66,7 @@ namespace Landlord
 
         public Block Copy()
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream()) 
             {
                 SharpSerializer s = new SharpSerializer(true);
                 s.Serialize(this, ms);

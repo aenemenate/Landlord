@@ -118,97 +118,42 @@ namespace Landlord
 
         public void Print(int x, int y, string str, int length)
         {
-            Print(x, y, str, length, Color.AntiqueWhite);
+            Print(Program.Console, x, y, str, length, Color.AntiqueWhite);
         }
 
-        public void Print(int x, int y, string str, int length, Color foreColor)
-        {
-            if (y > Program.Window.Height)
-                return;
-
-            str = str + ' ';
-            int endIndex = str.LastIndexOf(' ');
-            string nextLine = str.Substring(0, endIndex + 1);
-            while (true)
-            {
-                if (nextLine.Length > length + 1)
-                {
-                    if (nextLine.Contains(" "))
-                        endIndex = nextLine.Substring(0, endIndex).LastIndexOf(' ');
-                    nextLine = str.Substring(0, endIndex + 1);
-                }
-                else
-                {
-                    Program.Console.Print(x, y, nextLine, foreColor);
-                    y++;
-                    str = str.Substring(endIndex + 1, str.Length - nextLine.Length);
-                    endIndex = str.LastIndexOf(' ');
-                    nextLine = str.Substring(0, endIndex + 1);
-                    if (str == "")
-                        return;
-                }
-            }
-        }
-
-        public int Print(int x, int y, string str, int length, Color foreColor, Color backColor)
+        public int Print( Console console, int x, int y, string str, int length, Color foreColor )
         {
             str = str + ' ';
             int lines = 0;
-            int endIndex = str.LastIndexOf(' ');
-            string nextLine = str.Substring(0, endIndex + 1);
+            int endIndex = str.LastIndexOf( ' ' );
+            string nextLine = str.Substring( 0, endIndex + 1 );
             while (true)
             {
                 if (nextLine.Length > length + 1)
                 {
-                    if (nextLine.Contains(" "))
-                        endIndex = nextLine.Substring(0, endIndex).LastIndexOf(' ');
-                    nextLine = str.Substring(0, endIndex + 1);
-                }
-                else
+                    if (nextLine.Contains( " " ))
+                        endIndex = nextLine.Substring( 0, endIndex ).LastIndexOf( ' ' );
+                    nextLine = str.Substring( 0, endIndex + 1 );
+                } else
                 {
-                    Program.Console.Print(x, y, nextLine, foreColor, backColor);
+                    if (y >= Program.Window.Height)
+                        return lines;
+                    console.Print( x, y, nextLine, foreColor );
                     y++;
                     lines++;
-                    str = str.Substring(endIndex + 1, str.Length - nextLine.Length);
-                    endIndex = str.LastIndexOf(' ');
-                    nextLine = str.Substring(0, endIndex + 1);
+                    str = str.Substring( endIndex + 1, str.Length - nextLine.Length );
+                    endIndex = str.LastIndexOf( ' ' );
+                    nextLine = str.Substring( 0, endIndex + 1 );
                     if (str == "")
                         return lines;
                 }
             }
         }
-
-        public void Print( Console console, int x, int y, string str, int length, Color foreColor )
-        {
-            str = str + ' ';
-            int endIndex = str.LastIndexOf( ' ' );
-            string nextLine = str.Substring( 0, endIndex + 1 );
-            while (true)
-            {
-                if (nextLine.Length > length + 1)
-                {
-                    if (nextLine.Contains( " " ))
-                        endIndex = nextLine.Substring( 0, endIndex ).LastIndexOf( ' ' );
-                    nextLine = str.Substring( 0, endIndex + 1 );
-                } else
-                {
-
-                    if (y > Program.Window.Height)
-                        return;
-                    console.Print( x, y, nextLine, foreColor );
-                    y++;
-                    str = str.Substring( endIndex + 1, str.Length - nextLine.Length );
-                    endIndex = str.LastIndexOf( ' ' );
-                    nextLine = str.Substring( 0, endIndex + 1 );
-                    if (str == "")
-                        return;
-                }
-            }
-        }
         
-        public void Print( Console console, int x, int y, string str, int length, Color foreColor, Color backColor )
+        public int Print( Console console, int x, int y, string str, int length, Color foreColor, Color backColor )
         {
             str = str + ' ';
+            int lines = 0;
             int endIndex = str.LastIndexOf( ' ' );
             string nextLine = str.Substring( 0, endIndex + 1 );
             while (true)
@@ -218,15 +163,19 @@ namespace Landlord
                     if (nextLine.Contains( " " ))
                         endIndex = nextLine.Substring( 0, endIndex ).LastIndexOf( ' ' );
                     nextLine = str.Substring( 0, endIndex + 1 );
-                } else
+                } 
+                else
                 {
+                    if (y >= Program.Window.Height)
+                        return lines;
                     console.Print( x, y, nextLine, foreColor, backColor );
                     y++;
+                    lines++;
                     str = str.Substring( endIndex + 1, str.Length - nextLine.Length );
                     endIndex = str.LastIndexOf( ' ' );
                     nextLine = str.Substring( 0, endIndex + 1 );
                     if (str == "")
-                        return;
+                        return lines;
                 }
             }
         }

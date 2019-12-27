@@ -211,7 +211,7 @@ namespace Landlord
         public static bool RenderInventory() // display handling
         {
             int heightOfItems = inventoryItems.Count;
-            int itemPortHeight = Program.Console.Height - 8 - ( displayingEquipment ? equipmentStartY : equipmentHeight );
+            int itemPortHeight = Program.Console.Height - 8 - ( displayingEquipment ? equipmentStartY : 3 );
             itemsPerPage = itemPortHeight / padding;
 
             Point mousePos = new Point( SadConsole.Global.MouseState.ScreenPosition.X / SadConsole.Global.FontDefault.Size.X,
@@ -555,11 +555,13 @@ namespace Landlord
             if (Program.Animations.Count == 0)
                 RenderItemView();
 
-            bool selectingEat = mousePos.Y == 27 && mousePos.X >= width + 1 && mousePos.X <= width + 5;
-            bool selectingDrink = mousePos.Y == 27 && mousePos.X >= width + 12 && mousePos.X <= width + 18;
-            bool selectingDrop = mousePos.Y == 29 && mousePos.X >= width + 1 && mousePos.X <= width + 6;
-            bool selectingEquip = mousePos.Y == 29 && mousePos.X >= width + 12 && mousePos.X <= width + 18;
-            bool selectingOpen = mousePos.Y == 31 && mousePos.X >= width + 1 && mousePos.X <= width + 6;
+            int actionsStartY = Program.Console.Height - 7;
+
+            bool selectingEat = mousePos.Y == actionsStartY && mousePos.X >= width + 1 && mousePos.X <= width + 5;
+            bool selectingDrink = mousePos.Y == actionsStartY && mousePos.X >= width + 12 && mousePos.X <= width + 18;
+            bool selectingDrop = mousePos.Y == actionsStartY + 2 && mousePos.X >= width + 1 && mousePos.X <= width + 6;
+            bool selectingEquip = mousePos.Y == actionsStartY + 2 && mousePos.X >= width + 12 && mousePos.X <= width + 18;
+            bool selectingOpen = mousePos.Y == actionsStartY + 4 && mousePos.X >= width + 1 && mousePos.X <= width + 6;
 
             bool mouseOutsideOfItemWindow = ( mousePos.X > width || mousePos.X < width );
 
@@ -638,17 +640,18 @@ namespace Landlord
 
             //print the item description
             color = new Color(100, 116, 136, 0.99F);
-            Program.Window.Print(GUI.Console, width + 1, 13, item.Description, 18, color);
-
+            int numlines = Program.Window.Print(GUI.Console, width + 1, 13, item.Description, 18, color);
 
             // print the weight, volume, and quality
             color = new Color(Color.LightGray, 0.99F);
             string plural = ".";
             if (item.Weight > 1)
                 plural = "s.";
-            GUI.Console.Print(width + 1, 21, "Weight: " + Math.Round(item.Weight, 2) + " lb" + plural, color);
-            GUI.Console.Print(width + 1, 23, "Size: " + Math.Round(Convert.FromCubicFeetToCubicInches(item.Volume), 2), color);
-            GUI.Console.Print( width + 7, 24, "cubic inches", color );
+            GUI.Console.Print(width + 1, 14 + numlines, "Weight: " + Math.Round(item.Weight, 2) + " lb" + plural, color);
+            GUI.Console.Print(width + 1, 14 + numlines + 2, "Size: " + Math.Round(Convert.FromCubicFeetToCubicInches(item.Volume), 2), color);
+            GUI.Console.Print( width + 7, 14 + numlines + 3, "cubic inches", color );
+
+            int actionsStartY = 14 + numlines + 5;
 
             // print the actions
             for (int x = width + 1; x <= width + 12; x += 11)
@@ -659,22 +662,22 @@ namespace Landlord
                 bool thisIsTheFirstIteration = x == width + 1;
 
                 string action = thisIsTheFirstIteration ? "[eat]" : "[drink]";
-                if (Program.Window.MousePos.Y == 27 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
+                if (Program.Window.MousePos.Y == actionsStartY && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
                     highlightingAction = true;
-                GUI.Console.Print( x, 27, action, highlightingAction ? highlightingColor : color, lighterColor );
+                GUI.Console.Print(x, actionsStartY, action, highlightingAction ? highlightingColor : color, lighterColor);
 
                 highlightingAction = false;
                 action = thisIsTheFirstIteration ? "[drop]" : "[equip]";
-                if (Program.Window.MousePos.Y == 29 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
+                if (Program.Window.MousePos.Y == actionsStartY + 2 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
                     highlightingAction = true;
-                GUI.Console.Print( x, 29, action, highlightingAction ? highlightingColor : color, lighterColor );
+                GUI.Console.Print(x, actionsStartY + 2, action, highlightingAction ? highlightingColor : color, lighterColor);
 
                 if (thisIsTheFirstIteration) {
                     highlightingAction = false;
                     action = "[open]";
-                    if (Program.Window.MousePos.Y == 31 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
+                    if (Program.Window.MousePos.Y == actionsStartY + 4 && Program.Window.MousePos.X >= x && Program.Window.MousePos.X < x + action.Length)
                         highlightingAction = true;
-                    GUI.Console.Print(x, 31, action, highlightingAction ? highlightingColor : color, lighterColor);
+                    GUI.Console.Print(x, actionsStartY + 4, action, highlightingAction ? highlightingColor : color, lighterColor);
                 }
             }
         }

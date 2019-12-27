@@ -722,7 +722,7 @@ namespace Landlord
                 void PrintDescription()
                 {
                     if (Program.Console.GetGlyph(StartX + 1, StartY + 4) != currentlyViewedRecipe.Description[0])
-                        Program.Window.Print(StartX + 1, StartY + 4, currentlyViewedRecipe.Description, Width - 2, new Color(91, 105, 124) * 1.1F);
+                        Program.Window.Print(Program.Console, StartX + 1, StartY + 4, currentlyViewedRecipe.Description, Width - 2, new Color(91, 105, 124) * 1.1F);
                 }
 
                 void PrintTimeRequired()

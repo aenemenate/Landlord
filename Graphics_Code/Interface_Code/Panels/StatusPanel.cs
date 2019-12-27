@@ -244,7 +244,7 @@ namespace Landlord
                             curCreature = creature;
                         }
                         // draw creature name
-                        curY += Program.Window.Print( StartX + 1, curY, creature.Name + " / LVL " + creature.Stats.Level.Lvl, 20, textColor, tempBG);
+                        curY += Program.Window.Print( Program.Console, StartX + 1, curY, creature.Name + " / LVL " + creature.Stats.Level.Lvl, 20, textColor, tempBG);
                         // draw creature hp
                         DrawResourceBar(curY, creature.Stats.Resources[Resource.HP], creature.Stats.Resources[Resource.MaxHP], 20, new Color(45, 51, 122));
                         curY++;
@@ -262,8 +262,6 @@ namespace Landlord
                             DrawResourceBar( curY, effect.Turns, effect.TotalTurns, 20, new Color( 122, 45, 90 ), effect.Name );
                             curY++;
                         }
-                        // draw creature goal, if appropriate
-
                         padding = 1 + curY - i - tabStartY;
                     }
                 }
@@ -273,13 +271,13 @@ namespace Landlord
 
             bool PrintSkills()
             {
-                Program.Window.Print( StartX + 1, tabStartY + 1, "You haven't learned any skills.", width - 3, Color.LightGray );
+                Program.Window.Print( Program.Console, StartX + 1, tabStartY + 1, "You haven't learned any skills.", width - 3, Color.LightGray );
                 return false;
             }
 
             bool PrintQuests()
             {
-                Program.Window.Print( StartX + 1, tabStartY + 1, "You haven't embarked upon any quests.", width - 3, Color.LightGray );
+                Program.Window.Print(Program.Console, StartX + 1, tabStartY + 1, "You haven't embarked upon any quests.", width - 3, Color.LightGray );
                 return false;
             }
 

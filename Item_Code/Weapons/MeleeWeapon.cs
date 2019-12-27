@@ -95,7 +95,8 @@ namespace Landlord
                         description += $"has a {enchant.AppliedEffect.Chance}% chance to inflict {enchant.AppliedEffect.Name}, ";
 
                 foreach (WeaponEnchantment enchant in enchantments)
-                    description += $"deals {enchant.VictimDamage} {enchant.DamageType.ToString().ToLower()} damage on hit, ";
+                    if (enchant.VictimDamage != 0)
+                        description += $"deals {enchant.VictimDamage} {enchant.DamageType.ToString().ToLower()} dmg, ";
 
                 description = description.Substring(0, description.LastIndexOf(',')) + '.';
 

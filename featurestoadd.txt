@@ -2,7 +2,7 @@
 *cellular automata cave generation
 *fix inventory display bug
 *update inventory panel to display information about items more elegantly
-add intro screen
+*add intro screen
 ai enter combat mode if struck
 add night vision property
 increase exp gain across the board

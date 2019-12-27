@@ -1,5 +1,9 @@
-﻿ai enter combat mode if struck
-allow 
-cellular automata cave generation, multiple dungeons (1st is cave, second is goblin keep)
-entity component system
-repair entity handling
+﻿
+*cellular automata cave generation
+ai enter combat mode if struck
+implement faster lvling
+quivers of same type merge if brought into inventory
+item durability
+balance dungeon #1
+create monsters for dungeon #2
+improve monster xml reading to allow for custom weapons

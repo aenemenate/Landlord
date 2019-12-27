@@ -663,7 +663,7 @@ namespace Landlord
             }
             static public void GenerateDungeonScreen()
             {
-                bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerSecond * 5);
+                bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerSecond * 25);
                 if (loadingFailed)
                     loadThread.Abort();
                 if (ClickedDialog)

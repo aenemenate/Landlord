@@ -651,7 +651,7 @@ namespace Landlord
             GUI.Console.Print(width + 1, 14 + numlines + 2, "Size: " + Math.Round(Convert.FromCubicFeetToCubicInches(item.Volume), 2), color);
             GUI.Console.Print( width + 7, 14 + numlines + 3, "cubic inches", color );
 
-            int actionsStartY = 14 + numlines + 5;
+            int actionsStartY = Program.Console.Height - 7;
 
             // print the actions
             for (int x = width + 1; x <= width + 12; x += 11)

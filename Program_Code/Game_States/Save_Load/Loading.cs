@@ -16,7 +16,6 @@ namespace Landlord
         public override void Render(ref SadConsole.Console console, ref Window window)
         {
             Menus.LoadSave.LoadScreen();
-
         }
 
         public override void ClientSizeChanged()

@@ -61,9 +61,7 @@ namespace Landlord
             this.faction = faction;
         }
 
-        public Creature() : base()
-        {
-        }
+        public Creature() : base() { }
 
         // FUNCTIONS //
 

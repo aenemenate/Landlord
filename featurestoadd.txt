@@ -1,15 +1,21 @@
 ﻿
 *cellular automata cave generation
 *fix inventory display bug
-update inventory panel to display information about items more elegantly
+*update inventory panel to display information about items more elegantly
+add intro screen
 ai enter combat mode if struck
+add night vision property
 increase exp gain across the board
 quivers of same type merge if brought into inventory
 can craft torch
 torch increases fov
+add weapon class, ranged & melee weapon inherit from this class
+weapons can be two handed vs. one handed, update game to handle this properly
 item durability
 balance dungeon #1
  -> dungeon 1 has water pools at low levels and ores deeper down
 create monsters for dungeon #2
 dungeon 2 has locked doors and keys
 improve monster xml reading to allow for custom weapons
+
+convert to entity component system

@@ -29,10 +29,7 @@ namespace Landlord
             startLvl = Program.Player.Stats.Level.Lvl;
         }
 
-        public Dungeon()
-        {
-
-        }
+        public Dungeon() { }
 
 
         // FUNCTIONS //

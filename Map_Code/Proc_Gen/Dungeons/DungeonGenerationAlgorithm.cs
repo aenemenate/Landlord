@@ -9,6 +9,7 @@ namespace Landlord
     abstract class DungeonGenerationAlgorithm
     {
         protected Random rng;
+        protected Point firstRoomPos;
         protected DungeonFloor dungeonFloor;
         protected List<string> monsterTypes;
 

@@ -32,7 +32,6 @@ namespace Landlord
     class RoomPlacementAlgorithm : DungeonGenerationAlgorithm
     {
         private List<Block[,]> rooms = new List<Block[,]>();
-        private Point firstRoomPos;
 
         private int cavernChance = 45, rectChance = 10, crossChance = 30;
         private int maxRoomPlaceAttempts = 10;

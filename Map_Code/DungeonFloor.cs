@@ -43,11 +43,15 @@ namespace Landlord
             {
                 case (DungeonType.RoomPlacement_s):
                     dungeonGenerationAlgorithm = new RoomPlacementAlgorithm(this, monsterTypes);
-                    dungeonGenerationAlgorithm.GenerateDungeon(20, floor, worldIndex);
+                    dungeonGenerationAlgorithm.GenerateDungeon(15, floor, worldIndex);
+                    break;
+                case (DungeonType.Cave_s):
+                    dungeonGenerationAlgorithm = new CaveGenerationAlgorithm(this, monsterTypes);
+                    dungeonGenerationAlgorithm.GenerateDungeon(50, floor, worldIndex);
                     break;
                 case (DungeonType.RoomPlacement_l):
                     dungeonGenerationAlgorithm = new RoomPlacementAlgorithm(this, monsterTypes );
-                    dungeonGenerationAlgorithm.GenerateDungeon(40, floor, worldIndex);
+                    dungeonGenerationAlgorithm.GenerateDungeon(30, floor, worldIndex);
                     break;
                 default:
                     dungeonGenerationAlgorithm = new RoomPlacementAlgorithm(this, monsterTypes );

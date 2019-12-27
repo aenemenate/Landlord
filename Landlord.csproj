@@ -167,6 +167,7 @@
     <Compile Include="Map_Code\Map_Objects\Blocks\UpStair.cs" />
     <Compile Include="Map_Code\Map_Objects\Blocks\Wall.cs" />
     <Compile Include="Map_Code\Map_Objects\Blocks\Corridor.cs" />
+    <Compile Include="Map_Code\Proc_Gen\Dungeons\CaveGenerationAlgorithm.cs" />
     <Compile Include="Map_Code\Proc_Gen\Dungeons\DungeonHelper.cs" />
     <Compile Include="Audio_Code\MusicHandler.cs" />
     <Compile Include="Map_Code\Proc_Gen\Dungeons\DungeonGenerationAlgorithm.cs" />

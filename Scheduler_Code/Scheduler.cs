@@ -24,15 +24,19 @@ namespace Landlord
             UpdateCreatureList(Program.WorldMap[worldIndex.X, worldIndex.Y]);
             List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
             List<Projectile> projectiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Projectiles : Program.WorldMap[worldIndex.X, worldIndex.Y].Projectiles;
+            
+            if (creatures.Count == 0)
+                return;
             creatures.Sort();
-
+            
             for (int i = 0; i < creatures.Count; i++) {
                 Program.TimeHandler.CurrentTime = creatures[i].NextActionTime;
                 if (projectiles.Count > 0)
                     break;
                 if (creatures[i] is Player) {
                     player.DetermineAction();
-                    creatures[i] = player;
+                    if (creatures.Count != 0 && creatures[i] is Player)
+                        creatures[i] = player;
                     break;
                 }
                 creatures[i].DetermineAction();

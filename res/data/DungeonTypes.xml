@@ -29,7 +29,7 @@
       <algorithm name="Cave_l" floor="0"/>
       <algorithm name="RoomPlacement_s" floor="(last_floor) - 3"/>
     </algorithms>
-    <monster_types boss="spider-queen" persistent="kobold ratling cave-spider" unique="gremlin troglodyte dregar goblin" unique_count="3"/>
+    <monster_types boss="spider-queen" persistent="kobold ratling soldier-ant" unique="gremlin troglodyte dregar goblin" unique_count="3"/>
   </dungeon>
 
   <dungeon>

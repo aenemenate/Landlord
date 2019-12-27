@@ -28,10 +28,8 @@ namespace Landlord
 
             List<Point> potentialSpots = new List<Point>(); // for the down stair
             for (int i = 1; i < dungeonFloor.Width - 1; i++)
-                for (int j = 1; j < dungeonFloor.Height - 1; j++)
-                {
-                    int distFromPlayer = Math.Max(Math.Abs(upStairPos.X - i), Math.Abs(upStairPos.Y - j));
-                    if (GetNumOfAdjacentWalls(new Point(i, j), dungeonFloor) == 0 && distFromPlayer > 25)
+                for (int j = 1; j < dungeonFloor.Height - 1; j++) {
+                    if (GetNumOfAdjacentWalls(new Point(i, j), dungeonFloor) < 2 && new Point(i, j).DistFrom(upStairPos) > 20)
                         potentialSpots.Add(new Point(i, j));
                 }
             Point spot = potentialSpots[Program.RNG.Next(0, potentialSpots.Count)];

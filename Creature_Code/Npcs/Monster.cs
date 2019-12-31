@@ -145,7 +145,6 @@ namespace Landlord
 
                     int thisVal = !patrolling ? GetPosValue(new Point(i, j)) : GetPatrolPosValue(new Point(i, j));
                     
-
                     if (thisVal <= bestVal) {
                         bestPositions.Add( new Point( i, j ) );
                         bestVal = thisVal;

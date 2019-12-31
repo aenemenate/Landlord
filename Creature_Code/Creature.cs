@@ -314,8 +314,7 @@ namespace Landlord
         public int GetWeaponSkill(Item weapon)
         {
             if (weapon != null) {
-                if (weapon is MeleeWeapon)
-                {
+                if (weapon is MeleeWeapon) {
                     if (weapon is Sword)
                         return Stats.Skills[Skill.LongBlades];
                     else if (weapon is Dagger)
@@ -363,10 +362,8 @@ namespace Landlord
             Item weapon;
 
             // FUNCTIONS
-            void DetermineWeapon()
-            {
-                weapon = Body.MainHand;
-            } // unfinished! needs to switch from main to off hand.
+            void DetermineWeapon() { weapon = Body.MainHand; } 
+            // unfinished! needs to switch from main to off hand.
 
             bool DetermineIfAttackLanded()
             {
@@ -549,6 +546,10 @@ namespace Landlord
             if (finalDmg > 0) SplatterBlood(dmgAngle);
 
             ChangeResource(Resource.SP, Math.Abs((int)finalDmg) * -1);
+
+            if (this is Monster m) {
+                m.TurnsSinceAttentionCaught = m.Persistence;
+            }
 
             return (int)finalDmg;
         }
@@ -779,14 +780,24 @@ namespace Landlord
             Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
             int width = Program.WorldMap.TileWidth;
             bool itemAdded = false;
+            string itemName = "";
             string containerName = "inventory";
 
             if (blocks[itemPos.X * width + itemPos.Y] is Item item) {
+                itemName = item.Name;
                 if (item is Arrow && inventory.Exists(i => i is Quiver)) {
                     Quiver q = (Quiver)inventory.Find(i => i is Quiver);
                     q.Arrows.Add(item);
                     itemAdded = true;
                     containerName = q.Name;
+                }
+                else if (item is Quiver q1 && inventory.Exists(i => i is Quiver)) {
+                    Quiver q2 = (Quiver)inventory.Find(i => i is Quiver);
+                    foreach (Arrow a in q1.Arrows)
+                        q2.Arrows.Add(a);
+                    itemAdded = true;
+                    itemName += "'s arrows";
+                    containerName = q2.Name;
                 }
                 if (!itemAdded) itemAdded = AddItem(item);
                 if (itemAdded) {
@@ -795,10 +806,10 @@ namespace Landlord
                     if (currentFloor == Program.Player.CurrentFloor && worldIndex.Equals(Program.Player.WorldIndex))
                         Program.WorldMap[worldIndex.X, worldIndex.Y].DijkstraMaps.CallItemPosChanged(this);
                     if (this.Visible)
-                        Program.MsgConsole.WriteLine($"{Name} put the {item.Name} in their {containerName}.");
+                        Program.MsgConsole.WriteLine($"{Name} put the {itemName} in their {containerName}.");
                     ApplyActionCost(6);
                 } else
-                    Program.MsgConsole.WriteLine($"{Name} tried to get the {item.Name} but didn't have enough space.");
+                    Program.MsgConsole.WriteLine($"{Name} tried to get the {itemName} but didn't have enough space.");
             }
         }
         public bool AddItem(Item item)
@@ -1090,6 +1101,5 @@ namespace Landlord
             get { return nextActionTime; }
             set { nextActionTime = value; }
         }
-
     }
 }

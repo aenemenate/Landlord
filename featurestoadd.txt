@@ -5,7 +5,7 @@
 *add intro screen
 *ai enter combat mode if struck
 add night vision property
-increase exp gain across the board
+*increase exp gain across the board
 *quivers of same type merge if brought into inventory
 add weapon class, ranged & melee weapon inherit from this class
 weapons can be two handed vs. one handed, update game to handle this properly
@@ -18,5 +18,5 @@ balance dungeon #1
 create monsters for dungeon #2
 dungeon 2 has locked doors and keys
 improve monster xml reading to allow for custom weapons
-
+add weather effects (raining, cloudy, sunny) and weather description in-game
 convert to entity component system

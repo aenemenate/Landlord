@@ -71,7 +71,7 @@ namespace Landlord
                 }
                 CheckLvlProgress( c );
                 string skillName = Enum.GetName(typeof(Skill), skill);
-                Program.MsgConsole.WriteLine($"{c.Name} increased their proficiency with {skillName}!");
+                Program.MsgConsole.WriteLine($"{c.Name} increased their proficiency at {skillName}!");
                 return true;
             }
             return false;
@@ -82,8 +82,11 @@ namespace Landlord
             lvl++;
             unspentSkillPoints++;
             unspentAttrPoints += 3;
-            Program.MsgConsole.WriteLine("You leveled up!");
-            Program.CurrentState = new LevelUp( c, lvlProgress);
+            Program.MsgConsole.WriteLine($"{c.Name} lvld up!");
+            if (c is Player) {
+                Program.CurrentState = new LevelUp(c, lvlProgress);
+            }
+
             lvlProgress = new Dictionary<Attribute, int>();
         }
 

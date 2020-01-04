@@ -263,75 +263,6 @@ namespace Landlord
                 this.Splattered = false;
             ApplyEffects();
         }
-        private void ApplyEffects()
-        {
-            for (int i = 0; i < effects.Count; i++)
-                effects[i].Apply(this);
-        }
-
-        private int GetArmorSkill(Armor armor)
-        {
-            if (armor != null) {
-                if (armor.Material == Material.Brass || armor.Material == Material.Bronze || armor.Material == Material.Copper
-                    || armor.Material == Material.Iron || armor.Material == Material.Platinum || armor.Material == Material.Steel)
-                    return Stats.Skills[Skill.HeavyArmor];
-                else if (armor.Material == Material.Bone || armor.Material == Material.Cloth || armor.Material == Material.Glass
-                    || armor.Material == Material.Leather || armor.Material == Material.Silk)
-                    return Stats.Skills[Skill.LightArmor];
-                else return -1;
-            }
-            else
-                return Stats.Skills[Skill.Unarmored];
-        }
-        private int GetDefenseValue(DamageType dmgType)
-        {
-            double helmetPer = .15, chestPer = .35, shirtPer = .1, gauntletsPer = .1, leggingsPer = .2, bootsPer = .1;
-
-            // contains the percentage that a piece of armor gives to the overall armor value.
-            double[] armorPercents = new double[6] { helmetPer, chestPer, shirtPer, gauntletsPer, leggingsPer, bootsPer };
-            Armor[] armorPieces = Body.GetArmorList().ToArray();
-
-            int armorVal = 0;
-            int tempVal = 0;
-
-            int i = 0;
-            foreach (Armor armorPiece in armorPieces) {
-                if (dmgType == DamageType.Blunt)
-                    tempVal = (int)(Physics.ImpactYields[armorPiece.Material] * armorPercents[i] + .5);
-                else if (dmgType == DamageType.Shear)
-                    tempVal = (int)(Physics.ShearYields[armorPiece.Material] * armorPercents[i] + .5);
-
-                foreach (ArmorEnchantment enchant in armorPiece.Enchantments)
-                    if (enchant.DamageType == dmgType)
-                        tempVal += (int)(enchant.Effect * armorPercents[i]);
-
-                armorVal += (int)(tempVal * (.5 + ((double)GetArmorSkill(armorPiece) / 200)));
-                i++;
-            }
-
-            return armorVal;
-        }
-        public int GetWeaponSkill(Item weapon)
-        {
-            if (weapon != null) {
-                if (weapon is MeleeWeapon) {
-                    if (weapon is Sword)
-                        return Stats.Skills[Skill.LongBlades];
-                    else if (weapon is Dagger)
-                        return Stats.Skills[Skill.ShortBlade];
-                    else if (weapon is Mace || weapon is Axe)
-                        return Stats.Skills[Skill.HeavyWeapons];
-                    else if (weapon is Spear)
-                        return Stats.Skills[Skill.Spear];
-                    else return -1;
-                }
-                else if (weapon is RangedWeapon)
-                    return Stats.Skills[Skill.Marksmanship];
-                return 0;
-            }
-            else
-                return Stats.Skills[Skill.Brawling];
-        }
 
         public List<Point> GetNearbyBlocksOfType(BlockType type)
         {
@@ -382,18 +313,18 @@ namespace Landlord
                 int diceRoll = rng.Next( 0, (int)maxMissChance );
                 if (diceRoll <= chanceToMiss) {
                     Program.MsgConsole.WriteLine($"{Name}'s attack missed.");
-                    LvlWeaponSkill(weapon, 5);
+                    LvlWeaponSkill(weapon, 10);
                     return false;
                 }
 
                 diceRoll = rng.Next(0, (int)attackersHitRate + 2);
                 if (diceRoll <= chanceToDodge) {
                     Program.MsgConsole.WriteLine($"{defender.Name} evaded {Name}'s attack.");
-                    LvlWeaponSkill(weapon, 10);
+                    LvlWeaponSkill(weapon, 20);
                     return false;
                 }
 
-                LvlWeaponSkill(weapon, 25);
+                LvlWeaponSkill(weapon, 40);
 
                 return true;
             }
@@ -438,6 +369,41 @@ namespace Landlord
             else
                 ChangeResource( Resource.SP, -8 );
         }
+        public int DefendAgainstDmg(DamageType dmgType, int dmg, Point dmgAngle)
+        {
+            // Note: this function will return a negative value if the defender blocked. This is for message handling.
+            Random rng = new Random();
+            int armorVal = GetDefenseValue(dmgType);
+
+            double finalDmg = Math.Max(dmg - armorVal, 1);
+
+            // blocking //
+            if (Body.OffHand is Shield && (dmgType == DamageType.Blunt || dmgType == DamageType.Shear))
+            {
+                int blockChance = 10 + (Stats.Skills[Skill.Block] / 5);
+                if (rng.Next(0, 101) <= blockChance)
+                {
+                    finalDmg /= -((double)2 + ((Stats.Attributes[Attribute.Strength] + Stats.Attributes[Attribute.Strength]) / 400));
+                    Program.MsgConsole.WriteLine($"{Name} blocked the attack, taking {Math.Abs((int)finalDmg)} damage.");
+                    LvlWeaponSkill((MeleeWeapon)body.OffHand, 25);
+                }
+            }
+
+            LvlArmorSkill(25);
+
+            ChangeResource(Resource.HP, Math.Abs((int)finalDmg) * -1);
+
+            if (finalDmg > 0) SplatterBlood(dmgAngle);
+
+            ChangeResource(Resource.SP, Math.Abs((int)finalDmg) * -1);
+
+            if (this is Monster m)
+            {
+                m.TurnsSinceAttentionCaught = m.Persistence;
+            }
+
+            return (int)finalDmg;
+        }
         public void Shoot(Point pos)
         {
             Random rng = new Random();
@@ -454,11 +420,11 @@ namespace Landlord
 
                 int diceRoll = rng.Next(0, (int)maxMissChance);
                 if (diceRoll <= chanceToMiss) {
-                    LvlWeaponSkill(weapon, 5);
+                    LvlWeaponSkill(weapon, 15);
                     return false;
                 }
 
-                LvlWeaponSkill(weapon, 25);
+                LvlWeaponSkill(weapon, 50);
                 return true;
             }
 
@@ -493,98 +459,6 @@ namespace Landlord
                 if (body.MainHand is RangedWeapon == false) Program.MsgConsole.WriteLine("Nothing to shoot with!");
                 else if (arrow == null) Program.MsgConsole.WriteLine("Out of arrows!");
             }
-        }
-        private void LvlWeaponSkill( Item weapon, int amount )
-        {
-            if (weapon is MeleeWeapon mWeapon)
-                Stats.LvlSkill( mWeapon.GetWeaponSkill(), amount, this );
-            else if (weapon is RangedWeapon)
-                Stats.LvlSkill(Skill.Marksmanship, amount, this);
-        }
-        private void LvlArmorSkill(int amount)
-        {
-            List<Armor> equipment = Body.GetArmorList();
-            int lightArmorPieces = equipment.Count( armor => armor.GetSkill() == Skill.LightArmor );
-            int heavyArmorPieces = equipment.Count( armor => armor.GetSkill() == Skill.HeavyArmor );
-
-            if (lightArmorPieces == heavyArmorPieces)
-            {
-                Stats.LvlSkill( Skill.LightArmor, amount / 2, this );
-                Stats.LvlSkill( Skill.HeavyArmor, amount / 2, this );
-            }
-            if (lightArmorPieces > heavyArmorPieces)
-                Stats.LvlSkill( Skill.LightArmor, amount, this );
-            else if (lightArmorPieces == 0 && heavyArmorPieces == 0)
-                Stats.LvlSkill( Skill.Unarmored, amount, this );
-            else
-                Stats.LvlSkill( Skill.HeavyArmor, amount, this );
-        }
-        public int DefendAgainstDmg( DamageType dmgType, int dmg, Point dmgAngle )
-        {
-            // Note: this function will return a negative value if the defender blocked. This is for message handling.
-            Random rng = new Random();
-            int armorVal = GetDefenseValue(dmgType);
-            
-            double finalDmg = Math.Max(dmg - armorVal, 1);
-
-            // blocking //
-            if ( Body.OffHand is Shield && (dmgType == DamageType.Blunt || dmgType == DamageType.Shear) )
-            {
-                int blockChance = 10 + ( Stats.Skills[Skill.Block] / 5 );
-                if (rng.Next(0, 101) <= blockChance)
-                {
-                    finalDmg /= -((double)2 + ((Stats.Attributes[Attribute.Strength] + Stats.Attributes[Attribute.Strength]) / 400));
-                    Program.MsgConsole.WriteLine($"{Name} blocked the attack, taking {Math.Abs((int)finalDmg)} damage.");
-                    LvlWeaponSkill((MeleeWeapon)body.OffHand, 25);
-                }
-            }
-
-            LvlArmorSkill( 25 );
-
-            ChangeResource(Resource.HP, Math.Abs((int)finalDmg) * -1);
-
-            if (finalDmg > 0) SplatterBlood(dmgAngle);
-
-            ChangeResource(Resource.SP, Math.Abs((int)finalDmg) * -1);
-
-            if (this is Monster m) {
-                m.TurnsSinceAttentionCaught = m.Persistence;
-            }
-
-            return (int)finalDmg;
-        }
-        private void SplatterBlood(Point recievingAngle)
-        {
-            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
-            Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
-            int tileWidth = Program.WorldMap.TileWidth;
-            int tileHeight = Program.WorldMap.TileHeight;
-            Random rng = new Random();
-            for (int i = Math.Max(position.X - 4, 0); i <= Math.Min(position.X + 4, tileWidth - 1); i++)
-                for (int j = Math.Max(position.Y - 4, 0); j <= Math.Min(position.Y + 4, tileHeight - 1); j++)
-                {
-                    int treeRoll = rng.Next(1, 11), maxChance = 5;
-                    double distFromTree = new Point(i, j).DistFrom(position);
-                    bool pointCloserToDefThanAtt = new Point(i, j).DistFrom(recievingAngle) >= distFromTree;
-                    Block block = blocks[i * tileWidth + j];
-                    Tile tile = tiles[i * tileWidth + j];
-                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToDefThanAtt && visiblePoints.Contains(new Point(i, j))) {
-                        block.Splattered = block.Visible;
-                        tile.Splattered = tile.Visible;
-                    }
-                }
-        }
-        private void Die()
-        {
-            if (!alive)
-                return;
-            ForeColor = Color.DarkRed;
-            Solid = false;
-            Opaque = false;
-            alive = false;
-            inventory.Add(new Food(DietType.Carnivore, $"{Name} meat slab", 238, 0.15));
-            if (this is Player == false) UnequipAll();
-            else Menus.DeathNotification();
         }
 
         public void Move( Point to, bool openDoors = true )
@@ -621,6 +495,8 @@ namespace Landlord
             position = to;
 
             ChangeResource(Resource.SP, 2);
+            if (Program.RNG.Next(0, 10) < 1)
+                Stats.LvlSkill(Skill.Acrobatics, 1, this);
 
             if (this is Player)
                 Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallPlayerMoved(this);
@@ -701,8 +577,8 @@ namespace Landlord
                 Tree tree = (Tree)Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y];
                 tree.Thickness -= weapon.GetWepDmg(this);
                 ApplyActionCost(weapon.GetWeaponCost(this));
-                if (rng.Next(0, 100) < 10)
-                    LvlWeaponSkill(weapon, 5);
+                if (rng.Next(0, 100) < 30)
+                    LvlWeaponSkill(weapon, 10);
                 // deplete stamina
                 ChangeResource( Resource.SP, -(int)( weapon.Weight * 2 ) );
                 Program.MsgConsole.WriteLine($"{Name} chopped the tree.");
@@ -724,8 +600,8 @@ namespace Landlord
                 Random rng = new Random();
                 if (weapon != null) {
                     ApplyActionCost(weapon.GetWeaponCost(this));
-                    if (rng.Next(0, 100) < 10)
-                        LvlWeaponSkill(weapon, 5);
+                    if (rng.Next(0, 100) < 30)
+                        LvlWeaponSkill(weapon, 10);
                     ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
                 }
                 ChangeResource(Resource.SP, -20);
@@ -749,8 +625,8 @@ namespace Landlord
             {
                 Program.MsgConsole.WriteLine( $"{Name} struck the {wall.Name}" );
                 ApplyActionCost(axe.GetWeaponCost(this) );
-                if (rng.Next( 0, 100 ) < 10)
-                    LvlWeaponSkill( axe, 5 );
+                if (rng.Next( 0, 100 ) < 30)
+                    LvlWeaponSkill( axe, 10 );
                 ChangeResource( Resource.SP, -(int)( axe.Weight * 2 ) );
                 wall.HP -= (int)Physics.ImpactYields[axe.Material] - (int)Physics.ImpactYields[Material.Stone];
             }
@@ -1026,6 +902,139 @@ namespace Landlord
                 Unequip(body.MainHand);
             if (body.OffHand != null)
                 Unequip(body.OffHand);
+        }
+
+        private void LvlWeaponSkill(Item weapon, int amount)
+        {
+            if (weapon is MeleeWeapon mWeapon)
+                Stats.LvlSkill(mWeapon.GetWeaponSkill(), amount, this);
+            else if (weapon is RangedWeapon)
+                Stats.LvlSkill(Skill.Marksmanship, amount, this);
+        }
+        private void LvlArmorSkill(int amount)
+        {
+            List<Armor> equipment = Body.GetArmorList();
+            int lightArmorPieces = equipment.Count(armor => armor.GetSkill() == Skill.LightArmor);
+            int heavyArmorPieces = equipment.Count(armor => armor.GetSkill() == Skill.HeavyArmor);
+
+            if (lightArmorPieces == heavyArmorPieces)
+            {
+                Stats.LvlSkill(Skill.LightArmor, amount / 2, this);
+                Stats.LvlSkill(Skill.HeavyArmor, amount / 2, this);
+            }
+            if (lightArmorPieces > heavyArmorPieces)
+                Stats.LvlSkill(Skill.LightArmor, amount, this);
+            else if (lightArmorPieces == 0 && heavyArmorPieces == 0)
+                Stats.LvlSkill(Skill.Unarmored, amount, this);
+            else
+                Stats.LvlSkill(Skill.HeavyArmor, amount, this);
+        }
+        private void SplatterBlood(Point recievingAngle)
+        {
+            Block[] blocks = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Blocks : Program.WorldMap[worldIndex.X, worldIndex.Y].Blocks;
+            Tile[] tiles = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Floor : Program.WorldMap[worldIndex.X, worldIndex.Y].Floor;
+            int tileWidth = Program.WorldMap.TileWidth;
+            int tileHeight = Program.WorldMap.TileHeight;
+            Random rng = new Random();
+            for (int i = Math.Max(position.X - 4, 0); i <= Math.Min(position.X + 4, tileWidth - 1); i++)
+                for (int j = Math.Max(position.Y - 4, 0); j <= Math.Min(position.Y + 4, tileHeight - 1); j++)
+                {
+                    int treeRoll = rng.Next(1, 11), maxChance = 5;
+                    double distFromTree = new Point(i, j).DistFrom(position);
+                    bool pointCloserToDefThanAtt = new Point(i, j).DistFrom(recievingAngle) >= distFromTree;
+                    Block block = blocks[i * tileWidth + j];
+                    Tile tile = tiles[i * tileWidth + j];
+                    if (treeRoll < maxChance - distFromTree * 2 && pointCloserToDefThanAtt && visiblePoints.Contains(new Point(i, j)))
+                    {
+                        block.Splattered = block.Visible;
+                        tile.Splattered = tile.Visible;
+                    }
+                }
+        }
+        private void Die()
+        {
+            if (!alive)
+                return;
+            ForeColor = Color.DarkRed;
+            Solid = false;
+            Opaque = false;
+            alive = false;
+            inventory.Add(new Food(DietType.Carnivore, $"{Name} meat slab", 238, 0.15));
+            if (this is Player == false) UnequipAll();
+            else Menus.DeathNotification();
+        }
+        private void ApplyEffects()
+        {
+            for (int i = 0; i < effects.Count; i++)
+                effects[i].Apply(this);
+        }
+
+        private int GetArmorSkill(Armor armor)
+        {
+            if (armor != null)
+            {
+                if (armor.Material == Material.Brass || armor.Material == Material.Bronze || armor.Material == Material.Copper
+                    || armor.Material == Material.Iron || armor.Material == Material.Platinum || armor.Material == Material.Steel)
+                    return Stats.Skills[Skill.HeavyArmor];
+                else if (armor.Material == Material.Bone || armor.Material == Material.Cloth || armor.Material == Material.Glass
+                    || armor.Material == Material.Leather || armor.Material == Material.Silk)
+                    return Stats.Skills[Skill.LightArmor];
+                else return -1;
+            }
+            else
+                return Stats.Skills[Skill.Unarmored];
+        }
+        private int GetDefenseValue(DamageType dmgType)
+        {
+            double helmetPer = .15, chestPer = .35, shirtPer = .1, gauntletsPer = .1, leggingsPer = .2, bootsPer = .1;
+
+            // contains the percentage that a piece of armor gives to the overall armor value.
+            double[] armorPercents = new double[6] { helmetPer, chestPer, shirtPer, gauntletsPer, leggingsPer, bootsPer };
+            Armor[] armorPieces = Body.GetArmorList().ToArray();
+
+            int armorVal = 0;
+            int tempVal = 0;
+
+            int i = 0;
+            foreach (Armor armorPiece in armorPieces)
+            {
+                if (dmgType == DamageType.Blunt)
+                    tempVal = (int)(Physics.ImpactYields[armorPiece.Material] * armorPercents[i] + .5);
+                else if (dmgType == DamageType.Shear)
+                    tempVal = (int)(Physics.ShearYields[armorPiece.Material] * armorPercents[i] + .5);
+
+                foreach (ArmorEnchantment enchant in armorPiece.Enchantments)
+                    if (enchant.DamageType == dmgType)
+                        tempVal += (int)(enchant.Effect * armorPercents[i]);
+
+                armorVal += (int)(tempVal * (.5 + ((double)GetArmorSkill(armorPiece) / 200)));
+                i++;
+            }
+
+            return armorVal;
+        }
+        public int GetWeaponSkill(Item weapon)
+        {
+            if (weapon != null)
+            {
+                if (weapon is MeleeWeapon)
+                {
+                    if (weapon is Sword)
+                        return Stats.Skills[Skill.LongBlades];
+                    else if (weapon is Dagger)
+                        return Stats.Skills[Skill.ShortBlade];
+                    else if (weapon is Mace || weapon is Axe)
+                        return Stats.Skills[Skill.HeavyWeapons];
+                    else if (weapon is Spear)
+                        return Stats.Skills[Skill.Spear];
+                    else return -1;
+                }
+                else if (weapon is RangedWeapon)
+                    return Stats.Skills[Skill.Marksmanship];
+                return 0;
+            }
+            else
+                return Stats.Skills[Skill.Brawling];
         }
 
         // PROPERTIES //

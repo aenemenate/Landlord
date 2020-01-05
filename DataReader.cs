@@ -289,6 +289,7 @@ namespace Landlord
             if (plantData == null)
                 return null;
 
+            bool edible = System.Convert.ToBoolean(ReadAttribute(plantData.Element("edible").Attribute("bool")));
             int growthInterval = System.Convert.ToInt32(ReadAttribute(plantData.Attribute("growth_interval")));
             int seedRadius = System.Convert.ToInt32(ReadAttribute(plantData.Attribute("seed_radius")));
 
@@ -316,7 +317,7 @@ namespace Landlord
                     + ReadAttribute(plantData.Element("requirement").Attribute("dist"));
             }
 
-            return new Plant(growthStages[0], name, growthInterval, seedRadius, growthStages, requirement, foreColor);
+            return new Plant(growthStages[0], name, growthInterval, seedRadius, growthStages, requirement, edible, foreColor);
         }
         public static WeaponEnchantment GetNextWeaponEnchantment()
         {

@@ -72,7 +72,7 @@ namespace Landlord
                         if (cFocus == null || cFocus.Position.DistFrom(Position) > c.Position.DistFrom(Position))
                             cFocus = c;
                 }
-                else if ((block is Plant p && p.IsEdible()) || (block is Food f && f.FoodType == DietType.Herbivore))
+                else if ((block is Plant p && p.Edible) || (block is Food f && f.FoodType == DietType.Herbivore))
                     if (pFocus.Equals(new Point()) || (Program.WorldMap[WorldIndex.X, WorldIndex.Y][pFocus.X, pFocus.Y] is Food == false && pFocus.DistFrom(Position) > point.DistFrom(Position)))
                         pFocus = point;
             }

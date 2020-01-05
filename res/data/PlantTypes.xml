@@ -3,6 +3,7 @@
 <plants>
   <plant name="grass" growth_interval="1" seed_radius="12">
     <requirement req="tile_nearby" type="water" dist="8"/>
+    <edible bool="false"/>
     <fore_color r="124" g="252" b="0"/>
     <growth_stages>
       <growth_stage graphic="46" />
@@ -12,6 +13,7 @@
   </plant>
   <plant name="bushtail" growth_interval="1" seed_radius="12">
     <requirement req="block_nearby" type="wall" dist="4"/>
+    <edible bool="false"/>
     <fore_color r="123" g="111" b="89"/>
     <growth_stages>
       <growth_stage graphic="41" />
@@ -21,6 +23,7 @@
   </plant>
   <plant name="dandelion" growth_interval="4" seed_radius="8">
     <requirement req=""/>
+    <edible bool="false"/>
     <fore_color r="240" g="225" b="48"/>
     <growth_stages>
       <growth_stage graphic="46" />
@@ -30,6 +33,7 @@
   </plant>
   <plant name="poppy" growth_interval="4" seed_radius="8">
     <requirement req=""/>
+    <edible bool="false"/>
     <fore_color r="199" g="61" b="50"/>
     <growth_stages>
       <growth_stage graphic="46" />
@@ -39,6 +43,7 @@
   </plant>
   <plant name="blackberry bush" growth_interval="3" seed_radius="4">
     <requirement req="tile_nearby" type="water" dist="8"/>
+    <edible bool="true"/>
     <fore_color r="77" g="0" b="54"/>
     <growth_stages>
       <growth_stage graphic="46" />
@@ -50,6 +55,7 @@
   </plant>
   <plant name="raspberry bush" growth_interval="3" seed_radius="3">
     <requirement req="tile_nearby" type="water" dist="12"/>
+    <edible bool="true"/>
     <fore_color r="227" g="11" b="93"/>
     <growth_stages>
       <growth_stage graphic="46" />
@@ -61,6 +67,7 @@
   </plant>
   <plant name="mushroom stalk" growth_interval="3" seed_radius="3">
     <requirement req="block_nearby" type="tree" dist="2"/>
+    <edible bool="true"/>
     <fore_color r="255" g="218" b="185"/>
     <growth_stages>
       <growth_stage graphic="46" />
@@ -70,6 +77,7 @@
   </plant>
   <plant name="mushroom patch" growth_interval="3" seed_radius="3">
     <requirement req="block_nearby" type="wall" dist="7"/>
+    <edible bool="true"/>
     <fore_color r="255" g="218" b="185"/>
     <growth_stages>
       <growth_stage graphic="46" />

@@ -10,20 +10,20 @@ namespace Landlord
         private int seedRadius;
         private List<byte> growthStages;
         private string requirement;
-        //private Food harvest;
+        private bool edible;
 
-        public Plant(byte graphic, string name, int growthInterval, int seedRadius, List<byte> growthStages, string requirement, Color? color = null, bool explored = false, bool solid = false, bool opaque = false, BlockType type = BlockType.Plant, bool interactive = true, bool enterable = false) : base(graphic, name, type, explored, solid, opaque, interactive, enterable)
+        public Plant(byte graphic, string name, int growthInterval, int seedRadius, List<byte> growthStages, string requirement, bool edible, Color? color = null, bool explored = false, bool solid = false, bool opaque = false, BlockType type = BlockType.Plant, bool interactive = true, bool enterable = false) : base(graphic, name, type, explored, solid, opaque, interactive, enterable)
         {
             if (color != null)
                 this.ForeColor = (Color)color;
-            else
-                this.ForeColor = Color.AntiqueWhite;
+            else this.ForeColor = Color.AntiqueWhite;
             this.BackColor = Color.Pink;
 
             this.growthInterval = growthInterval;
             this.seedRadius = seedRadius;
             this.growthStages = growthStages;
             this.requirement = requirement;
+            this.edible = edible;
         }
         public Plant() : base() { }
         public void Grow(MapTile map, Point position, Random rng)
@@ -45,7 +45,7 @@ namespace Landlord
             bool explored = map.Blocks[position.X * map.Width + position.Y].Explored;
             if (map.Floor[position.X * map.Width + position.Y] is DirtFloor)
                 if ((map.Blocks[position.X * map.Width + position.Y] is Plant && rng.Next(0, 50) <= 1) || map.Blocks[position.X * map.Width + position.Y] is Air)
-                    map[position.X, position.Y] = new Plant(growthStages[0], Name, growthInterval, seedRadius, growthStages, requirement, ForeColor, explored);
+                    map[position.X, position.Y] = new Plant(growthStages[0], Name, growthInterval, seedRadius, growthStages, requirement, edible, ForeColor, explored);
         }
         public bool RequirementsMet(MapTile map, Point position)
         {
@@ -74,15 +74,10 @@ namespace Landlord
             return false;
         }
 
-        internal bool IsEdible()
+        public Block DropHarvest()
         {
-            int currentStage = growthStages.IndexOf(Graphic);
-            return requirement != "" && currentStage == growthStages.Count - 1;
-        }
-
-        public Block DropHarvest(MapTile map, Point position)
-        {
-            if (IsEdible() == false) return new Air();
+            bool fullyGrown = growthStages.IndexOf(Graphic) != growthStages.Count - 1;
+            if (!Edible || fullyGrown) return new Air();
             else return new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 15 * 16 + 10, .013, ForeColor);
         }
         public override void Activate(Creature user)
@@ -105,6 +100,10 @@ namespace Landlord
         public string Requirement {
             get { return requirement; }
             set { requirement = value; }
+        }
+        public bool Edible {
+            get { return edible; }
+            set { edible = value; }
         }
     }
 }

@@ -117,10 +117,11 @@ namespace Landlord
                         else if (currentlyViewedItem is Armor armorPiece)
                             Program.Player.Equip(armorPiece);
                         else if (currentlyViewedItem is BlueprintPouch || currentlyViewedItem is RecipePouch || currentlyViewedItem is Quiver) {
+                            int maxItems = (currentlyViewedItem is Quiver) ? 20 : 40;
                             Program.Animations.Add(new OpenLootView());
                             Program.CurrentState = new ViewLoot(currentlyViewedItem is RecipePouch ? ((RecipePouch)currentlyViewedItem).Recipes :
                                                                     ((currentlyViewedItem is Quiver) ? ((Quiver)currentlyViewedItem).Arrows :
-                                                                      ((BlueprintPouch)currentlyViewedItem).Blueprints), currentlyViewedItem.Name);
+                                                                      ((BlueprintPouch)currentlyViewedItem).Blueprints), maxItems, currentlyViewedItem.Name);
                         }
                         else Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == currentlyViewedItem.Name), true);
                     }
@@ -150,7 +151,7 @@ namespace Landlord
                     }
                     else if (Program.CurrentState is ViewLoot viewLoot) {
                         // if viewing loot in a container, clicking an item will add it to the container.
-                        if (Program.Animations.Count == 0) {
+                        if (Program.Animations.Count == 0 && viewLoot.LootMenu.ContainerMaxItems > viewLoot.LootMenu.ContainerInventory.Count) {
                             viewLoot.LootMenu.ContainerInventory.Add(currentlyViewedItem);
                             Program.Player.Inventory.Remove(currentlyViewedItem);
                         }
@@ -284,7 +285,7 @@ namespace Landlord
                 bool InventoryItemsContains( Item item )
                 {
                     foreach (Item i in inventoryItems)
-                        if (item.Name == i.Name && item.Rarity == i.Rarity)
+                        if (item.Name == i.Name)
                             return true;
                     return false;
                 }
@@ -588,12 +589,11 @@ namespace Landlord
                         Program.MsgConsole.WriteLine($"You can't open the {currentlyViewedItem.Name}");
                         return;
                     }
-                    Program.Animations.Add(new CloseItemView());
-                    Program.CurrentState = new ViewLoot(currentlyViewedItem is RecipePouch 
-                                                          ? ((RecipePouch)currentlyViewedItem).Recipes 
-                                                            : ((currentlyViewedItem is Quiver) 
-                                                              ? ((Quiver)currentlyViewedItem).Arrows 
-                                                                : ((BlueprintPouch)currentlyViewedItem).Blueprints), currentlyViewedItem.Name);
+                    int maxItems = (currentlyViewedItem is Quiver) ? 20 : 40;
+                    Program.Animations.Add(new OpenLootView());
+                    Program.CurrentState = new ViewLoot(currentlyViewedItem is RecipePouch ? ((RecipePouch)currentlyViewedItem).Recipes :
+                                                            ((currentlyViewedItem is Quiver) ? ((Quiver)currentlyViewedItem).Arrows :
+                                                              ((BlueprintPouch)currentlyViewedItem).Blueprints), maxItems, currentlyViewedItem.Name);
                 }
                 currentlyViewedItem = null;
                 if (Program.CurrentState is DialogWindow == false)

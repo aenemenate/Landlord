@@ -80,7 +80,7 @@ namespace Landlord
             }
             else {
                 Program.Animations.Add(new OpenLootView());
-                Program.CurrentState = new ViewLoot(inventory, Name);
+                Program.CurrentState = new ViewLoot(inventory, 20, Name);
             }
         }
 
@@ -663,14 +663,19 @@ namespace Landlord
                 itemName = item.Name;
                 if (item is Arrow && inventory.Exists(i => i is Quiver)) {
                     Quiver q = (Quiver)inventory.Find(i => i is Quiver);
-                    q.Arrows.Add(item);
-                    itemAdded = true;
-                    containerName = q.Name;
+                    if (q.Arrows.Count <= 20) {
+                        q.Arrows.Add(item);
+                        itemAdded = true;
+                        containerName = q.Name;
+                    }
                 }
                 else if (item is Quiver q1 && inventory.Exists(i => i is Quiver)) {
                     Quiver q2 = (Quiver)inventory.Find(i => i is Quiver);
-                    foreach (Arrow a in q1.Arrows)
-                        q2.Arrows.Add(a);
+                    foreach (Arrow a in q1.Arrows) {
+                        if (q2.Arrows.Count <= 20)
+                            q2.Arrows.Add(a);
+                        else inventory.Add(a);
+                    }
                     itemAdded = true;
                     itemName += "'s arrows";
                     containerName = q2.Name;

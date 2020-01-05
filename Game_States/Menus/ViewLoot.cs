@@ -7,9 +7,9 @@ namespace Landlord
     {
         private GUI.LootMenu lootMenu;
 
-        public ViewLoot(List<Item> inventory, string containerName) : base()
+        public ViewLoot(List<Item> inventory, int containerMaxItems, string containerName) : base()
         {
-            lootMenu = new GUI.LootMenu(inventory, containerName);
+            lootMenu = new GUI.LootMenu(inventory, containerMaxItems, containerName);
         }
 
         public override void Update()

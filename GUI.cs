@@ -323,6 +323,7 @@ namespace Landlord
             public IItemList iItemList;
             
             private string containerName;
+            private int containerMaxItems;
             private static bool clickedContainer;
 
             private Point TakeAllPos { get { return new Point(StartX + Width - 1 - "Take All".Length, StartY + Height - 2); } }
@@ -330,10 +331,10 @@ namespace Landlord
 
             // CONSTRUCTOR //
 
-            public LootMenu(List<Item> containerInventory, string containerName)
+            public LootMenu(List<Item> containerInventory, int containerMaxItems, string containerName)
             {
                 this.containerName = containerName;
-
+                this.containerMaxItems = containerMaxItems;
                 iItemList = new IItemList(containerInventory, new Point(StartX + 1, StartY + 3), Width - 2, Height - 6, 3, new Point(StartX + Width - 2, StartY + 1), new Point(StartX + 1, StartY + 1));
 
             }
@@ -441,7 +442,11 @@ namespace Landlord
                 get { return iItemList.ContainerInventory; }
                 set { iItemList.ContainerInventory = value; }
             }
-
+            public int ContainerMaxItems
+            {
+                get { return containerMaxItems; }
+                set { containerMaxItems = value; }
+            }
             public static bool ClickedContainer
             {
                 get { return clickedContainer; }

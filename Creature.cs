@@ -495,8 +495,8 @@ namespace Landlord
             position = to;
 
             ChangeResource(Resource.SP, 2);
-            if (Program.RNG.Next(0, 10) < 1)
-                Stats.LvlSkill(Skill.Acrobatics, 1, this);
+            if (Program.RNG.Next(0, 30) < 1)
+                Stats.LvlSkill(Skill.Acrobatics, 3, this);
 
             if (this is Player)
                 Program.WorldMap[WorldIndex.X, WorldIndex.Y].DijkstraMaps.CallPlayerMoved(this);

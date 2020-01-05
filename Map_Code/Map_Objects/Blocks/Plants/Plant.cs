@@ -44,9 +44,8 @@ namespace Landlord
                 return;
             bool explored = map.Blocks[position.X * map.Width + position.Y].Explored;
             if (map.Floor[position.X * map.Width + position.Y] is DirtFloor)
-                if ((map.Blocks[position.X * map.Width + position.Y] is Plant && rng.Next(0, 20) <= 5) || map.Blocks[position.X * map.Width + position.Y] is Air)
-                    if (RequirementsMet(map, position))
-                        map[position.X, position.Y] = new Plant(growthStages[0], Name, growthInterval, seedRadius, growthStages, requirement, ForeColor, explored);
+                if ((map.Blocks[position.X * map.Width + position.Y] is Plant && rng.Next(0, 50) <= 1) || map.Blocks[position.X * map.Width + position.Y] is Air)
+                    map[position.X, position.Y] = new Plant(growthStages[0], Name, growthInterval, seedRadius, growthStages, requirement, ForeColor, explored);
         }
         public bool RequirementsMet(MapTile map, Point position)
         {

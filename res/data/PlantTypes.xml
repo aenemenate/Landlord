@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <plants>
-  <plant name="grass" growth_interval="1" seed_radius="5">
-    <requirement req=""/>
+  <plant name="grass" growth_interval="1" seed_radius="12">
+    <requirement req="tile_nearby" type="water" dist="8"/>
     <fore_color r="124" g="252" b="0"/>
     <growth_stages>
       <growth_stage graphic="46" />
@@ -10,7 +10,16 @@
       <growth_stage graphic="34" />
     </growth_stages>
   </plant>
-  <plant name="dandelion" growth_interval="3" seed_radius="8">
+  <plant name="bushtail" growth_interval="1" seed_radius="12">
+    <requirement req="block_nearby" type="wall" dist="4"/>
+    <fore_color r="123" g="111" b="89"/>
+    <growth_stages>
+      <growth_stage graphic="41" />
+      <growth_stage graphic="39" />
+      <growth_stage graphic="34" />
+    </growth_stages>
+  </plant>
+  <plant name="dandelion" growth_interval="4" seed_radius="8">
     <requirement req=""/>
     <fore_color r="240" g="225" b="48"/>
     <growth_stages>
@@ -19,7 +28,7 @@
       <growth_stage graphic="42" />
     </growth_stages>
   </plant>
-  <plant name="poppy" growth_interval="3" seed_radius="8">
+  <plant name="poppy" growth_interval="4" seed_radius="8">
     <requirement req=""/>
     <fore_color r="199" g="61" b="50"/>
     <growth_stages>
@@ -50,7 +59,7 @@
       <growth_stage graphic="171" />
     </growth_stages>
   </plant>
-  <plant name="mushroom stalk" growth_interval="2" seed_radius="8">
+  <plant name="mushroom stalk" growth_interval="3" seed_radius="3">
     <requirement req="block_nearby" type="tree" dist="2"/>
     <fore_color r="255" g="218" b="185"/>
     <growth_stages>
@@ -59,7 +68,7 @@
       <growth_stage graphic="148" />
     </growth_stages>
   </plant>
-  <plant name="mushroom patch" growth_interval="2" seed_radius="8">
+  <plant name="mushroom patch" growth_interval="3" seed_radius="3">
     <requirement req="block_nearby" type="wall" dist="7"/>
     <fore_color r="255" g="218" b="185"/>
     <growth_stages>

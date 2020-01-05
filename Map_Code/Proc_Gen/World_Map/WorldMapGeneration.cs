@@ -9,8 +9,7 @@ namespace Landlord
 {
     static class WorldMapGeneration
     {
-        // if height higher than 180f a tile is stone, lower than that but higher than 65f it's grass, lower than or equal to that that it's water.
-        public static float StoneCutoff = 180f, WaterCutoff = 65f;
+        public static float StoneCutoff = 150f, WaterCutoff = 65f;
 
         // funcs that work on individual tiles
 
@@ -35,8 +34,8 @@ namespace Landlord
                         map.Floor[i * map.Width + j] = new Water();
                     }
                 }
-            GenerateTrees(map, rng, 7, 15);
-            GeneratePlants(map, rng, plantTypes, 120, 27);
+            GenerateTrees(map, rng, 7, 16);
+            GeneratePlants(map, rng, plantTypes, 500, 24);
             GenerateOre(map, rng, 0.025f);
             GenerateCreatures(map, rng, creatureTypes);
         }
@@ -95,35 +94,18 @@ namespace Landlord
             List<Point> availableSpots = map.GetAllDirtTiles();
             Point nextSpot = null;
             int placedPlants = 0;
-
+            int maxTries = availableSpots.Count();
+            int tries = 0;
             // placement algorithm
-            while (placedPlants < numOfSeedPlants) {
+            while (placedPlants < numOfSeedPlants || tries > maxTries) {
+                ++tries;
                 Plant p;
                 nextSpot = availableSpots[rng.Next(0, availableSpots.Count)];
-                if (nextSpot != null){
+                if (nextSpot != null) {
                     placedPlants++;
                     p = DataReader.GetPlant(plantTypes[rng.Next(0, plantTypes.Count)]);
-                    if (p.Requirement.Equals(""))
+                    if (p.RequirementsMet(map, nextSpot))
                         map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
-                    else if (p.Requirement.Contains("tile_nearby")) {
-                        if (p.Requirement.Contains("water"))  {
-                            int dist = System.Convert.ToInt32(p.Requirement.Replace("tile_nearby;water;", ""));
-                            if (map.GetClosestOfTileTypeToPos(nextSpot, new Water()).DistFrom(nextSpot) < dist)
-                                map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
-                        }
-                    }
-                    else if (p.Requirement.Contains("block_nearby")) {
-                        if (p.Requirement.Contains("wall;")) {
-                            int dist = System.Convert.ToInt32(p.Requirement.Replace("block_nearby;wall;", ""));
-                            if (map.GetClosestOfBlockTypeToPos(nextSpot, BlockType.Wall).DistFrom(nextSpot) < dist)
-                                map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
-                        }
-                        else if (p.Requirement.Contains("tree;")) {
-                            int dist = System.Convert.ToInt32(p.Requirement.Replace("block_nearby;tree;", ""));
-                            if (map.GetClosestOfBlockTypeToPos(nextSpot, BlockType.Tree).DistFrom(nextSpot) < dist)
-                                map.Blocks[nextSpot.X * map.Width + nextSpot.Y] = p;
-                        }
-                    }
                 }
             }
             // growth algorithm
@@ -141,10 +123,8 @@ namespace Landlord
             for (int i = 0; i < map.Width; i++)
                 for (int j = 0; j < map.Height; j++) {
                     if (map[i,j].Name.Equals("stone wall")
-                        && coalMap[i,j] >= StoneCutoff) {
-                        map[i, j] = null;
+                        && coalMap[i,j] >= 190F)
                         map[i, j] = new OreWall(Material.Coal);
-                    }
                 }
         }
         private static void GenerateCreatures( MapTile map, Random rng, List<string> creatureTypes )

@@ -27,7 +27,7 @@ namespace Landlord
             if (user is Player)
             {
                 Program.Animations.Add(new OpenLootView());
-                Program.CurrentState = new ViewLoot(inventory, Name);
+                Program.CurrentState = new ViewLoot(inventory, 100, Name);
             }
         }
 

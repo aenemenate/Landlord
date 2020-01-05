@@ -280,7 +280,7 @@ namespace Landlord
 
         public void UpdateFOV()
         {
-            int effectiveSightDist = (currentFloor < 0) ? Program.TimeHandler.GetOutsideSightDist(sightDist) : (sightDist / 2);
+            int effectiveSightDist = (currentFloor < 0) ? Program.TimeHandler.GetOutsideSightDist(sightDist) : (int)(sightDist * 0.3F);
             visiblePoints = RayCaster.CalculateFOV(effectiveSightDist, this).ToList();
         }
 

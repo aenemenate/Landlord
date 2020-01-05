@@ -255,6 +255,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="featurestoadd.txt" />
+    <Content Include="longtermgoals.txt" />
     <Content Include="res\data\EffectTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

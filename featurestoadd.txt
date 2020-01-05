@@ -8,8 +8,8 @@
 *quivers of same type merge if brought into inventory
 *quiver max 20 arrows
 *max item handling
-stop any important items from dropping in build mode
-add limit to quiver arrow count
+*stop any important items from dropping in build mode
+can adjust volume in-game
 add weapon class, ranged & melee weapon inherit from this class
 weapons can be two handed vs. one handed, update game to handle this properly
 add perks (permanent)
@@ -30,3 +30,7 @@ dungeon 2 has locked doors and keys
 improve monster xml reading to allow for custom weapons
 add weather effects (raining, cloudy, sunny) and weather description in-game
 convert to entity component system
+
+update gui:
+ -> loot menu shows max/current items
+ -> inventory shows max/current items

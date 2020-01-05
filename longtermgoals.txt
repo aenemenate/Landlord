@@ -1,0 +1,7 @@
+﻿1 month:
+  merchants
+  perks
+3 months:
+  swimming
+6 months:
+  full keyboard support including button remapping

@@ -4,7 +4,7 @@
   <plant name="grass" growth_interval="1" seed_radius="12">
     <requirement req="tile_nearby" type="water" dist="8"/>
     <edible bool="false"/>
-    <fore_color r="124" g="252" b="0"/>
+    <fore_color r="124" g="222" b="0"/>
     <growth_stages>
       <growth_stage graphic="46" />
       <growth_stage graphic="44" />

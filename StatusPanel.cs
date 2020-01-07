@@ -244,9 +244,10 @@ namespace Landlord
                             curCreature = creature;
                         }
                         // draw creature name
-                        curY += Program.Window.Print( Program.Console, StartX + 1, curY, creature.Name + " / LVL " + creature.Stats.Level.Lvl, 20, textColor, tempBG);
+                        curY += Program.Window.Print( Program.Console, StartX + 1, curY, creature.Name + " / LVL " + creature.Stats.Level.Lvl, 20, creature.Alive ? textColor : Color.DarkRed, tempBG);
                         // draw creature hp
-                        DrawResourceBar(curY, creature.Stats.Resources[Resource.HP], creature.Stats.Resources[Resource.MaxHP], 20, new Color(45, 51, 122));
+                        if (creature.Alive)
+                            DrawResourceBar(curY, creature.Stats.Resources[Resource.HP], creature.Stats.Resources[Resource.MaxHP], 20, new Color(45, 51, 122));
                         curY++;
                         // for each stat, draw if appropriate
                         if (creature is Player) {

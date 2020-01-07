@@ -115,9 +115,9 @@ namespace Landlord
         // GetItemOrChest returns a random item. It has a chance to return a chest if spawnChests is set to true.
         private static Block GetItemOrChest(bool spawnChests = true)
         {
-            int rand = Program.RNG.Next(0, 6);
-            int chestChance = Program.RNG.Next(1, 101);
-            if (chestChance > 5 || spawnChests == false)
+            int rand = Program.RNG.Next(0, 5);
+            int chestChance = Program.RNG.Next(0, 100);
+            if (chestChance >= 5 || spawnChests == false)
             {
                 switch (rand) {
                     case (0):

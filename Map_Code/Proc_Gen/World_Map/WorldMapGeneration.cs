@@ -9,7 +9,7 @@ namespace Landlord
 {
     static class WorldMapGeneration
     {
-        public static float StoneCutoff = 150f, WaterCutoff = 65f;
+        public static float StoneCutoff = 167f, WaterCutoff = 65f;
 
         // funcs that work on individual tiles
 

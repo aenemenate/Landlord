@@ -174,22 +174,23 @@ namespace Landlord
         private static Item GetWeapon()
         {
             int rand = Program.RNG.Next(0, 7);
+            bool twoHanded = Program.RNG.Next(0, 2) == 0 ? true : false;
             switch (rand)
             {
                 case (0):
-                    return new Sword(true);
+                    return new Sword(twoHanded);
                 case (1):
-                    return new Dagger(true);
+                    return new Dagger(false);
                 case (2):
-                    return new Mace(true);
+                    return new Mace(twoHanded);
                 case (3):
-                    return new Axe(true);
+                    return new Axe(twoHanded);
                 case (4):
-                    return new Spear(true);
+                    return new Spear(twoHanded);
                 case (5):
-                    return new Shield(true);
+                    return new Shield(false);
                 case (6):
-                    return new Bow(true);
+                    return new Bow(twoHanded);
                 default:
                     return null;
             }

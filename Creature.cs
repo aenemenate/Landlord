@@ -96,21 +96,24 @@ namespace Landlord
         public void DetermineEquipment()
         {
             Random rng = new Random();
-
+            bool twoHanded = false;
+            if (Class.MajorSkills.Contains(Skill.Block) || Class.MinorSkills.Contains(Skill.Block)) {
+                body.OffHand = new Shield(false);
+                twoHanded = true;
+            }
             if (Class.MajorSkills.Contains(Skill.HeavyWeapons))
-                body.MainHand = new Mace(true);
+                body.MainHand = new Mace(twoHanded);
             else if (Class.MajorSkills.Contains(Skill.LongBlades))
-                body.MainHand = new Sword(true);
-            else if (Class.MajorSkills.Contains(Skill.ShortBlade))
-                body.MainHand = new Dagger(true);
+                body.MainHand = new Sword(twoHanded);
             else if (Class.MajorSkills.Contains(Skill.Spear))
-                body.MainHand = new Spear(true);
-            if (Class.MajorSkills.Contains(Skill.Block) || Class.MinorSkills.Contains(Skill.Block))
-                body.OffHand = new Shield(true);
+                body.MainHand = new Spear(twoHanded);
+            else if (Class.MajorSkills.Contains(Skill.ShortBlade)) {
+                body.MainHand = new Dagger(false);
+                if (twoHanded) body.OffHand = new Dagger(false);
+            }
             if (Class.MajorSkills.Contains(Skill.Marksmanship) || Class.MinorSkills.Contains(Skill.Marksmanship))
                     { inventory.Add(new Bow(true)); inventory.Add(new Quiver(false)); }
-                
-
+            
             // determine valid Materials
             Skill armorSkill = Skill.Alchemy;
             foreach (Skill skill in Class.MinorSkills)

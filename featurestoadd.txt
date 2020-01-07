@@ -15,8 +15,9 @@ buildings will show on world map
   -> *update creature.wield to handle this property
   -> *twohanded weapons deal double damage, cost 2x as much to use
 there is a button to unwield all (puts wielded items into inventory)
-add torch weapon
- -> torch increases fov
+*add torch weapon
+ -> *torch increases fov
+ -> *deals burn damage
 non edible plants drop leaves
 can craft handle from sticks && leaves
 can craft torch from handle and coal

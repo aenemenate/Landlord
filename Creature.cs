@@ -776,10 +776,21 @@ namespace Landlord
 
         public void Wield(int itemIndex, bool mainHand)
         {
+            Item item = inventory[itemIndex];
             if (mainHand) {
                 if (body.MainHand != null)
                     inventory.Add(body.MainHand);
+                if (item is Weapon w) {
+                    if (w.TwoHanded)
+                        if (body.OffHand != null) {
+                            inventory.Add(body.OffHand);
+                            body.OffHand = null;
+                        }
+
+                }
                 body.MainHand = inventory[itemIndex];
+
+                // enter build/craft mode if necessary
                 if (this is Player && Program.CurrentState is Play play && play.PlayMode == PlayMode.Roguelike) {
                     if (body.MainHand is BlueprintPouch) {
                         play.PlayMode = PlayMode.BuildMode;
@@ -791,12 +802,17 @@ namespace Landlord
                 }
             }
             else {
-                if (body.OffHand != null)
-                    inventory.Add(body.OffHand);
-                body.OffHand = inventory[itemIndex];
+                if (body.MainHand != null && body.MainHand is Weapon w && w.TwoHanded) {
+                    Program.MsgConsole.WriteLine($"{Name} tried to wield the {inventory[itemIndex].Name} in their offhand but had no free hand");
+                }
+                else {
+                    if (body.OffHand != null)
+                        inventory.Add(body.OffHand);
+                    body.OffHand = inventory[itemIndex];
+                }
+
             }
-            
-            if (this.Visible)
+            if (Visible)
                 Program.MsgConsole.WriteLine($"{Name} wielded the {inventory[itemIndex].Name}");
             inventory.RemoveAt(itemIndex);
             ApplyActionCost(10);

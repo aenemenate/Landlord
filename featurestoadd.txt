@@ -13,12 +13,14 @@ buildings will show on world map
 *add weapon class, ranged & melee weapon inherit from this class
 *weapons can be two handed vs. one handed
   -> *update creature.wield to handle this property
-  -> twohanded weapons deal double damage
-implement dual wielding
+  -> *twohanded weapons deal double damage, cost 2x as much to use
 there is a button to unwield all (puts wielded items into inventory)
 add torch weapon
  -> torch increases fov
-can craft torch
+non edible plants drop leaves
+can craft handle from sticks && leaves
+can craft torch from handle and coal
+torch is always lit (for now)
 item durability
 campfires, craftable
  -> increases sight when nearby
@@ -31,6 +33,10 @@ add merchant
  -> clicking the merchant will allow you to talk
  -> a talk option will lead to trading
  -> attacking him or raiding his cart will incur his attack
+add hot springs near mountains
+ -> will spawn on two or three tiles near mountain peaks
+ -> can find sulfur there deposited at edges
+
 can adjust volume in-game
 add perks (permanent)
 add skills

@@ -14,10 +14,14 @@ Features:
  * basic crafting/building and recipes/blueprints to discover
  
 Missing:
+ * some advanced weapon functionality
+ * crafting content
+ * enchanting
+ * skills
+ * perks (and other rpg side effects)
+ * merchantilism
  * npcs
  * quests
  * content
- * crafting content
- * skills
  * magic
  * world gen tlc

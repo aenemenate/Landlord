@@ -340,7 +340,9 @@ namespace Landlord
 
             bool attackLanded = DetermineIfAttackLanded();
             if (attackLanded) {
-                int damage = weapon.GetWepDmg(this);
+                int multiplier = 1;
+                if (weapon is Weapon w && w.TwoHanded) multiplier = 2;
+                int damage = weapon.GetWepDmg(this) * multiplier;
 
                 DamageType dmgType = weapon.GetWepDmgType();
 
@@ -780,14 +782,12 @@ namespace Landlord
             if (mainHand) {
                 if (body.MainHand != null)
                     inventory.Add(body.MainHand);
-                if (item is Weapon w) {
+                if (item is Weapon w)
                     if (w.TwoHanded)
                         if (body.OffHand != null) {
                             inventory.Add(body.OffHand);
                             body.OffHand = null;
                         }
-
-                }
                 body.MainHand = inventory[itemIndex];
 
                 // enter build/craft mode if necessary

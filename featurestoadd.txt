@@ -12,9 +12,9 @@
 buildings will show on world map
 *add weapon class, ranged & melee weapon inherit from this class
 *weapons can be two handed vs. one handed
-  -> update creature.wield to handle this property
-getting an item will wield it
- -> getting shield will yield in offhand
+  -> *update creature.wield to handle this property
+  -> twohanded weapons deal double damage
+implement dual wielding
 there is a button to unwield all (puts wielded items into inventory)
 add torch weapon
  -> torch increases fov

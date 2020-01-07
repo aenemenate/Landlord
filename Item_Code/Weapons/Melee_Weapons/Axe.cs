@@ -7,6 +7,7 @@ namespace Landlord
         public Axe(bool twoHanded, byte graphic = 47, double volume = 0.0125, bool hollow = false, DamageType damageType = DamageType.Shear)
                 : base(graphic, volume, hollow, twoHanded, damageType)
         {
+            if (twoHanded) Volume = 0.02;
         }
 
         public Axe() : base()

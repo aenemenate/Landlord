@@ -10,25 +10,29 @@ namespace Landlord
     {
         public static int GetWeaponCost(this Item weapon, Creature c)
         {
+            int returnvalue;
+            int multiplier = 1;
+            if (weapon is Weapon w && w.TwoHanded) multiplier = 2;
             if (weapon != null) {
                 if (weapon is MeleeWeapon) {
                     if (weapon is Sword)
-                        return 8 - (c.GetWeaponSkill(weapon) / 25);
+                        returnvalue = 8 - (c.GetWeaponSkill(weapon) / 25);
                     else if (weapon is Dagger)
-                        return 6 - (c.GetWeaponSkill(weapon) / 33);
+                        returnvalue = 6 - (c.GetWeaponSkill(weapon) / 33);
                     else if (weapon is Mace)
-                        return 16 - (c.GetWeaponSkill(weapon) / 12);
+                        returnvalue = 16 - (c.GetWeaponSkill(weapon) / 12);
                     else if (weapon is Axe)
-                        return 16 - (c.GetWeaponSkill(weapon) / 12);
+                        returnvalue = 16 - (c.GetWeaponSkill(weapon) / 12);
                     else if (weapon is Spear)
-                        return 8 - (c.GetWeaponSkill(weapon) / 25);
-                    else return -1;
+                        returnvalue = 8 - (c.GetWeaponSkill(weapon) / 25);
+                    else returnvalue = -1;
                 }
                 else
-                    return 8 - (c.GetWeaponSkill(weapon) / 25);
+                    returnvalue = 8 - (c.GetWeaponSkill(weapon) / 25);
             }
             else
-                return 4 - (c.Stats.Skills[Skill.Brawling] / 25);
+                returnvalue = 4 - (c.Stats.Skills[Skill.Brawling] / 25);
+            return returnvalue * multiplier;
         }
 
         public static int GetWepDmg(this Item weapon, Creature c)

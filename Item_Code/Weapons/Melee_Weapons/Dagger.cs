@@ -8,6 +8,7 @@ namespace Landlord
         public Dagger(bool twoHanded, byte graphic = 45, double volume = 0.0026, bool hollow = false, DamageType damageType = DamageType.Shear)
                 : base(graphic, volume, hollow, twoHanded, damageType)
         {
+            if (twoHanded) Volume = 0.004;
         }
 
         public Dagger() : base()

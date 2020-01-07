@@ -11,6 +11,7 @@ namespace Landlord
         public Bow(bool twoHanded, byte graphic = 40, double volume = 0.003, bool hollow = false, DamageType damageType = DamageType.Blunt)
                 : base(graphic, volume, hollow, twoHanded, damageType)
         {
+            if (twoHanded) Volume = 0.006;
         }
 
         public Bow() : base()

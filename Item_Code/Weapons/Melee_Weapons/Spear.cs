@@ -8,6 +8,7 @@ namespace Landlord
         public Spear(bool twoHanded, byte graphic = 47, double volume = 0.015, bool hollow = false, DamageType damageType = DamageType.Shear)
                 : base(graphic, volume, hollow, twoHanded, damageType)
         {
+            if (twoHanded) Volume = 0.02;
         }
 
         public Spear() : base()

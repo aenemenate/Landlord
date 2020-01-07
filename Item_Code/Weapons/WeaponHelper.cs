@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Landlord
 {
-    static class MeleeWeaponHelper
+    static class WeaponHelper
     {
         public static int GetWeaponCost(this Item weapon, Creature c)
         {

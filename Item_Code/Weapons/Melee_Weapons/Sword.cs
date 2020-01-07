@@ -8,8 +8,8 @@ namespace Landlord
 {
     class Sword : MeleeWeapon
     {
-        public Sword(bool instantiating, byte graphic = 47, double volume = 0.004, bool hollow = false, DamageType damageType = DamageType.Shear)
-                : base(graphic, volume, hollow, damageType)
+        public Sword(bool twoHanded, byte graphic = 47, double volume = 0.004, bool hollow = false, DamageType damageType = DamageType.Shear)
+                : base(graphic, volume, hollow, twoHanded, damageType)
         {
         }
 

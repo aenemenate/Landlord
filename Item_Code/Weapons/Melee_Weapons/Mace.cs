@@ -5,8 +5,8 @@ namespace Landlord
 
     class Mace : MeleeWeapon
     {
-        public Mace(bool instantiating, byte graphic = 47, double volume = 0.01, bool hollow = false, DamageType damageType = DamageType.Blunt)
-                : base(graphic, volume, hollow, damageType)
+        public Mace(bool twoHanded, byte graphic = 47, double volume = 0.01, bool hollow = false, DamageType damageType = DamageType.Blunt)
+                : base(graphic, volume, hollow, twoHanded, damageType)
         {
         }
 

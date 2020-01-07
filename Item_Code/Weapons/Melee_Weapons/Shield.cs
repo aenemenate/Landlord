@@ -8,8 +8,8 @@ namespace Landlord
 {
     class Shield : MeleeWeapon
     {
-        public Shield(bool instantiating, byte graphic = 9, double volume = 0.125, bool hollow = true, DamageType damageType = DamageType.Blunt)
-                : base(graphic, volume, hollow, damageType)
+        public Shield(bool twoHanded, byte graphic = 9, double volume = 0.125, bool hollow = true, DamageType damageType = DamageType.Blunt)
+                : base(graphic, volume, hollow, twoHanded, damageType)
         {
         }
 

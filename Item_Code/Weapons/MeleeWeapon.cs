@@ -6,8 +6,8 @@ namespace Landlord
 {
     abstract class MeleeWeapon : Weapon
     {
-        public MeleeWeapon(byte graphic, double volume, bool hollow, DamageType damageType, ItemType type = ItemType.MeleeWeapon)
-                : base(graphic, volume, hollow, damageType, type)
+        public MeleeWeapon(byte graphic, double volume, bool hollow, bool twoHanded, DamageType damageType, ItemType type = ItemType.MeleeWeapon)
+                : base(graphic, volume, hollow, twoHanded, damageType, type)
         {
         }
 

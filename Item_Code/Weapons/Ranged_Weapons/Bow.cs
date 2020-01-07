@@ -8,8 +8,8 @@ namespace Landlord
 {
     class Bow : RangedWeapon
     {
-        public Bow(bool instantiating, byte graphic = 40, double volume = 0.003, bool hollow = false, DamageType damageType = DamageType.Blunt)
-                : base(graphic, volume, hollow, damageType)
+        public Bow(bool twoHanded, byte graphic = 40, double volume = 0.003, bool hollow = false, DamageType damageType = DamageType.Blunt)
+                : base(graphic, volume, hollow, twoHanded, damageType)
         {
         }
 

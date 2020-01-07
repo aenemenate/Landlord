@@ -5,8 +5,8 @@ namespace Landlord
 
     class Dagger : MeleeWeapon
     {
-        public Dagger(bool instantiating, byte graphic = 45, double volume = 0.0026, bool hollow = false, DamageType damageType = DamageType.Shear)
-                : base(graphic, volume, hollow, damageType)
+        public Dagger(bool twoHanded, byte graphic = 45, double volume = 0.0026, bool hollow = false, DamageType damageType = DamageType.Shear)
+                : base(graphic, volume, hollow, twoHanded, damageType)
         {
         }
 

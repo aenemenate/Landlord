@@ -5,8 +5,8 @@ namespace Landlord
 
     class Spear : MeleeWeapon
     {
-        public Spear(bool instantiating, byte graphic = 47, double volume = 0.015, bool hollow = false, DamageType damageType = DamageType.Shear)
-                : base(graphic, volume, hollow, damageType)
+        public Spear(bool twoHanded, byte graphic = 47, double volume = 0.015, bool hollow = false, DamageType damageType = DamageType.Shear)
+                : base(graphic, volume, hollow, twoHanded, damageType)
         {
         }
 

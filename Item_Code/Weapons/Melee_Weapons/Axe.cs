@@ -4,8 +4,8 @@ namespace Landlord
 {
     class Axe : MeleeWeapon
     {
-        public Axe(bool instantiating, byte graphic = 47, double volume = 0.0125, bool hollow = false, DamageType damageType = DamageType.Shear)
-                : base(graphic, volume, hollow, damageType)
+        public Axe(bool twoHanded, byte graphic = 47, double volume = 0.0125, bool hollow = false, DamageType damageType = DamageType.Shear)
+                : base(graphic, volume, hollow, twoHanded, damageType)
         {
         }
 

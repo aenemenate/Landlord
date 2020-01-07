@@ -8,8 +8,8 @@ namespace Landlord
 {
     abstract class RangedWeapon : Weapon
     {
-        public RangedWeapon(byte graphic, double volume, bool hollow, DamageType damageType, ItemType type = ItemType.MeleeWeapon)
-                : base(graphic, volume, hollow, damageType, type)
+        public RangedWeapon(byte graphic, double volume, bool hollow, bool twoHanded, DamageType damageType, ItemType type = ItemType.RangedWeapon)
+                : base(graphic, volume, hollow, twoHanded, damageType, type)
         {
         }
 

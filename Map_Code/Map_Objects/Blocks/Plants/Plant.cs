@@ -12,6 +12,7 @@ namespace Landlord
         private string requirement;
         private bool edible;
 
+        // CONSTRUCTORS
         public Plant(byte graphic, string name, int growthInterval, int seedRadius, List<byte> growthStages, string requirement, bool edible, Color? color = null, bool explored = false, bool solid = false, bool opaque = false, BlockType type = BlockType.Plant, bool interactive = true, bool enterable = false) : base(graphic, name, type, explored, solid, opaque, interactive, enterable)
         {
             if (color != null)
@@ -26,6 +27,8 @@ namespace Landlord
             this.edible = edible;
         }
         public Plant() : base() { }
+
+        // FUNCTIONS
         public void Grow(MapTile map, Point position, Random rng)
         {
             int currentStage = growthStages.IndexOf(Graphic);
@@ -37,7 +40,6 @@ namespace Landlord
             Point seedSpot = new Point(Math.Min(map.Width - 1, Math.Max(0, randX)), Math.Min(map.Height - 1, Math.Max(0, randY)));
             TrySeed(map, seedSpot, rng);
         }
-        // tries to place a seed at the specified position
         public void TrySeed(MapTile map, Point position, Random rng)
         {
             if (!map.PointWithinBounds(position))
@@ -73,18 +75,17 @@ namespace Landlord
             }
             return false;
         }
-
         public Block DropHarvest()
         {
             bool fullyGrown = growthStages.IndexOf(Graphic) != growthStages.Count - 1;
-            if (!Edible || fullyGrown) return new Air();
+            if (!Edible || fullyGrown) return new Leaf(true, Name.Split(' ')[0], ForeColor);
             else return new Food(DietType.Herbivore, Name.Split(' ')[0] + " bundle", 15 * 16 + 10, .013, ForeColor);
         }
         public override void Activate(Creature user)
         {
-
         }
 
+        // PROPERTIES
         public int GrowthInterval {
             get { return growthInterval; }
             set { growthInterval = value; }

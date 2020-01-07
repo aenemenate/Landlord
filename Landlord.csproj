@@ -110,6 +110,7 @@
     <Compile Include="Bresenhams.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="Animal.cs" />
+    <Compile Include="Item_Code\Materials\Resources\Leaf.cs" />
     <Compile Include="Item_Code\Weapons\Melee_Weapons\Torch.cs" />
     <Compile Include="Item_Code\Weapons\Weapon.cs" />
     <Compile Include="Level.cs" />

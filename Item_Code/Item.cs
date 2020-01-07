@@ -24,6 +24,7 @@ namespace Landlord
         Coal,  //
         Plank,   //
         Stick,  //
+        Leaf,
         Wheel, //
         Arrow, // Shoot these
         Bolt,  

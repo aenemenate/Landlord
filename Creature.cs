@@ -614,9 +614,9 @@ namespace Landlord
                 ChangeResource(Resource.SP, -20);
 
                 Block harvest = plant.DropHarvest();
-                if (harvest is Food) {
+                if (harvest is Food f) {
                     if (this is Player) { inventory.Add((Item)harvest); Program.MsgConsole.WriteLine($"{Name} harvested the {plant.Name}."); }
-                    else { Eat((Item)harvest); }
+                    else { if (Visible) Program.MsgConsole.WriteLine($"{Name} ate the {plant.Name}."); Eat((Item)harvest); }
                     Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y] = new Air();
                 }
                 else Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y] = harvest;

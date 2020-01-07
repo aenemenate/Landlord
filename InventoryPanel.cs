@@ -123,6 +123,8 @@ namespace Landlord
                                                                     ((currentlyViewedItem is Quiver) ? ((Quiver)currentlyViewedItem).Arrows :
                                                                       ((BlueprintPouch)currentlyViewedItem).Blueprints), maxItems, currentlyViewedItem.Name);
                         }
+                        else if (currentlyViewedItem is Shield)
+                            Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == currentlyViewedItem.Name), false);
                         else Program.Player.Wield(Program.Player.Inventory.FindIndex(i => i.Name == currentlyViewedItem.Name), true);
                     }
                     else if (Program.CurrentState is ViewLoot viewLoot) {

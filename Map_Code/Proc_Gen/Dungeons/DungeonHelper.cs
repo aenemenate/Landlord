@@ -173,7 +173,7 @@ namespace Landlord
         // GetWeapon returns a random weapon.
         private static Item GetWeapon()
         {
-            int rand = Program.RNG.Next(0, 7);
+            int rand = Program.RNG.Next(0, 8);
             bool twoHanded = Program.RNG.Next(0, 2) == 0 ? true : false;
             switch (rand)
             {
@@ -190,7 +190,9 @@ namespace Landlord
                 case (5):
                     return new Shield(false);
                 case (6):
-                    return new Bow(twoHanded);
+                    return new Bow(true);
+                case (7):
+                    return new Torch(twoHanded);
                 default:
                     return null;
             }
@@ -198,7 +200,7 @@ namespace Landlord
 
         private static Item GetBlueprintOrRecipe()
         {
-            int rand = Program.RNG.Next(0, 5);
+            int rand = Program.RNG.Next(0, 6);
             switch (rand) {
                 case (0):
                     return new GlueWheelRecipe(true);
@@ -210,6 +212,8 @@ namespace Landlord
                     return new WoodStoneMillBlueprint(true);
                 case (4):
                     return new WoodCartBlueprint(true);
+                case (5):
+                    return new WoodHandleRecipe(true);
                 default:
                     return null;
             }

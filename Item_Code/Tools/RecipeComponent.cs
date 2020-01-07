@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace Landlord
 {
@@ -10,10 +8,13 @@ namespace Landlord
     {
         Null,
         Log,
+        Leaf,
+        Stick,
         Stone,
         Plank,
         WoodWheel,
-        StoneWheel
+        StoneWheel,
+        Handle
     }
 
     static class RecipeHelper
@@ -22,12 +23,22 @@ namespace Landlord
         {
             switch (rc)
             {
+                case RecipeComponent.Log:
+                    return 0;
+                case RecipeComponent.Leaf:
+                    return 0;
+                case RecipeComponent.Stick:
+                    return 0;
+                case RecipeComponent.Stone:
+                    return 0;
                 case RecipeComponent.Plank:
-                    return 5;
+                    return 10;
                 case RecipeComponent.WoodWheel:
                     return 75;
                 case RecipeComponent.StoneWheel:
-                    return 125;
+                    return 150;
+                case RecipeComponent.Handle:
+                    return 100;
                 default:
                     return 0;
             }
@@ -39,6 +50,10 @@ namespace Landlord
             {
                 case RecipeComponent.Log:
                     return new Log( true );
+                case RecipeComponent.Leaf:
+                    return new Leaf(true, "tree", Color.ForestGreen);
+                case RecipeComponent.Stick:
+                    return new Stick(true);
                 case RecipeComponent.Stone:
                     return new Stone( true );
                 case RecipeComponent.Plank:
@@ -47,6 +62,8 @@ namespace Landlord
                     return new WoodWheel( true );
                 case RecipeComponent.StoneWheel:
                     return new Stone( true );
+                case RecipeComponent.Handle:
+                    return new Handle(true, Material.Wood);
                 default:
                     return new EmptyBottle( true );
             }
@@ -58,6 +75,10 @@ namespace Landlord
             {
                 case RecipeComponent.Log:
                     return "log";
+                case RecipeComponent.Leaf:
+                    return "leaf";
+                case RecipeComponent.Stick:
+                    return "stick";
                 case RecipeComponent.Stone:
                     return "stone";
                 case RecipeComponent.Plank:
@@ -66,6 +87,8 @@ namespace Landlord
                     return "wood wheel";
                 case RecipeComponent.StoneWheel:
                     return "stone wheel";
+                case RecipeComponent.Handle:
+                    return "wood handle";
                 default:
                     return "null";
             }
@@ -75,6 +98,10 @@ namespace Landlord
         {
             if (item.ItemType == ItemType.Log)
                 return RecipeComponent.Log;
+            else if (item.ItemType == ItemType.Leaf)
+                return RecipeComponent.Leaf;
+            else if (item.ItemType == ItemType.Stick)
+                return RecipeComponent.Stick;
             else if (item.ItemType == ItemType.Stone)
                 return RecipeComponent.Stone;
             else if (item.ItemType == ItemType.Plank)
@@ -83,6 +110,8 @@ namespace Landlord
                 return RecipeComponent.WoodWheel;
             else if (item.ItemType == ItemType.Wheel && item.Material == Material.Stone)
                 return RecipeComponent.StoneWheel;
+            else if (item.ItemType == ItemType.Handle)
+                return RecipeComponent.Handle;
             else
                 return RecipeComponent.Null;
         }

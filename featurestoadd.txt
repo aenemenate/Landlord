@@ -20,7 +20,8 @@ there is a button to unwield all (puts wielded items into inventory)
  -> *deals burn damage
 *non edible plants drop leaves
 *can craft handle from sticks && leaves
-can craft torch from handle and coal
+*can craft hilt from log
+can craft torch from handle, hilt, and coal
 torch is always lit (for now)
 item durability
 campfires, craftable

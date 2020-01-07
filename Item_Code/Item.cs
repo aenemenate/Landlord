@@ -25,6 +25,7 @@ namespace Landlord
         Plank,   //
         Stick,  //
         Handle,
+        Hilt,
         Leaf,
         Wheel, //
         Arrow, // Shoot these

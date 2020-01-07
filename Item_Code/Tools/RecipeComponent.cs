@@ -14,7 +14,8 @@ namespace Landlord
         Plank,
         WoodWheel,
         StoneWheel,
-        Handle
+        Handle,
+        Hilt
     }
 
     static class RecipeHelper
@@ -38,6 +39,8 @@ namespace Landlord
                 case RecipeComponent.StoneWheel:
                     return 150;
                 case RecipeComponent.Handle:
+                    return 100;
+                case RecipeComponent.Hilt:
                     return 100;
                 default:
                     return 0;
@@ -64,6 +67,8 @@ namespace Landlord
                     return new Stone( true );
                 case RecipeComponent.Handle:
                     return new Handle(true, Material.Wood);
+                case RecipeComponent.Hilt:
+                    return new Hilt(true, Material.Wood);
                 default:
                     return new EmptyBottle( true );
             }
@@ -88,7 +93,9 @@ namespace Landlord
                 case RecipeComponent.StoneWheel:
                     return "stone wheel";
                 case RecipeComponent.Handle:
-                    return "wood handle";
+                    return "handle";
+                case RecipeComponent.Hilt:
+                    return "hilt";
                 default:
                     return "null";
             }
@@ -112,6 +119,8 @@ namespace Landlord
                 return RecipeComponent.StoneWheel;
             else if (item.ItemType == ItemType.Handle)
                 return RecipeComponent.Handle;
+            else if (item.ItemType == ItemType.Hilt)
+                return RecipeComponent.Hilt;
             else
                 return RecipeComponent.Null;
         }

@@ -2,17 +2,17 @@
 
 namespace Landlord
 {
-    class Handle : Item
+    class Hilt : Item
     {
-        public Handle(bool instantiating, Material material, byte graphic = 92, ItemType type = ItemType.Handle, double volume = 0.05, bool hollow = true, DamageType damageType = DamageType.Blunt)
+        public Hilt(bool instantiating, Material material, byte graphic = 252, ItemType type = ItemType.Hilt, double volume = 0.05, bool hollow = true, DamageType damageType = DamageType.Blunt)
                : base(graphic, type, volume, hollow, damageType)
         {
-            this.Material = material;
+            Material = material;
             ForeColor = new Color(205, 133, 63);
             Identify();
         }
 
-        public Handle() : base()
+        public Hilt() : base()
         {
 
         }
@@ -26,12 +26,12 @@ namespace Landlord
 
         public override string DetermineDescription()
         {
-            return "A " + Physics.MaterialNames[Material] + " handle.";
+            return "A " + Physics.MaterialNames[Material] + " hilt.";
         }
 
         public override string DetermineName(bool identifying)
         {
-            return Physics.MaterialNames[Material] + " handle";
+            return Physics.MaterialNames[Material] + " hilt";
         }
 
         public override Material DetermineMaterial()

@@ -23,7 +23,7 @@ there is a button to unwield all (puts wielded items into inventory)
 *can craft hilt from log
 *can craft torch from handle, hilt, and coal
 torch is always lit (for now)
-grabbing a blueprint or recipe will put it in the appropriate pouch
+*grabbing a blueprint or recipe will put it in the appropriate pouch
 item durability
   -> add property
   -> DetermineDurability(); instantiates from material fractures

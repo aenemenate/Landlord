@@ -667,6 +667,7 @@ namespace Landlord
             string containerName = "inventory";
 
             if (blocks[itemPos.X * width + itemPos.Y] is Item item) {
+                // handle various cases of items which must be managed uniquely
                 itemName = item.Name;
                 if (item is Arrow && inventory.Exists(i => i is Quiver)) {
                     Quiver q = (Quiver)inventory.Find(i => i is Quiver);
@@ -687,7 +688,23 @@ namespace Landlord
                     itemName += "'s arrows";
                     containerName = q2.Name;
                 }
+                else if (item is Blueprint && inventory.Exists(i => i is BlueprintPouch)) {
+                    BlueprintPouch bp = (BlueprintPouch)inventory.Find(i => i is BlueprintPouch);
+                    bp.Blueprints.Add(item);
+                    itemAdded = true;
+                    containerName = bp.Name;
+                }
+                else if (item is CraftingRecipe && inventory.Exists(i => i is RecipePouch))
+                {
+                    RecipePouch rp = (RecipePouch)inventory.Find(i => i is RecipePouch);
+                    rp.Recipes.Add(item);
+                    itemAdded = true;
+                    containerName = rp.Name;
+                }
+                // normal case
                 if (!itemAdded) itemAdded = AddItem(item);
+
+                // apply action cost, update map, write to msg console
                 if (itemAdded) {
                     Block replacementBlock = item.BlockPlacedOn ?? new Air();
                     blocks[itemPos.X * width + itemPos.Y] = replacementBlock;
@@ -696,7 +713,8 @@ namespace Landlord
                     if (this.Visible)
                         Program.MsgConsole.WriteLine($"{Name} put the {itemName} in their {containerName}.");
                     ApplyActionCost(6);
-                } else
+                }
+                else if (this.Visible)
                     Program.MsgConsole.WriteLine($"{Name} tried to get the {itemName} but didn't have enough space.");
             }
         }

@@ -36,8 +36,9 @@ namespace Landlord
             bool upLeftPressed = SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.NumPad7);
 
             bool waitPressed = SadConsole.Global.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.NumPad5) || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.W);
-            bool actionPressed = SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Enter) || SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Space);
+            bool actionPressed = SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Enter);
             bool firePressed = SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F);
+            bool disarmPressed = SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.D);
 
             Point nextPos = new Point();
 
@@ -112,6 +113,8 @@ namespace Landlord
                 else
                     nextPos = new Point(Program.Player.Position.X, Program.Player.Position.Y);
             }
+            else if (disarmPressed)
+                Program.Player.Disarm();
 
 
             // Choose how to handle the next position input, if there is one

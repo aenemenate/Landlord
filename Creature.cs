@@ -876,6 +876,11 @@ namespace Landlord
             inventory.Remove(armorPiece);
             ApplyActionCost(18);
         }
+        public void Disarm()
+        {
+            Unequip(body.MainHand);
+            Unequip(body.OffHand);
+        }
         public void Unequip(Item item)
         {
             if (item is Armor) {

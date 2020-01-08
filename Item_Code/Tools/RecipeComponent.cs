@@ -11,11 +11,13 @@ namespace Landlord
         Leaf,
         Stick,
         Stone,
+        Coal,
         Plank,
         WoodWheel,
         StoneWheel,
         Handle,
-        Hilt
+        Hilt,
+        Torch
     }
 
     static class RecipeHelper
@@ -32,6 +34,8 @@ namespace Landlord
                     return 0;
                 case RecipeComponent.Stone:
                     return 0;
+                case RecipeComponent.Coal:
+                    return 0;
                 case RecipeComponent.Plank:
                     return 10;
                 case RecipeComponent.WoodWheel:
@@ -41,6 +45,8 @@ namespace Landlord
                 case RecipeComponent.Handle:
                     return 100;
                 case RecipeComponent.Hilt:
+                    return 100;
+                case RecipeComponent.Torch:
                     return 100;
                 default:
                     return 0;
@@ -59,6 +65,8 @@ namespace Landlord
                     return new Stick(true);
                 case RecipeComponent.Stone:
                     return new Stone( true );
+                case RecipeComponent.Coal:
+                    return new CoalOre( true );
                 case RecipeComponent.Plank:
                     return new Plank( true );
                 case RecipeComponent.WoodWheel:
@@ -69,6 +77,8 @@ namespace Landlord
                     return new Handle(true, Material.Wood);
                 case RecipeComponent.Hilt:
                     return new Hilt(true, Material.Wood);
+                case RecipeComponent.Torch:
+                    return new Torch(false);
                 default:
                     return new EmptyBottle( true );
             }
@@ -86,6 +96,8 @@ namespace Landlord
                     return "stick";
                 case RecipeComponent.Stone:
                     return "stone";
+                case RecipeComponent.Coal:
+                    return "coal ore";
                 case RecipeComponent.Plank:
                     return "plank";
                 case RecipeComponent.WoodWheel:
@@ -96,6 +108,8 @@ namespace Landlord
                     return "handle";
                 case RecipeComponent.Hilt:
                     return "hilt";
+                case RecipeComponent.Torch:
+                    return "torch";
                 default:
                     return "null";
             }
@@ -111,6 +125,8 @@ namespace Landlord
                 return RecipeComponent.Stick;
             else if (item.ItemType == ItemType.Stone)
                 return RecipeComponent.Stone;
+            else if (item.ItemType == ItemType.Coal)
+                return RecipeComponent.Coal;
             else if (item.ItemType == ItemType.Plank)
                 return RecipeComponent.Plank;
             else if (item.ItemType == ItemType.Wheel && item.Material == Material.Wood)
@@ -121,6 +137,8 @@ namespace Landlord
                 return RecipeComponent.Handle;
             else if (item.ItemType == ItemType.Hilt)
                 return RecipeComponent.Hilt;
+            else if (item is Torch)
+                return RecipeComponent.Torch;
             else
                 return RecipeComponent.Null;
         }

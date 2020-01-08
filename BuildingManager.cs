@@ -14,7 +14,7 @@ namespace Landlord
     static class BuildingManager
     {
         private static BuildingModeInput inputHandler = new BuildingModeInput();
-        private static bool paused = false;
+        private static bool paused = true;
         private static PlayerState playerState = PlayerState.GetMaterial;
 
         private static BuildingPlaceholder[,] constructionMap = new BuildingPlaceholder[Program.WorldMap.TileWidth, Program.WorldMap.TileHeight];
@@ -251,6 +251,7 @@ namespace Landlord
                 {
                 }
                 else {
+                    // if there is no crafting recipe stored and the player has a recipe pouch
                     if (currentCraftingRecipe == null && Program.Player.Inventory.Exists(i => i is RecipePouch)) {
                         RecipePouch rp = (RecipePouch)Program.Player.Inventory.Find(i => i is RecipePouch);
                         foreach (CraftingRecipe r in rp.Recipes)
@@ -259,7 +260,7 @@ namespace Landlord
                                 break;
                             }
                     }
-                    if (currentCraftingRecipe != null)
+                    else if (currentCraftingRecipe != null)
                     {
                         if (!currentCraftingRecipe.CraftingTarget.Exists(e => e.ToComponent() == nextComponent))
                             currentCraftingRecipe = null;
@@ -462,8 +463,6 @@ namespace Landlord
             playerState = PlayerState.Idle;
             Program.Player.Path = null;
         }
-
-
         // RENDERING
         public static void RenderConstructionMap()
         {

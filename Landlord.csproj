@@ -110,8 +110,8 @@
     <Compile Include="Bresenhams.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="Animal.cs" />
-    <Compile Include="Item_Code\Materials\Resources\Handle.cs" />
-    <Compile Include="Item_Code\Materials\Resources\Hilt.cs" />
+    <Compile Include="Item_Code\Materials\Components\Handle.cs" />
+    <Compile Include="Item_Code\Materials\Components\Hilt.cs" />
     <Compile Include="Item_Code\Materials\Resources\Leaf.cs" />
     <Compile Include="Item_Code\Tools\Crafting\Crafting_Recipes\CarveHiltRecipe.cs" />
     <Compile Include="Item_Code\Tools\Crafting\Crafting_Recipes\WoodHandleRecipe.cs" />
@@ -131,8 +131,8 @@
     <Compile Include="Item_Code\Materials\Resources\Food.cs" />
     <Compile Include="Item_Code\Materials\Resources\CoalOre.cs" />
     <Compile Include="Item_Code\Materials\Resources\Stick.cs" />
-    <Compile Include="Item_Code\Materials\Resources\StoneWheel.cs" />
-    <Compile Include="Item_Code\Materials\Resources\WoodWheel.cs" />
+    <Compile Include="Item_Code\Materials\Components\StoneWheel.cs" />
+    <Compile Include="Item_Code\Materials\Components\WoodWheel.cs" />
     <Compile Include="Item_Code\Materials\Resources\Stone.cs" />
     <Compile Include="Item_Code\Materials\Resources\Log.cs" />
     <Compile Include="Item_Code\Items\Potion.cs" />

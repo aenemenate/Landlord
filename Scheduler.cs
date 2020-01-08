@@ -72,7 +72,7 @@ namespace Landlord
         public static void HandleCraftingScheduling(int secondsToAdvance)
         {
             int counter = 0;
-            int interval = 50;
+            int interval = 120;
 
             Point worldIndex = Program.Player.WorldIndex;
 

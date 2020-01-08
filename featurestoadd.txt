@@ -31,6 +31,7 @@ item durability
 add item.onbreak
 add item.onland (for when thrown)
 add throwing
+show equipment on character sheet
 campfires, craftable
  -> increases sight when nearby
  -> can sit by to pass time
@@ -45,7 +46,6 @@ add merchant
 add hot springs near mountains
  -> will spawn on two or three tiles near mountain peaks
  -> can find sulfur there deposited at edges
-
 can adjust volume in-game
 add perks (permanent)
 add skills
@@ -60,7 +60,8 @@ create monsters for dungeon #2
 dungeon 2 has locked doors and keys
 improve monster xml reading to allow for custom weapons
 add weather effects (raining, cloudy, sunny) and weather description in-game
-convert to entity component system
+move crafting manager code to entity (allowing any entity to craft)
+allow building manager to use multiple entities (player's party)
 
 update gui:
  -> loot menu shows max/current items

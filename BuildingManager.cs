@@ -15,7 +15,7 @@ namespace Landlord
     {
         private static BuildingModeInput inputHandler = new BuildingModeInput();
         private static bool paused = false;
-        private static PlayerState playerState = PlayerState.Idle;
+        private static PlayerState playerState = PlayerState.GetMaterial;
 
         private static BuildingPlaceholder[,] constructionMap = new BuildingPlaceholder[Program.WorldMap.TileWidth, Program.WorldMap.TileHeight];
 

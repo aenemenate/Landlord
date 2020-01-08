@@ -9,7 +9,7 @@ namespace Landlord
         public Leaf(bool instantiating, string leafName, Color foreColor, byte graphic = 45, ItemType type = ItemType.Leaf, double volume = 0.0002, bool hollow = true, DamageType damageType = DamageType.Blunt)
                : base(graphic, type, volume, hollow, damageType)
         {
-            leafName = leafName;
+            this.leafName = leafName;
             ForeColor = foreColor;
             Identify();
         }

@@ -48,7 +48,7 @@ namespace Landlord
         {
 
             if (BuildingManager.Paused == false)
-                Program.TimeHandler.CurrentTime.AddTime(2);
+                Program.TimeHandler.CurrentTime.AddTime(1);
             else
                 return;
             

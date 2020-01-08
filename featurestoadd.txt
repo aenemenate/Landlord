@@ -24,6 +24,13 @@ there is a button to unwield all (puts wielded items into inventory)
 can craft torch from handle, hilt, and coal
 torch is always lit (for now)
 item durability
+  -> add property
+  -> DetermineDurability(); instantiates from material fractures
+  -> using an item will decrease durability
+  -> call on break when durability reaches 0, the item will change into a new item
+add item.onbreak
+add item.onland (for when thrown)
+add throwing
 campfires, craftable
  -> increases sight when nearby
  -> can sit by to pass time

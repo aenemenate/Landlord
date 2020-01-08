@@ -108,9 +108,11 @@ namespace Landlord
         }
         public override string DetermineName(bool identifying)
         {
+            string adjectives = "";
+            if (twoHanded) adjectives += "two-handed ";
             if (enchantments != null && enchantments.Count > 0)
                 return enchantments[0].PartName + ' ' + Physics.MaterialNames[Material] + ' ' + weaponName;
-            return Physics.MaterialNames[Material] + ' ' + weaponName;
+            return adjectives + Physics.MaterialNames[Material] + ' ' + weaponName;
         }
         public void DetermineEnchantments()
         {

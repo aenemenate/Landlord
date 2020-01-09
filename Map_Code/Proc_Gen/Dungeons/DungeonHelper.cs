@@ -200,7 +200,7 @@ namespace Landlord
 
         private static Item GetBlueprintOrRecipe()
         {
-            int rand = Program.RNG.Next(0, 7);
+            int rand = Program.RNG.Next(0, 8);
             switch (rand) {
                 case (0):
                     return new GlueWheelRecipe(true);
@@ -216,6 +216,8 @@ namespace Landlord
                     return new WoodHandleRecipe(true);
                 case (6):
                     return new CarveHiltRecipe(true);
+                case (7):
+                    return new ConstructTorchRecipe(true);
                 default:
                     return null;
             }

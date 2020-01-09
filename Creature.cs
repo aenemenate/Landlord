@@ -96,17 +96,17 @@ namespace Landlord
         public void DetermineEquipment()
         {
             Random rng = new Random();
-            bool twoHanded = false;
+            bool twoHanded = true;
             if (Class.MajorSkills.Contains(Skill.Block) || Class.MinorSkills.Contains(Skill.Block)) {
                 body.OffHand = new Shield(false);
-                twoHanded = true;
+                twoHanded = false;
             }
             if (Class.MajorSkills.Contains(Skill.HeavyWeapons))
                 body.MainHand = new Mace(twoHanded);
             else if (Class.MajorSkills.Contains(Skill.LongBlades))
                 body.MainHand = new Sword(twoHanded);
             else if (Class.MajorSkills.Contains(Skill.Spear))
-                body.MainHand = new Spear(twoHanded);
+                body.MainHand = new Spear(true);
             else if (Class.MajorSkills.Contains(Skill.ShortBlade)) {
                 body.MainHand = new Dagger(false);
                 if (twoHanded) body.OffHand = new Dagger(false);

@@ -14,8 +14,9 @@ buildings will show on world map
 *weapons can be two handed vs. one handed
   -> *update creature.wield to handle this property
   -> *twohanded weapons deal double damage, cost 2x as much to use
-there is a button to unwield all (puts wielded items into inventory)
 
+
+*there is a button to unwield all (puts wielded items into inventory)
 *add torch weapon
  -> *torch increases fov
  -> *deals burn damage
@@ -24,7 +25,6 @@ there is a button to unwield all (puts wielded items into inventory)
 *can craft hilt from log
 *can craft torch from handle, hilt, and coal
 torch is always lit (for now)
-*grabbing a blueprint or recipe will put it in the appropriate pouch
 
 item durability
   -> add property
@@ -34,8 +34,13 @@ item durability
 add item.onbreak
 add item.onland (for when thrown)
 add throwing
-
 show equipment on character sheet
+
+add skills
+add 3 skills for each class:
+    warrior: shield bash, charge, spin slash
+    rogue: improve focus, dual wield, slip around
+
 campfires, craftable
  -> increases sight when nearby
  -> can sit by to pass time
@@ -52,10 +57,6 @@ add hot springs near mountains
  -> can find sulfur there deposited at edges
 can adjust volume in-game
 add perks (permanent)
-add skills
-add 3 skills for each class:
-    warrior: shield bash, charge, spin slash
-    rogue: improve focus, slip around, roll
 add shovel weapon
 add shovelling
 balance dungeon #1

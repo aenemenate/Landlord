@@ -75,7 +75,7 @@ namespace Landlord
         {
             if (alive) {
                 if (faction.Equals(user.Faction) == false)
-                    user.LaunchAttack(this);
+                    user.Attack(this);
                 else
                     user.StartDialog(this);
             }
@@ -226,19 +226,6 @@ namespace Landlord
             }
         }
 
-        public bool CanCarryItem(Item item)
-        {
-            double carrying = 0;
-
-            if (inventory.Count != 0)
-                foreach (Item i in inventory)
-                    carrying += i.Weight;
-
-            if (carrying + item.Weight <= Stats.Attributes[Attribute.Strength] * 2)
-                return true;
-            return false;
-        }
-
         public void ChangeResource(Resource resource, int effect)
         {
             Stats.Resources[resource] += effect;
@@ -251,7 +238,7 @@ namespace Landlord
             if (Stats.Resources[Resource.HP] == 0)
                 Die();
         }
-        public void ApplyActionCost( int maxNumOfSeconds )
+        private void ApplyActionCost( int maxNumOfSeconds )
         {
             double granularity = stats.Attributes[Attribute.Agility] / 300;
             int timeToAdd = (int)(maxNumOfSeconds * (1 - granularity));
@@ -266,6 +253,11 @@ namespace Landlord
             if (stats.Resources[Resource.HP] > stats.Resources[Resource.MaxHP] * 0.8)
                 this.Splattered = false;
             ApplyEffects();
+        }
+        private void ApplyEffects()
+        {
+            for (int i = 0; i < effects.Count; i++)
+                effects[i].Apply(this);
         }
 
         public List<Point> GetNearbyBlocksOfType(BlockType type)
@@ -301,85 +293,46 @@ namespace Landlord
             }
         }
 
-        public void LaunchAttack(Creature defender)
+        public void Attack(Creature defender)
         {
-            Random rng = new Random();
             if (defender.Alive == false)
                 return;
-            
-            Item weapon;
 
-            // FUNCTIONS
-            void DetermineWeapon() { weapon = Body.MainHand; } 
-            // unfinished! needs to switch from main to off hand.
-
-            bool DetermineIfAttackLanded()
-            {
-                double attackersHitRate =
-                (GetWeaponSkill(this.Body.MainHand) + (this.Stats.Attributes[Attribute.Dexterity] / 2.5) + (rng.Next(0, this.Stats.Attributes[Attribute.Luck]) / 10))
-                    * (0.75 + 0.5 * this.Stats.Resources[Resource.SP] / this.Stats.Resources[Resource.MaxSP]);
-
-                double defendersEvasion =
-                    ((defender.Stats.Attributes[Attribute.Agility] / 5) + (rng.Next(0, defender.Stats.Attributes[Attribute.Luck]) / 10))
-                        * (0.75 + 0.5 * defender.Stats.Resources[Resource.SP] / defender.Stats.Resources[Resource.MaxSP]);
-
-                double maxMissChance = 150;
-                double chanceToMiss = maxMissChance - attackersHitRate;
-                double chanceToDodge = attackersHitRate - (attackersHitRate - defendersEvasion);
-
-                int diceRoll = rng.Next( 0, (int)maxMissChance );
-                if (diceRoll <= chanceToMiss) {
-                    Program.MsgConsole.WriteLine($"{Name}'s attack missed.");
-                    LvlWeaponSkill(weapon, 10);
-                    return false;
-                }
-
-                diceRoll = rng.Next(0, (int)attackersHitRate + 2);
-                if (diceRoll <= chanceToDodge) {
-                    Program.MsgConsole.WriteLine($"{defender.Name} evaded {Name}'s attack.");
-                    LvlWeaponSkill(weapon, 20);
-                    return false;
-                }
-
-                LvlWeaponSkill(weapon, 40);
-
-                return true;
-            }
-
-
-            // START
-            DetermineWeapon();
-            
+            Item weapon = Body.MainHand;
             ApplyActionCost(weapon.GetWeaponCost(this));
 
-            bool attackLanded = DetermineIfAttackLanded();
-            if (attackLanded) {
-                int multiplier = 1;
-                if (weapon is Weapon w && w.TwoHanded) multiplier = 2;
+            bool attackLanded = this.CheckAttackLanded(weapon, defender);
+
+            if (attackLanded) 
+            {
+                // set the proper multiplier to damage
+                int multiplier = 1; if (weapon is Weapon w && w.TwoHanded) multiplier = 2;
+                // get the damage and apply the muliplier
                 int damage = weapon.GetWepDmg(this) * multiplier;
+                // get the proper damage type
                 DamageType dmgType = weapon.GetWepDmgType();
+                // get a random armor piece from the defender
                 Armor armorpiece = defender.GetRandomArmorPiece();
                 if (weapon != null && !weapon.OnHit(armorpiece)) BreakWeapon(weapon);
                 if (armorpiece != null && !armorpiece.OnHit(weapon)) BreakArmorPiece(armorpiece);
+                
+                // dish out the damage
+                int dmgDealt = defender.Defend(dmgType, damage, position);
+                bool defenderBlocked = dmgDealt >= 0 ? true : false;
+                
+                if (defenderBlocked) {
+                    // write a message, convert to absolute value
+                    Program.MsgConsole.WriteLine($"{defender.Name} blocked {Name}'s attack, taking {Math.Abs((int)dmgDealt)} damage.");
+                }
+                else {
+                    // apply enchantments if opponent did not block
+                    if (weapon != null && weapon is MeleeWeapon && ((MeleeWeapon)weapon).Enchantments.Count > 0)
+                        foreach (WeaponEnchantment enchantment in ((MeleeWeapon)weapon).Enchantments)
+                            enchantment.Apply(this, defender);
+                    // also write a message about the attack
+                    Program.MsgConsole.WriteLine($"{Name} attacked {defender} for {dmgDealt} damage!");
+                }
 
-                int dmgDealt = defender.DefendAgainstDmg(dmgType, damage, position);
-
-                if (dmgDealt <= 0)
-                    goto Finish;
-
-                //
-                ////
-                //////
-                if (weapon != null && weapon is MeleeWeapon && ((MeleeWeapon)weapon).Enchantments.Count > 0)
-                    foreach (WeaponEnchantment enchantment in ((MeleeWeapon)weapon).Enchantments)
-                        enchantment.Apply(this, defender);
-                //////
-                ////
-                //
-
-                Program.MsgConsole.WriteLine($"{Name} attacked for {dmgDealt} damage!");
-
-                Finish:
                 if (defender.Alive == false)
                     Program.MsgConsole.WriteLine($"{defender.Name} died.");
             }
@@ -388,11 +341,11 @@ namespace Landlord
             if (weapon != null)
                 ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
             else
-                ChangeResource( Resource.SP, -8 );
+                ChangeResource(Resource.SP, -8);
         }
-        public int DefendAgainstDmg(DamageType dmgType, int dmg, Point dmgAngle)
+        // Note: this function will return a negative value if the defender blocked. This is for message handling.
+        public int Defend(DamageType dmgType, int dmg, Point dmgAngle)
         {
-            // Note: this function will return a negative value if the defender blocked. This is for message handling.
             Random rng = new Random();
             int armorVal = GetDefenseValue(dmgType);
 
@@ -405,23 +358,22 @@ namespace Landlord
                 if (rng.Next(0, 101) <= blockChance)
                 {
                     finalDmg /= -((double)2 + ((Stats.Attributes[Attribute.Strength] + Stats.Attributes[Attribute.Strength]) / 400));
-                    Program.MsgConsole.WriteLine($"{Name} blocked the attack, taking {Math.Abs((int)finalDmg)} damage.");
                     LvlWeaponSkill((MeleeWeapon)body.OffHand, 25);
                 }
             }
-
-            LvlArmorSkill(25);
+            else
+            {
+                LvlArmorSkill(25);
+                if (finalDmg > 0) SplatterBlood(dmgAngle);
+            }
 
             ChangeResource(Resource.HP, Math.Abs((int)finalDmg) * -1);
 
-            if (finalDmg > 0) SplatterBlood(dmgAngle);
-
             ChangeResource(Resource.SP, Math.Abs((int)finalDmg) * -1);
 
+
             if (this is Monster m)
-            {
                 m.TurnsSinceAttentionCaught = m.Persistence;
-            }
 
             return (int)finalDmg;
         }
@@ -433,7 +385,7 @@ namespace Landlord
             bool DetermineIfAttackLanded()
             {
                 double attackersHitRate =
-                (GetWeaponSkill(this.Body.MainHand) + (this.Stats.Attributes[Attribute.Dexterity] / 5) + (rng.Next(0, this.Stats.Attributes[Attribute.Luck]) / 10))
+                (this.GetWeaponSkill(this.Body.MainHand) + (this.Stats.Attributes[Attribute.Dexterity] / 5) + (rng.Next(0, this.Stats.Attributes[Attribute.Luck]) / 10))
                     * (0.75 + 0.5 * this.Stats.Resources[Resource.SP] / this.Stats.Resources[Resource.MaxSP]);
 
                 double maxMissChance = 150;
@@ -752,7 +704,7 @@ namespace Landlord
         public bool AddItem(Item item)
         {
             ApplyActionCost(6);
-            bool canCarry = CanCarryItem(item);
+            bool canCarry = this.CheckCanCarryItem(item);
 
             if (canCarry)
                 inventory.Add(item);
@@ -1009,7 +961,7 @@ namespace Landlord
             Program.MsgConsole.WriteLine($"{Name}'s {weapon.Name} broke!");
         }
 
-        private void LvlWeaponSkill(Item weapon, int amount)
+        public void LvlWeaponSkill(Item weapon, int amount)
         {
             if (weapon is MeleeWeapon mWeapon)
                 Stats.LvlSkill(mWeapon.GetWeaponSkill(), amount, this);
@@ -1068,11 +1020,6 @@ namespace Landlord
             if (this is Player == false) UnequipAll();
             else Menus.DeathNotification();
         }
-        private void ApplyEffects()
-        {
-            for (int i = 0; i < effects.Count; i++)
-                effects[i].Apply(this);
-        }
 
         private int GetArmorSkill(Armor armor)
         {
@@ -1117,48 +1064,6 @@ namespace Landlord
             }
 
             return armorVal;
-        }
-        public int GetWeaponSkill(Item weapon)
-        {
-            if (weapon != null)
-            {
-                if (weapon is MeleeWeapon)
-                {
-                    if (weapon is Sword)
-                        return Stats.Skills[Skill.LongBlades];
-                    else if (weapon is Dagger)
-                        return Stats.Skills[Skill.ShortBlade];
-                    else if (weapon is Mace || weapon is Axe)
-                        return Stats.Skills[Skill.HeavyWeapons];
-                    else if (weapon is Spear)
-                        return Stats.Skills[Skill.Spear];
-                    else return -1;
-                }
-                else if (weapon is RangedWeapon)
-                    return Stats.Skills[Skill.Marksmanship];
-                return 0;
-            }
-            else
-                return Stats.Skills[Skill.Brawling];
-        }
-        public Armor GetRandomArmorPiece()
-        {
-            int rand = Program.RNG.Next(0, 5);
-            switch (rand)
-            {
-                case (0):
-                    return Body.Helmet;
-                case (1):
-                    return (Body.ChestPiece != null) ? (Armor)Body.ChestPiece : (Armor)Body.Shirt;
-                case (2):
-                    return Body.Gauntlets;
-                case (3):
-                    return Body.Leggings;
-                case (4):
-                    return Body.Boots;
-                default:
-                    return Body.Shirt;
-            }
         }
 
         // PROPERTIES //

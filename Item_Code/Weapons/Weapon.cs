@@ -79,8 +79,19 @@ namespace Landlord
         {
             string description = "";
 
+            string particle = "A";
+            switch (weaponName[0]) {
+                case ('a'): case ('e'):
+                case ('i'): case ('o'):
+                case ('u'):
+                case ('A'): case ('E'):
+                case ('I'): case ('O'):
+                case ('U'):
+                    particle = "An";
+                    break;
+            }
             if (enchantments == null || enchantments.Count == 0)
-                return $"An unenchanted {weaponName}.";
+                return $"{particle} {weaponName}.";
             else
             {
                 description = $"An enchanted {weaponName} which ";

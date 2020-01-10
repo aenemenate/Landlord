@@ -92,11 +92,11 @@ namespace Landlord
             bool nextToPlayer = Position.NextToPoint(Program.Player.Position);
             bool wantToKillPlayer = CurrentDesires[DesireType.KillPlayer] > 0;
             if (nextToPlayer && wantToKillPlayer) {
-                LaunchAttack(Program.Player);
+                Attack(Program.Player);
                 CreaturePlacementHelper.flag = true; // What's going on here?
             }
             else if (itemSpots.Count > 0 && CurrentDesires[DesireType.Treasure] > 0) {
-                if (CanCarryItem((Item)blocks[itemSpots[0].X * width + itemSpots[0].Y])) {
+                if (this.CheckCanCarryItem((Item)blocks[itemSpots[0].X * width + itemSpots[0].Y])) {
                     GetItem(itemSpots[0]);
                     CurrentDesires[DesireType.Treasure] = BaseDesires[DesireType.Treasure];
                 }

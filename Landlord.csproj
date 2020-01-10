@@ -108,8 +108,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bresenhams.cs" />
+    <Compile Include="CreatureHelper.cs" />
+    <Compile Include="DeletionManager.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="AI_Classes\Animal.cs" />
+    <Compile Include="InteractionsManager.cs" />
     <Compile Include="Item_Code\Materials\Components\Handle.cs" />
     <Compile Include="Item_Code\Materials\Components\Hilt.cs" />
     <Compile Include="Item_Code\Materials\Resources\Leaf.cs" />
@@ -234,7 +237,7 @@
     <Compile Include="Pathfinder.cs" />
     <Compile Include="Map_Code\Proc_Gen\Dungeons\RoomPlacementAlgorithm.cs" />
     <Compile Include="RayCaster.cs" />
-    <Compile Include="Game_States\Save_Load\ReadWrite.cs" />
+    <Compile Include="ReadWrite.cs" />
     <Compile Include="Map_Code\Proc_Gen\World_Map\SimplexNoise.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Program.cs" />

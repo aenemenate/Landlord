@@ -62,7 +62,7 @@ namespace Landlord
 
             if (victimHPDamageType != DamageType.None)
             {
-                int damageTaken = victim.DefendAgainstDmg(victimHPDamageType, victimResourceDamage[0], victim.Position);
+                int damageTaken = victim.Defend(victimHPDamageType, victimResourceDamage[0], victim.Position);
                 victimText += $" recieved {damageTaken} {victimHPDamageType.ToString()} damage,";
             }
             if (victimResourceDamage[1] > 0)

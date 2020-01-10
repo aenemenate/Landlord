@@ -12,8 +12,8 @@ namespace Landlord
     {
         private int width, height;
         private Point worldIndex;
-        private Block[] map; // x * width + y
-        private Tile[] floor; // x * width + y
+        private Block[] map; //<-{x * width + y}
+        private Tile[] floor;//<--^
         private List<Creature> creatures;
         private List<Projectile> projectiles;
         private DijkstraMaps dijkstraMaps;
@@ -24,7 +24,7 @@ namespace Landlord
         private Point dungeonEntrance;
         private Dungeon dungeon;
 
-        // CONSTRUCTOR //
+        // CONSTRUCTORS
 		public MapTile(Point size, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
             width = size.X;
@@ -41,7 +41,8 @@ namespace Landlord
         public MapTile()
         {
         }
-        // FUNCTIONS //
+
+        // FUNCTIONS
         public void Init(Random rng, Point worldIndex, float[,] heightMap, List<string> plantTypes, List<string> creatureTypes, bool containsDungeon)
         {
             WorldMapGeneration.GenerateForestMap(rng, this, plantTypes, creatureTypes, worldIndex, heightMap);
@@ -266,7 +267,8 @@ namespace Landlord
         {
             return new Point(Program.Window.CalculateMapStartPoint().X + (mousePos.X), Program.Window.CalculateMapStartPoint().Y + mousePos.Y);
         }
-        // PROPERTIES //
+
+        // PROPERTIES
         public Block this[int x, int y] {
             get { return map[x * width + y]; }
             set { map[x * width + y] = value; }

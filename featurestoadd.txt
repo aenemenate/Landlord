@@ -59,6 +59,10 @@ in smithing menu, crafting recipes that use smith are displayed
 ENGINE:
 *support for variable maptile size
 save each maptile individually
+add ItemDistributor class which is called to get items
+add ItemDistributor.GetRandWeaponMaterial()
+change items to take a material in their constructor
+add ability to load custom weapons from xml
 
 LATER:
 
@@ -66,6 +70,15 @@ add skills
 add 3 skills for each class:
     warrior: shield bash, charge, spin slash
     rogue: improve focus, dual wield, slip around
+
+add scrolls
+add skill books
+add 3 spell skills:
+    destruction: cast fireball, cast shock, cast frost
+
+add fire effects
+
+add grass patches in caves
 
 campfires, craftable
  -> increases sight when nearby

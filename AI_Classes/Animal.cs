@@ -88,7 +88,7 @@ namespace Landlord
                                 RandomMove();
                             else if (this.Position.NextToPoint(cFocus.Position)) {
                                 if (cFocus.Alive)
-                                    LaunchAttack(cFocus);
+                                    Attack(cFocus);
                                 else
                                     GetMeatFromCreatureInventory(cFocus);
                             }

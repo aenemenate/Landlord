@@ -11,7 +11,7 @@ DamageTypes: Blunt, Shear, Magic, Burn, Frost, Shock, Poison, None
 the game randomly selects a static value from the ranges defined with the min and max attributes
 
 StatusEffects:
-  None: Does nothing. Why would you even read this, you dumb piece of shit?
+  None: 
   Paralyzed: Stops the user from moving for a certain amount of seconds times the amount of turns (for example, if the effect is set to 3 and turns is set to 2, you will be paralyzed for 3 seconds twice, elapsing a total of 6 seconds)
   Frozen: Makes all actions take 1.5x as long to perform
   

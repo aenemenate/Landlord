@@ -165,14 +165,17 @@ namespace Landlord
             }
         }
 
-        public static void GenerateRivers( Random rng, int width, int height, float[,] heightMap )
+        //carves the heightmap
+        public static void GenerateRivers( Random rng, int worldwidth, int worldheight, int tilewidth, int tileheight, float[,] heightMap )
         {
+            int width = worldwidth * tilewidth;
+            int height = worldheight * tileheight;
             Point leftPoint;
             Point rightPoint;
             do {
-                leftPoint = new Point(1, rng.Next(2, 397));
-                rightPoint = new Point(398, rng.Next(2, 397));
-            } while (leftPoint.Y % 100 > 90 || leftPoint.Y % 100 < 10 || rightPoint.Y % 100 > 90 || rightPoint.Y % 100 < 10 ||
+                leftPoint = new Point(1, rng.Next(2, height - 3));
+                rightPoint = new Point(width - 2, rng.Next(2, height - 3));
+            } while (leftPoint.Y % tileheight > 90 || leftPoint.Y % tileheight < 10 || rightPoint.Y % tileheight > 90 || rightPoint.Y % tileheight < 10 ||
                      heightMap[leftPoint.X, leftPoint.Y] >= StoneCutoff ||
                        heightMap[rightPoint.X, rightPoint.Y] >= StoneCutoff);
             Generate5x5River( leftPoint, rightPoint, heightMap );
@@ -207,8 +210,8 @@ namespace Landlord
             // find high and low spots
             List<Point> potentialRiverSprings = new List<Point>(); // prospects will have a height over 165 while having no higher neighbors
             List<Point> potentialRiverDeposits = new List<Point>();
-            for (int i = 1; i < 399; i++)
-                for (int j = 1; j < 399; j++)
+            for (int i = 1; i < width - 1; i++)
+                for (int j = 1; j < height - 1; j++)
                 {
                     if (CheckedCanSpawnRiverHere( i, j ) && rng.Next( 0, 100 ) > 40)
                         potentialRiverSprings.Add( new Point( i, j ) );

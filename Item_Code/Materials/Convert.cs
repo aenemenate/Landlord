@@ -11,15 +11,16 @@ namespace Landlord
     {
         public static double GetWeightOfItem(Item item)
         {
+            // 0.036 is the density of water
             if (item is Potion)
                 return Physics.Densities[item.Material] * (FromCubicFeetToCubicInches(item.Volume) - FromCubicFeetToCubicInches(item.Volume - item.Volume / 8))
-                    + Physics.Densities[Material.Water] * FromCubicFeetToCubicInches(item.Volume - item.Volume / 9);
-            else if (item is EmptyBottle)
+                    + 0.036 * FromCubicFeetToCubicInches(item.Volume - item.Volume / 9);
+            if (item is EmptyBottle)
                 return Physics.Densities[item.Material] * (FromCubicFeetToCubicInches(item.Volume) - FromCubicFeetToCubicInches(item.Volume - item.Volume / 3));
+            
             if (!item.Hollow)
                 return Physics.Densities[item.Material] * FromCubicFeetToCubicInches(item.Volume);
-            else
-                return Physics.Densities[item.Material] * (FromCubicFeetToCubicInches(item.Volume) - FromCubicFeetToCubicInches(item.Volume - item.Volume / 8));
+            return Physics.Densities[item.Material] * (FromCubicFeetToCubicInches(item.Volume) - FromCubicFeetToCubicInches(item.Volume - item.Volume / 8));
         }
         
         public static double FromCubicFeetToCubicInches(double cubicFeet)

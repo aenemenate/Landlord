@@ -27,7 +27,6 @@ namespace Landlord
         Bone,
         Plant,
         Meat,
-        Water,
         Coal,
         Null
     }
@@ -73,10 +72,10 @@ namespace Landlord
         private static void InitializeDensities()
         {
             densities.Add(Material.Wood, 0.026);
+            densities.Add(Material.Dirt, 0.063);
+            densities.Add(Material.Stone, 0.09);
             densities.Add(Material.Tin, 0.26);
             densities.Add(Material.Zinc, 0.258);
-            densities.Add( Material.Coal, 0.05 );
-            densities.Add( Material.Stone, 0.09 );
             densities.Add(Material.Copper, 0.323);
             densities.Add(Material.Bronze, 0.34);
             densities.Add(Material.Brass, 0.31);
@@ -88,21 +87,25 @@ namespace Landlord
             densities.Add(Material.Cloth, 0.014);
             densities.Add(Material.Silk, 0.009);
             densities.Add(Material.Bone, 0.052);
-            densities.Add(Material.Meat, 0.028);
             densities.Add(Material.Plant, 0.016);
-            densities.Add(Material.Water, 0.036);
+            densities.Add(Material.Meat, 0.028);
+            densities.Add(Material.Coal, 0.05);
         }
 
         private static void InitializeImpactYields()
         {
             impactYields.Add(Material.Cloth, 1);
+            impactYields.Add(Material.Silk, 1);
 
             impactYields.Add(Material.Glass, 1);
             impactYields.Add(Material.Plant, 1);
             impactYields.Add(Material.Meat, 2);
             impactYields.Add(Material.Leather, 2);
+            impactYields.Add(Material.Zinc, 6);
+            impactYields.Add(Material.Tin, 7);
             impactYields.Add(Material.Bone, 8);
             impactYields.Add( Material.Coal, 8 );
+            impactYields.Add(Material.Wood, 9);
             impactYields.Add( Material.Stone, 13 );
 
             impactYields.Add(Material.Copper, 20);
@@ -116,14 +119,18 @@ namespace Landlord
         private static void InitializeImpactFractures()
         {
             impactFractures.Add(Material.Cloth, 250);
+            impactFractures.Add(Material.Silk, 350);
 
             impactFractures.Add(Material.Glass, 12);
             impactFractures.Add(Material.Bone, 50);
             impactFractures.Add(Material.Plant, 50);
             impactFractures.Add(Material.Meat, 125);
             impactFractures.Add(Material.Leather, 125);
-            impactFractures.Add( Material.Stone, 200 );
-            impactFractures.Add( Material.Coal, 200 );
+            impactFractures.Add(Material.Wood, 200);
+            impactFractures.Add(Material.Stone, 200);
+            impactFractures.Add(Material.Coal, 200);
+            impactFractures.Add(Material.Zinc, 200);
+            impactFractures.Add(Material.Tin, 200);
 
             impactFractures.Add(Material.Copper, 250);
             impactFractures.Add(Material.Brass, 300);
@@ -136,14 +143,18 @@ namespace Landlord
         private static void InitializeShearYields()
         {
             shearYields.Add(Material.Cloth, 1);
+            shearYields.Add(Material.Silk, 1);
             shearYields.Add(Material.Meat, 1);
             shearYields.Add(Material.Plant, 1);
             shearYields.Add(Material.Leather, 1);
+            shearYields.Add(Material.Wood, 3);
 
             shearYields.Add(Material.Bone, 10);
+            shearYields.Add(Material.Zinc, 10);
             shearYields.Add( Material.Coal, 13 );
+            shearYields.Add(Material.Tin, 15);
             shearYields.Add(Material.Stone, 16);
-            shearYields.Add(Material.Glass, 20);
+            shearYields.Add(Material.Glass, 19);
 
             shearYields.Add(Material.Copper, 21);
             shearYields.Add(Material.Brass, 26);
@@ -156,14 +167,18 @@ namespace Landlord
         private static void InitializeShearFractures()
         {
             shearFractures.Add(Material.Cloth, 1);
+            shearFractures.Add(Material.Silk, 1);
 
             shearFractures.Add(Material.Meat, 15);
             shearFractures.Add(Material.Plant, 15);
             shearFractures.Add(Material.Leather, 25);
-            shearFractures.Add(Material.Bone, 75);
-            shearFractures.Add( Material.Coal, 100 );
+            shearFractures.Add(Material.Bone, 50);
+            shearFractures.Add(Material.Wood, 75);
+            shearFractures.Add(Material.Coal, 100);
+            shearFractures.Add(Material.Tin, 100);
+            shearFractures.Add(Material.Zinc, 100);
             shearFractures.Add( Material.Stone, 100 );
-            shearFractures.Add(Material.Glass, 500);
+            shearFractures.Add(Material.Glass, 200);
 
             shearFractures.Add(Material.Copper, 100);
             shearFractures.Add(Material.Brass, 150);
@@ -194,7 +209,6 @@ namespace Landlord
             materialNames.Add( Material.Bone, "bone" );
             materialNames.Add(Material.Meat, "meat");
             materialNames.Add(Material.Plant, "plant");
-            materialNames.Add( Material.Water, "water" );
         }
 
         private static void InitializeMaterialColors()
@@ -218,10 +232,8 @@ namespace Landlord
             materialColors.Add( Material.Bone, new Color( 227, 218, 201 ) );
             materialColors.Add( Material.Plant, new Color(58, 95, 11) );
             materialColors.Add( Material.Meat, new Color(209, 0, 0) );
-            materialColors.Add( Material.Water, new Color( 64, 164, 223 ) );
         }
 
-        
         public static List<Material> GetArmorSkillMaterials (Skill skill)
         {
             switch (skill)
@@ -235,46 +247,29 @@ namespace Landlord
             }
         }
         
-
         // PARAMETERS
-
-        public static Dictionary<Material, double> Densities
-        {
+        public static Dictionary<Material, double> Densities {
             get { return densities; }
         }
-
-        public static Dictionary<Material, double> ImpactYields
-        {
+        public static Dictionary<Material, double> ImpactYields {
             get { return impactYields; }
         }
-
-        public static Dictionary<Material, double> ImpactFractures
-        {
+        public static Dictionary<Material, double> ImpactFractures {
             get { return impactFractures; }
         }
-
-        public static Dictionary<Material, double> ShearYields
-        {
+        public static Dictionary<Material, double> ShearYields {
             get { return shearYields; }
         }
-
-        public static Dictionary<Material, double> ShearFractures
-        {
+        public static Dictionary<Material, double> ShearFractures {
             get { return shearFractures; }
         }
-
-        public static Dictionary<Rarity, double> RarityMultipliers
-        {
+        public static Dictionary<Rarity, double> RarityMultipliers {
             get { return rarityMultipliers; }
         }
-
-        public static Dictionary<Material, string> MaterialNames
-        {
+        public static Dictionary<Material, string> MaterialNames {
             get { return materialNames; }
         }
-
-        public static Dictionary<Material, Color> MaterialColors
-        {
+        public static Dictionary<Material, Color> MaterialColors {
             get { return materialColors; }
             set { materialColors = value; }
         }

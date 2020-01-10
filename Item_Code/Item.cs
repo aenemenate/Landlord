@@ -58,6 +58,8 @@ namespace Landlord
         private ItemType itemType;            // VAR itemType denotes which category of items this item belongs to.
         private Rarity rarity;              // VAR rarity indicates how valuable an item is
         private double volume;            // VAR volume stores the size of an item. It's measured in cubic feet
+        private double impactDurability;
+        private double shearDurability;
         private DamageType damageType;  // VAR damageType determines what kind of damage this item deals in combat (bulky items deal blunt damage and sharp ones deal shear damage).
         private bool hollow;          // VAR hollow is used to help determine the weight of an item. Hollow items wiegh less than solid ones, after all.
         private Block blockPlacedOn;
@@ -76,6 +78,7 @@ namespace Landlord
             this.damageType = damageType;
             Material = DetermineMaterial();
             rarity = DetermineRarity();
+            DetermineDurability();
 
             blockPlacedOn = null;
         }
@@ -85,24 +88,29 @@ namespace Landlord
             Type = BlockType.Item;
         }
 
-
         // FUNCTIONS
-
         public abstract string DetermineName(bool identifying);
-
         public abstract string DetermineDescription();
-
         public abstract Material DetermineMaterial();
-
         public abstract Rarity DetermineRarity();
-
-
+        public void DetermineDurability()
+        {
+            impactDurability = Physics.ImpactFractures[Material];
+            shearDurability = Physics.ShearFractures[Material];
+        }
+        public bool OnHit(Block blockHit) {
+            Material oMaterial = blockHit != null ? blockHit.Material : Material.Bone;
+            impactDurability -= Math.Max(0, Physics.ImpactYields[oMaterial] - Physics.ImpactYields[Material]/2);
+            if (blockHit is Weapon w && w.DamageType == DamageType.Shear)
+                shearDurability -= Math.Max(0, Physics.ShearYields[oMaterial] - Physics.ShearYields[Material]/2);
+            if (impactDurability <= 0 || shearDurability <= 0)
+                return false;
+            return true;
+        }
         public void Identify()
         {
             Program.Identification.IdentifyItem(Name);
         }
-
-
         public string ReturnRarityString()
         {
             switch(rarity)
@@ -118,7 +126,6 @@ namespace Landlord
             }
             return "";
         }
-
         public string ReturnIdentifiedString()
         {
             if (!Identified)
@@ -126,7 +133,6 @@ namespace Landlord
             else
                 return "";
         }
-
         public Color ReturnRarityColor()
         {
             switch (rarity)
@@ -142,7 +148,6 @@ namespace Landlord
             }
             return Color.AntiqueWhite;
         }
-        
         public DamageType ReturnRandomDamageType()
         {
             int maxValue = 0;
@@ -154,8 +159,6 @@ namespace Landlord
 
             return (DamageType)rand;
         }
-        
-
         public Tuple<byte, Color> GetComparisonArrow(Item otherItem)
         {
             const byte betterArrow = 24, worseArrow = 25, sameArrow = 45;
@@ -224,6 +227,14 @@ namespace Landlord
         public double Volume {
             get { return volume; }
             set { volume = value; }
+        }
+        public double ImpactDurability {
+            get { return impactDurability; }
+            set { impactDurability = value; }
+        }
+        public double ShearDurability {
+            get { return shearDurability; }
+            set { shearDurability = value; }
         }
         public bool Hollow {
             get { return hollow; }

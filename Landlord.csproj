@@ -229,7 +229,7 @@
     <Compile Include="Map_Code\CreaturePlacementHelper.cs" />
     <Compile Include="GUI.cs" />
     <Compile Include="Item_Code\Item.cs" />
-    <Compile Include="Item_Code\Materials\MaterialProperties.cs" />
+    <Compile Include="Physics.cs" />
     <Compile Include="Menus.cs" />
     <Compile Include="Pathfinder.cs" />
     <Compile Include="Map_Code\Proc_Gen\Dungeons\RoomPlacementAlgorithm.cs" />

@@ -13,6 +13,7 @@ namespace Landlord
         {
             if (twoHanded) Volume = 0.009;
             this.Material = Material.Wood;
+            DetermineDurability();
         }
 
         public Torch() : base()

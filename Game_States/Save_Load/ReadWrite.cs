@@ -51,7 +51,7 @@ namespace Landlord
         public static void LoadGame()
         {
             player = new Player();
-            worldMap = new WorldMap(100, 100, "");
+            worldMap = new WorldMap(4, 4, 100, 100, "");
             identification = new Identification();
             DirectoryInfo d = new DirectoryInfo(@"saves\");
             FileInfo[] Files = d.GetFiles("*.lls");

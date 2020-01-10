@@ -26,15 +26,27 @@ buildings will show on world map
 *can craft torch from handle, hilt, and coal
 torch is always lit (for now)
 
-item durability
-  -> add property
-  -> DetermineDurability(); instantiates from material fractures
-  -> using an item will decrease durability
-  -> call on break when durability reaches 0, the item will change into a new item
-add item.onbreak
-add item.onland (for when thrown)
+USABILITY:
+*display durability
+when looking at a monster, an arrow beside its name will show its danger level
+
+GAMEPLAY:
+*item durability
+  -> *add property
+  -> *DetermineDurability(); instantiates from material fractures
+  -> *using an item will decrease durability
+populate all material properties
+move durability from item to block
+ -> creature now uses hit block to hit block, breaks it based on durability factors
+ -> every block now has an onbreak function
 add throwing
 show equipment on character sheet
+
+ENGINE:
+*support for variable maptile size
+save each maptile individually
+
+LATER:
 
 add skills
 add 3 skills for each class:

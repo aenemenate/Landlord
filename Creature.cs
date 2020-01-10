@@ -357,8 +357,10 @@ namespace Landlord
                 int multiplier = 1;
                 if (weapon is Weapon w && w.TwoHanded) multiplier = 2;
                 int damage = weapon.GetWepDmg(this) * multiplier;
-
                 DamageType dmgType = weapon.GetWepDmgType();
+                Armor armorpiece = defender.GetRandomArmorPiece();
+                if (!weapon.OnHit(armorpiece)) BreakWeapon(weapon);
+                if (!armorpiece.OnHit(weapon)) BreakArmorPiece(armorpiece);
 
                 int dmgDealt = defender.DefendAgainstDmg(dmgType, damage, position);
 
@@ -980,6 +982,31 @@ namespace Landlord
                 Unequip(body.OffHand);
         }
 
+        private void BreakArmorPiece(Armor armorpiece)
+        {
+            if (Body.Helmet == armorpiece)
+                Body.Helmet = null;
+            if (Body.ChestPiece == armorpiece)
+                Body.ChestPiece = null;
+            if (Body.Shirt == armorpiece)
+                Body.Shirt = null;
+            if (Body.Gauntlets == armorpiece)
+                Body.Gauntlets = null;
+            if (Body.Leggings == armorpiece)
+                Body.Leggings = null;
+            if (Body.Boots == armorpiece)
+                Body.Boots = null;
+            Program.MsgConsole.WriteLine($"{Name}'s {armorpiece.Name} broke!");
+        }
+        private void BreakWeapon(Item weapon)
+        {
+            if (Body.MainHand == weapon)
+                Body.MainHand = null;
+            if (Body.OffHand == weapon)
+                Body.OffHand = null;
+            Program.MsgConsole.WriteLine($"{Name}'s {weapon.Name} broke!");
+        }
+
         private void LvlWeaponSkill(Item weapon, int amount)
         {
             if (weapon is MeleeWeapon mWeapon)
@@ -1111,6 +1138,25 @@ namespace Landlord
             }
             else
                 return Stats.Skills[Skill.Brawling];
+        }
+        public Armor GetRandomArmorPiece()
+        {
+            int rand = Program.RNG.Next(0, 5);
+            switch (rand)
+            {
+                case (0):
+                    return Body.Helmet;
+                case (1):
+                    return (Body.ChestPiece != null) ? (Armor)Body.ChestPiece : (Armor)Body.Shirt;
+                case (2):
+                    return Body.Gauntlets;
+                case (3):
+                    return Body.Leggings;
+                case (4):
+                    return Body.Boots;
+                default:
+                    return Body.Shirt;
+            }
         }
 
         // PROPERTIES //

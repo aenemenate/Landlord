@@ -24,6 +24,8 @@ namespace Landlord
             Inventory.Add( craftPouch );
             Inventory.Add( new Axe( true ) { WeaponName = "pickaxe", Material = Material.Copper } );
             Inventory.Add( new Torch(false) );
+            foreach (Item i in Inventory)
+                i.DetermineDurability();
 
             Gold = 550;
             Class = uclass;

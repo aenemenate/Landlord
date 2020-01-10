@@ -124,7 +124,7 @@ namespace Landlord
         public int Print( Console console, int x, int y, string str, int length, Color foreColor )
         {
             str = str + ' ';
-            int lines = 0;
+            int lines = 1;
             int endIndex = str.LastIndexOf( ' ' );
             string nextLine = str.Substring( 0, endIndex + 1 );
             while (true)
@@ -153,7 +153,7 @@ namespace Landlord
         public int Print( Console console, int x, int y, string str, int length, Color foreColor, Color backColor )
         {
             str = str + ' ';
-            int lines = 0;
+            int lines = 1;
             int endIndex = str.LastIndexOf( ' ' );
             string nextLine = str.Substring( 0, endIndex + 1 );
             while (true)

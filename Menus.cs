@@ -260,7 +260,7 @@ namespace Landlord
                             blackListedPoints.Add(adjacentPoint);
                     foreach (Point blackListedPoint in blackListedPoints)
                         adjacentPoints.Remove(blackListedPoint);
-                    int plotSize = (worldView.GetLength(0) / 5);
+                    int plotSize = (worldView.GetLength(0) / Program.WorldMap.Width);
                     foreach (Point adjacentPoint in adjacentPoints)
                     {
                         //bool adjacentPointInSameTile = adjacentPoint.X / plotSize == point.X / plotSize && adjacentPoint.Y / plotSize == point.Y / plotSize;
@@ -349,8 +349,8 @@ namespace Landlord
                         DetermineTile(ref mountainSpots, x, y);
 
                 // set dungeon entrances
-                for (int i = 0; i < 4; i++)
-                    for (int j = 0; j < 4; j++)
+                for (int i = 0; i < Program.WorldMap.Width; i++)
+                    for (int j = 0; j < Program.WorldMap.Height; j++)
                         if (Program.WorldMap[i, j].DungeonEntrance != null) {
                             Point dungEntrance = new Point(Program.WorldMap[i, j].DungeonEntrance.X + (i * hectareWidth), Program.WorldMap[i, j].DungeonEntrance.Y + (j * hectareHeight));
                             bool tileVisible = TileNextToExploredArea(new Point(dungEntrance.X / granularity, dungEntrance.Y / granularity));
@@ -452,9 +452,9 @@ namespace Landlord
                     }
                 }
 
-                Program.Console.Print(startPoint.X + WorldView.GetLength( 0 ) / 2 - 4, startPoint.Y - 1, "TOWN MAP", Color.Gold, Color.Black);
+                Program.Console.Print(startPoint.X + WorldView.GetLength( 0 ) / 2 - 4, startPoint.Y - 1, Program.WorldMap.Name, Color.Gold, Color.Black);
 
-                if (mouseWorldIndex.X >= 0 && mouseWorldIndex.X < 4 && mouseWorldIndex.Y >= 0 && mouseWorldIndex.Y < 4)
+                if (mouseWorldIndex.X >= 0 && mouseWorldIndex.X < Program.WorldMap.Width && mouseWorldIndex.Y >= 0 && mouseWorldIndex.Y < Program.WorldMap.Height)
                     DrawTooltip(explored, unexplored, mouseWorldIndex, mousePos);
                 else if (SadConsole.Global.MouseState.LeftClicked)
                 {
@@ -663,7 +663,7 @@ namespace Landlord
             }
             static public void GenerateDungeonScreen()
             {
-                bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerSecond * 25);
+                bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerSecond * 30);
                 if (loadingFailed)
                     loadThread.Abort();
                 if (ClickedDialog)
@@ -693,11 +693,8 @@ namespace Landlord
             static public void GenerateWorldMapScreen()
             {
                 bool loadingFailed = DateTime.Now - startLoad > new TimeSpan(TimeSpan.TicksPerMinute * 2);
-                if (loadingFailed) { 
+                if (loadingFailed)
                     loadThread.Abort();
-                    Program.CurrentState = new MainMenu();
-                    return;
-                }
                 if (ClickedDialog) ClickedDialog = !ClickedDialog;
                 if (!loading || !loadThread.IsAlive) {
                     startLoad = DateTime.Now;
@@ -1441,7 +1438,7 @@ namespace Landlord
                     SadConsole.Global.CurrentScreen.Children.Remove(Program.ControlsConsole);
                     Program.CurrentState = new GeneratingWorldMap(uclass, "male", name);
 
-                    Program.WorldMap = new WorldMap(100, 100, "Test");
+                    Program.WorldMap = new WorldMap(4, 4, 100, 100, "Your Town");
                     Program.Identification = new Identification(true);
                     Program.TimeHandler = new TimeHandler(8, 0, 0, 1);
                     Program.Factions = new List<Faction>();

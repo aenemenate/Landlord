@@ -12,6 +12,7 @@ namespace Landlord
         public event EventHandler<EventArgs> OnFinishedGenerating;
 
         private int tileWidth, tileHeight;
+        private int width, height;
         private List<string> creatureTypes;
         private List<string> plantTypes;
         private MapTile[,] worldMap;
@@ -19,13 +20,13 @@ namespace Landlord
         private int seed;
         private string name;
 
-        private int plantsInterval; // how many times have the plants been updated this playthrough
+        private int updateInterval; // how many times updates, used to modulo for certain events
         private int completedUpdateHour;
 
 
         // CONSTRUCTORS //
 
-        public WorldMap (int width, int height, string name, int seed = 0)
+        public WorldMap (int width, int height, int tilewidth, int tileheight, string name, int seed = 0)
         {
             Random rng = new Random();
             if (seed == 0)
@@ -33,10 +34,12 @@ namespace Landlord
             else
                 this.seed = seed;
 
-            tileWidth = width;
-            tileHeight = height;
+            this.width = width;
+            this.height = height;
+            tileWidth = tilewidth;
+            tileHeight = tileheight;
             this.name = name;
-            plantsInterval = 0;
+            updateInterval = 0;
             completedUpdateHour = 8;
 
             //GenerateWorldMap(width, height, name);
@@ -51,7 +54,7 @@ namespace Landlord
 
         public void GenerateWorldMap()
         {
-            worldMap = new MapTile[4, 4];
+            worldMap = new MapTile[width, height];
             creatureTypes = DataReader.GetOverworldCreatureList();
             plantTypes = DataReader.GetPlantList();
 
@@ -59,15 +62,15 @@ namespace Landlord
             SimplexNoise.Seed = this.seed;
             float scale = .005f;
 
-            heightMap = SimplexNoise.Calc2D(tileWidth * 4, tileHeight * 4, scale);
+            heightMap = SimplexNoise.Calc2D(tileWidth * width, tileHeight * height, scale);
             List<Point> potentialDungeons = new List<Point>();
             List<Point> dungeons = new List<Point>();
             bool dungeon = false;
 
-            WorldMapGeneration.GenerateRivers( rng, tileWidth, tileHeight, heightMap );
+            WorldMapGeneration.GenerateRivers( rng, width, height, tileWidth, tileHeight, heightMap );
 
-            for (int i = 0; i < 4; i++)
-                for (int j = 0; j < 4; j++)
+            for (int i = 0; i < width; i++)
+                for (int j = 0; j < height; j++)
                     potentialDungeons.Add(new Point(i, j));
             for (int c = 0; c < 8; c++) {
                 int index = rng.Next(0, potentialDungeons.Count);
@@ -75,8 +78,8 @@ namespace Landlord
                 potentialDungeons.RemoveAt(index);
             }
 
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
                     foreach (Point point in dungeons)
                         if (point.X == i && point.Y == j)
                             dungeon = true;
@@ -96,8 +99,8 @@ namespace Landlord
         {
             for (int i = 0; i < worldMap.GetLength(0); i++)
                 for (int j = 0; j < worldMap.GetLength(1); j++)
-                    worldMap[i, j].UpdatePlants(plantsInterval);
-            plantsInterval++;
+                    worldMap[i, j].UpdatePlants(updateInterval);
+            updateInterval++;
             completedUpdateHour = Program.TimeHandler.CurrentTime.Hour;
         }
         public void CleanSplatters()
@@ -124,6 +127,14 @@ namespace Landlord
             get { return tileHeight; }
             set { tileHeight = value; }
         }
+        public int Width {
+            get { return width; }
+            set { width = value; }
+        }
+        public int Height {
+            get { return height; }
+            set { height = value; }
+        }
         public List<string> CreatureTypes {
             get { return creatureTypes; }
             set { creatureTypes = value; }
@@ -144,9 +155,9 @@ namespace Landlord
             get { return name; ; }
             set { name = value; }
         }
-        public int PlantsInterval {
-            get { return plantsInterval; }
-            set { plantsInterval = value; }
+        public int UpdateInterval {
+            get { return updateInterval; }
+            set { updateInterval = value; }
         }
         public int CompletedUpdateHour {
             get { return completedUpdateHour; }

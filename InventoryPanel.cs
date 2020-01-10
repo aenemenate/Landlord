@@ -644,7 +644,7 @@ namespace Landlord
             color = new Color(100, 116, 136, 0.99F);
             int numlines = Program.Window.Print(GUI.Console, width + 1, 13, item.Description, 18, color);
 
-            // print the weight, volume, and quality
+            // print the weight, volume, and durability
             color = new Color(Color.LightGray, 0.99F);
             string plural = ".";
             if (item.Weight > 1)
@@ -652,6 +652,8 @@ namespace Landlord
             GUI.Console.Print(width + 1, 14 + numlines, "Weight: " + Math.Round(item.Weight, 2) + " lb" + plural, color);
             GUI.Console.Print(width + 1, 14 + numlines + 2, "Size: " + Math.Round(Convert.FromCubicFeetToCubicInches(item.Volume), 2), color);
             GUI.Console.Print( width + 7, 14 + numlines + 3, "cubic inches", color );
+            GUI.Console.Print(width + 1, 14 + numlines + 4, $"Impact Dur.: {item.ImpactDurability / Physics.ImpactFractures[item.Material]*100}%", color);
+            GUI.Console.Print(width + 1, 14 + numlines + 5, $"Shear Dur.: {item.ShearDurability / Physics.ShearFractures[item.Material] * 100}%", color);
 
             int actionsStartY = Program.Console.Height - 7;
 

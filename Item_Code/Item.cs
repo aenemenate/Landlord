@@ -99,9 +99,9 @@ namespace Landlord
             shearDurability = Physics.ShearFractures[Material];
         }
         public bool OnHit(Block blockHit) {
-            Material oMaterial = blockHit != null ? blockHit.Material : Material.Bone;
+            Material oMaterial = (blockHit != null) ? blockHit.Material : Material.Bone;
             impactDurability -= Math.Max(0, Physics.ImpactYields[oMaterial] - Physics.ImpactYields[Material]/2);
-            if (blockHit is Weapon w && w.DamageType == DamageType.Shear)
+            if (blockHit != null && blockHit is Weapon w && w.DamageType == DamageType.Shear)
                 shearDurability -= Math.Max(0, Physics.ShearYields[oMaterial] - Physics.ShearYields[Material]/2);
             if (impactDurability <= 0 || shearDurability <= 0)
                 return false;

@@ -29,18 +29,32 @@ torch is always lit (for now)
 USABILITY:
 *display durability
 when looking at a monster, an arrow beside its name will show its danger level
+show equipment on character sheet
 
 GAMEPLAY:
 *item durability
   -> *add property
   -> *DetermineDurability(); instantiates from material fractures
   -> *using an item will decrease durability
-populate all material properties
+*populate all material properties
 move durability from item to block
  -> creature now uses hit block to hit block, breaks it based on durability factors
  -> every block now has an onbreak function
 add throwing
-show equipment on character sheet
+add metal ore to game
+add metal smith block
+add crafting recipe that requires smith block
+ -> smith block recipe - takes an ore and spits out a block of the same material
+ -> add recipe for each weapon
+   -> with these recipes, you can select features (namely, whether the weapon is two handed, and which material)
+new feature, monster drops
+ -> monsters can drop an item
+new item, string
+new crafting recipe:
+ -> recipe for bow
+add crafting recipes that require smith block
+add smithing menu, opened when click on smith block
+in smithing menu, crafting recipes that use smith are displayed
 
 ENGINE:
 *support for variable maptile size

@@ -359,8 +359,8 @@ namespace Landlord
                 int damage = weapon.GetWepDmg(this) * multiplier;
                 DamageType dmgType = weapon.GetWepDmgType();
                 Armor armorpiece = defender.GetRandomArmorPiece();
-                if (!weapon.OnHit(armorpiece)) BreakWeapon(weapon);
-                if (!armorpiece.OnHit(weapon)) BreakArmorPiece(armorpiece);
+                if (weapon != null && !weapon.OnHit(armorpiece)) BreakWeapon(weapon);
+                if (armorpiece != null && !armorpiece.OnHit(weapon)) BreakArmorPiece(armorpiece);
 
                 int dmgDealt = defender.DefendAgainstDmg(dmgType, damage, position);
 

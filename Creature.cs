@@ -611,7 +611,7 @@ namespace Landlord
             if (weapon is Axe || weapon is Sword) {
                 Random rng = new Random();
                 Tree tree = (Tree)Program.WorldMap[worldIndex.X, worldIndex.Y][pos.X, pos.Y];
-                weapon.OnHit(tree);
+                if(weapon != null) weapon.OnHit(tree);
                 tree.Thickness -= weapon.GetWepDmg(this);
                 ApplyActionCost(weapon.GetWeaponCost(this));
                 if (rng.Next(0, 100) < 30)
@@ -660,7 +660,7 @@ namespace Landlord
                 return;
             if (Body.MainHand is Axe axe && axe.WeaponName == "pickaxe")
             {
-                axe.OnHit(wall);
+                if (axe != null) axe.OnHit(wall);
                 Program.MsgConsole.WriteLine( $"{Name} struck the {wall.Name}" );
                 ApplyActionCost(axe.GetWeaponCost(this) );
                 if (rng.Next( 0, 100 ) < 30)

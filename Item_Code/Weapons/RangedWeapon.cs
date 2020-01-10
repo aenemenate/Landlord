@@ -22,9 +22,5 @@ namespace Landlord
         {
             return;
         }
-        public override Skill GetWeaponSkill()
-        {
-                return Skill.Marksmanship;
-        }
     }
 }

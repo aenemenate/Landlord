@@ -153,7 +153,6 @@ namespace Landlord
                 }
             }
         }
-        public abstract Skill GetWeaponSkill();
 
         // PROPERTIES
         public int MaxEnchantments

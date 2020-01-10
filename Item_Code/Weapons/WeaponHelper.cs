@@ -34,7 +34,6 @@ namespace Landlord
                 returnvalue = 4 - (c.Stats.Skills[Skill.Brawling] / 25);
             return returnvalue * multiplier;
         }
-
         public static int GetWepDmg(this Item weapon, Creature c)
         {
             int damage;
@@ -47,6 +46,23 @@ namespace Landlord
                 damage = (int)(Physics.ShearYields[Material.Bone] * (.5 + (double)c.Stats.Skills[Skill.Brawling] / 200));
             return damage;
 
+        }
+        public static Skill GetWeaponSkill(this Item weapon)
+        {
+            if (weapon is Axe || weapon is Mace)
+                return Skill.HeavyWeapons;
+            else if (weapon is Dagger)
+                return Skill.ShortBlade;
+            else if (weapon is Shield)
+                return Skill.Block;
+            else if (weapon is Spear)
+                return Skill.Spear;
+            else if (weapon is Sword)
+                return Skill.LongBlades;
+            else if (weapon is Bow)
+                return Skill.Marksmanship;
+            else
+                return Skill.Brawling;
         }
 
         public static DamageType GetWepDmgType(this Item weapon)

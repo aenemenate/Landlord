@@ -221,7 +221,7 @@
     <Compile Include="UserInterfaceInput.cs" />
     <Compile Include="Item_Code\Weapons\WeaponEnchantment.cs" />
     <Compile Include="GameState.cs" />
-    <Compile Include="Item_Code\Identification.cs" />
+    <Compile Include="Identification.cs" />
     <Compile Include="Item_Code\Materials\Convert.cs" />
     <Compile Include="Creature.cs" />
     <Compile Include="Map_Code\DungeonFloor.cs" />

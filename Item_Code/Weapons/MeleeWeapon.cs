@@ -22,21 +22,5 @@ namespace Landlord
         {
             return;
         }
-
-        public override Skill GetWeaponSkill()
-        {
-            if (this is Axe || this is Mace)
-                return Skill.HeavyWeapons;
-            else if (this is Dagger)
-                return Skill.ShortBlade;
-            else if (this is Shield)
-                return Skill.Block;
-            else if (this is Spear)
-                return Skill.Spear;
-            else if (this is Sword)
-                return Skill.LongBlades;
-            else
-                return Skill.Brawling;
-        }
     }
 }

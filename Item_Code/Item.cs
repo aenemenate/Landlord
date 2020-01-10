@@ -58,7 +58,6 @@ namespace Landlord
         private ItemType itemType;            // VAR itemType denotes which category of items this item belongs to.
         private Rarity rarity;              // VAR rarity indicates how valuable an item is
         private double volume;            // VAR volume stores the size of an item. It's measured in cubic feet
-        private double durability;
         private DamageType damageType;  // VAR damageType determines what kind of damage this item deals in combat (bulky items deal blunt damage and sharp ones deal shear damage).
         private bool hollow;          // VAR hollow is used to help determine the weight of an item. Hollow items wiegh less than solid ones, after all.
         private Block blockPlacedOn;
@@ -156,6 +155,7 @@ namespace Landlord
             return (DamageType)rand;
         }
         
+
         public Tuple<byte, Color> GetComparisonArrow(Item otherItem)
         {
             const byte betterArrow = 24, worseArrow = 25, sameArrow = 45;
@@ -193,48 +193,56 @@ namespace Landlord
         }
 
         // PARAMETERS
+
         public ItemType ItemType {
             get { return itemType; }
             set { itemType = value; }
         }
+
         public Rarity Rarity {
             get { return rarity; }
             set { rarity = value; }
         }
+
         public DamageType DamageType {
             get { return damageType; }
             set { damageType = value; }
         }
+
         public double Damage {
             get { return damageType == DamageType.Blunt ? Physics.ImpactYields[Material] : Physics.ShearYields[Material]; }
         }
+
         public string Description {
             get { return DetermineDescription(); }
         }
+
         new public string Name {
             get { return DetermineName(false); }
         }
+
         public string IDName {
             get { return DetermineName(true); }
         }
+
         public double Weight {
             get { return Convert.GetWeightOfItem(this); }
         }
+
         public double Volume {
             get { return volume; }
             set { volume = value; }
         }
-        public double Durability {
-            get { return durability; }
-            set { durability = value; }
-        }
+
         public bool Hollow {
             get { return hollow; }
             set { hollow = value; }
         }
-        public bool Identified {
+
+        public bool Identified{
             get { return Program.Identification.IsThisIdentified(IDName); }
         }
+
         public Block BlockPlacedOn {
             get { return blockPlacedOn; }
             set { blockPlacedOn = value; }

@@ -20,8 +20,7 @@ namespace Landlord
         {
             bool canCraft = DetermineIfCanCraft(craftingRecipe);
 
-            if (canCraft)
-            {
+            if (canCraft) {
                 crafting = true;
                 timeStarted = Program.TimeHandler.CurrentTime;
                 ConsumeCraftingComponents(craftingRecipe);

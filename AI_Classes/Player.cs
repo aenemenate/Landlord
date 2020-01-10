@@ -7,7 +7,6 @@ namespace Landlord
     
     class Player : Creature
     {
-        private List<Point> path = null;
         private bool pausePathing = false;
         private int dangerCount = 0;
         private List<Creature> localCreatures = new List<Creature>();
@@ -104,39 +103,7 @@ namespace Landlord
             HandleVisibility();
         }
 
-
-        public void SetPath(Point goal)
-        {
-            try {
-                path = Pathfinder.FindPath( WorldIndex, CurrentFloor, Position, goal );
-            }
-            catch {
-                Program.MsgConsole.WriteLine( "A path couldn't be found." );
-            }
-        }
-
-        public void FollowPath()
-        {
-            if (path == null)
-                return;
-
-            if (path.Count != 0) {
-                Move(path[0], true);
-                path.RemoveAt(0);
-                return;
-            }
-
-            path = null;
-        }
-
-
-
         // PROPERTIES
-
-        public List<Point> Path {
-            get { return path; }
-            set { path = value; }
-        }
         public int DangerCount
         {
             get { return dangerCount; }

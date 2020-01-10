@@ -22,6 +22,7 @@ namespace Landlord
 
         private int sightDist;
         private List<Point> visiblePoints;
+        private List<Point> path = null;
 
         private double gold;
         private List<Item> inventory;
@@ -288,6 +289,17 @@ namespace Landlord
                                                     sightDist;
             visiblePoints = RayCaster.CalculateFOV(effectiveSightDist, this).ToList();
         }
+        public void SetPath(Point goal)
+        {
+            try
+            {
+                Path = Pathfinder.FindPath(WorldIndex, CurrentFloor, Position, goal);
+            }
+            catch
+            {
+                Program.MsgConsole.WriteLine("A path couldn't be found.");
+            }
+        }
 
         public void LaunchAttack(Creature defender)
         {
@@ -510,6 +522,21 @@ namespace Landlord
 
             ApplyActionCost(6);
         }
+        public void FollowPath()
+        {
+            if (Path == null)
+                return;
+
+            if (Path.Count != 0)
+            {
+                Move(Path[0], true);
+                Path.RemoveAt(0);
+                return;
+            }
+
+            Path = null;
+        }
+
         public void Wait()
         {
             ApplyActionCost(1);
@@ -1118,6 +1145,11 @@ namespace Landlord
         public List<Point> VisiblePoints {
             get { return visiblePoints; }
             set { visiblePoints = value; }
+        }
+        public List<Point> Path
+        {
+            get { return path; }
+            set { path = value; }
         }
         public double Gold {
             get { return gold; }

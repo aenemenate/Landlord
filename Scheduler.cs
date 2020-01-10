@@ -48,7 +48,7 @@ namespace Landlord
         {
 
             if (BuildingManager.Paused == false)
-                Program.TimeHandler.CurrentTime.AddTime(1);
+                Program.TimeHandler.CurrentTime.AddTime(30);
             else
                 return;
             
@@ -59,9 +59,8 @@ namespace Landlord
             
             for (int i = 0; i < creatures.Count; i++)
                 if (creatures[i].NextActionTime.IsLessThan(Program.TimeHandler.CurrentTime) || creatures[i].NextActionTime.Equals(Program.TimeHandler.CurrentTime)) {
-                    if (creatures[i] is Player) {
-                        BuildingManager.DeterminePlayerAction();
-                        creatures[i] = Program.Player;
+                    if (creatures[i] is Player p) {
+                        BuildingManager.DetermineCreatureAction(p);
                     }
                     else
                         creatures[i].DetermineAction();
@@ -72,7 +71,7 @@ namespace Landlord
         public static void HandleCraftingScheduling(int secondsToAdvance)
         {
             int counter = 0;
-            int interval = 120;
+            int interval = 60;
 
             Point worldIndex = Program.Player.WorldIndex;
 
@@ -81,18 +80,15 @@ namespace Landlord
                 counter += interval;
 
                 int currentFloor = Program.Player.CurrentFloor;
-
                 UpdateCreatureList(Program.WorldMap[worldIndex.X, worldIndex.Y]);
                 List<Creature> creatures = currentFloor >= 0 ? Program.WorldMap[worldIndex.X, worldIndex.Y].Dungeon.Floors[currentFloor].Creatures : Program.WorldMap[worldIndex.X, worldIndex.Y].Creatures;
-
                 creatures.Sort();
                 for (int i = 0; i < creatures.Count; i++)
                     if (creatures[i].NextActionTime.IsLessThan( Program.TimeHandler.CurrentTime ) || creatures[i].NextActionTime.Equals( Program.TimeHandler.CurrentTime )) {
                         if (creatures[i] is Player == false)
                             creatures[i].DetermineAction();
                         else {
-                            Program.Player.Wait();
-                            creatures[i] = Program.Player;
+                            creatures[i].Wait();
                         }
                     }
                 CheckUpdates();
@@ -104,13 +100,9 @@ namespace Landlord
         {
             if (floor == -1 || floor == -2) {
                 map.Creatures = new List<Creature>();
-                for (int i = map.Blocks.GetLength(0) - 1; i >= 0; i--)
-                    if (map.Blocks[i] is Creature creature) {
-                        if (map.Blocks[i] is Player == false)
+                for (int i = map.Blocks.GetLength(0) - 1; i >= 0; --i)
+                    if (map.Blocks[i] is Creature creature)
                             map.Creatures.Add(creature);
-                        else
-                            map.Creatures.Add(Program.Player);
-                    }
             }
             if (floor == -2) {
                 if (map.Dungeon != null) {

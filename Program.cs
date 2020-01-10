@@ -8,7 +8,7 @@ namespace Landlord
 {
 
     /* Landlord is an open world roguelike with town building elements.
-    Copyright (C) 2019  Tristan S. Williams
+    Copyright (C) 2020  Tristan S. Williams
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -111,17 +111,17 @@ namespace Landlord
                 UserInterfaceInput.HandleKeys();
                 musicHandler.Update();
             }
-        }
-        private static void Render()
-        {
-            if (currentState is Play && 
-                    !(console.Children.Contains(msgConsole.Console) && console.Children.Contains(GUI.Console))) {
+
+            if (currentState is Play && !(console.Children.Contains(msgConsole.Console) && console.Children.Contains(GUI.Console)))
+            {
                 console.Children.Remove(msgConsole.Console);
                 console.Children.Remove(GUI.Console);
                 console.Children.Add(msgConsole.Console);
                 console.Children.Add(GUI.Console);
             }
-
+        }
+        private static void Render()
+        {
             currentState.Render(ref console, ref window);
             if ((currentState is DialogWindow) == false) {
                 foreach (Animation anim in animations)

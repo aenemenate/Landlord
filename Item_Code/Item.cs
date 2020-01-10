@@ -193,56 +193,45 @@ namespace Landlord
         }
 
         // PARAMETERS
-
         public ItemType ItemType {
             get { return itemType; }
             set { itemType = value; }
         }
-
         public Rarity Rarity {
             get { return rarity; }
             set { rarity = value; }
         }
-
         public DamageType DamageType {
             get { return damageType; }
             set { damageType = value; }
         }
-
         public double Damage {
             get { return damageType == DamageType.Blunt ? Physics.ImpactYields[Material] : Physics.ShearYields[Material]; }
         }
-
-        public string Description {
+        public string Description
+        {
             get { return DetermineDescription(); }
         }
-
         new public string Name {
             get { return DetermineName(false); }
         }
-
         public string IDName {
             get { return DetermineName(true); }
         }
-
         public double Weight {
             get { return Convert.GetWeightOfItem(this); }
         }
-
         public double Volume {
             get { return volume; }
             set { volume = value; }
         }
-
         public bool Hollow {
             get { return hollow; }
             set { hollow = value; }
         }
-
         public bool Identified{
             get { return Program.Identification.IsThisIdentified(IDName); }
         }
-
         public Block BlockPlacedOn {
             get { return blockPlacedOn; }
             set { blockPlacedOn = value; }

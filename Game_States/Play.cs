@@ -117,25 +117,20 @@ namespace Landlord
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
 
             Point startPoint = Program.Window.CalculateMapStartPoint();
-            if (PlayerInput.AimingMode == false)
-            {
+            if (PlayerInput.AimingMode == false) {
                 List<Point> guiPath = GUI.CalculatePath(startPoint, Program.Window.Width);
                 if (guiPath != null) {
                     foreach (Point point in guiPath) {
-                        bool pointOutsideMapViewer = point.Y - startPoint.Y < 0
-                             || point.Y - startPoint.Y >= Program.Window.Height
-                                || point.X - startPoint.X < 0
-                                   || point.X - startPoint.X >= Program.Window.Width - StatusPanel.Width;
+                        bool pointOutsideMapViewer = point.Y - startPoint.Y < 0 || point.Y - startPoint.Y >= Program.Window.Height
+                                || point.X - startPoint.X < 0 || point.X - startPoint.X >= Program.Window.Width - StatusPanel.Width;
                         if (pointOutsideMapViewer)
                             continue;
 
-                        if (blocks[point.X * width + point.Y] is Air) {
+                        if (blocks[point.X * width + point.Y] is Air)
                             Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, tiles[point.X * width + point.Y].Graphic,
                                 tiles[point.X * width + point.Y].ForeColor, Color.RoyalBlue);
-                            continue;
-                        }
-
-                        Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, blocks[point.X * width + point.Y].Graphic,
+                        else
+                            Program.Console.SetGlyph(point.X - startPoint.X, point.Y - startPoint.Y, blocks[point.X * width + point.Y].Graphic,
                                 blocks[point.X * width + point.Y].ForeColor, Color.RoyalBlue);
                     }
                 }

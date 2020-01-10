@@ -12,8 +12,6 @@ namespace Landlord
         private static SadConsole.Console console;
         private static List<Point> path;
         private static Point prevMapPos;
-        private static DateTime lastFrameTime = DateTime.Now;
-        private static int fps = 0, fSinceLastSec = 0;
 
         // CLASSES //
 
@@ -65,7 +63,7 @@ namespace Landlord
 
             // RENDER //
             // <itemList> = the items to be rendered
-            public void Render(List<Item> itemList, Color itemColor, Color highlightedColor, Color itemBgColor, Color bgColor)
+            public void Render(Color itemColor, Color highlightedColor, Color itemBgColor, Color bgColor)
             {
                 itemsPerPage = height / itemPadding;
                 if (height % itemPadding != 0)
@@ -366,7 +364,7 @@ namespace Landlord
                 }
                 
                 PrintHeader();
-                iItemList.Render(iItemList.ContainerInventory, Color.White, Color.Green, InventoryPanel.color, InventoryPanel.darkerColor);
+                iItemList.Render(Color.White, Color.Green, InventoryPanel.color, InventoryPanel.darkerColor);
             }
 
             public void HandleLootMenu()
@@ -1372,19 +1370,6 @@ namespace Landlord
             else
                 path = null;
             return path;
-        }
-
-        static public void DrawFPS()
-        {
-            if (DateTime.Now - lastFrameTime >= new TimeSpan(0, 0, 1))
-            {
-                lastFrameTime = DateTime.Now;
-                fps = fSinceLastSec;
-                fSinceLastSec = 0;
-            }
-            else
-                fSinceLastSec++;
-            GUI.Console.Print( InventoryPanel.Width, 0, $"{fps}", new Color(Color.AntiqueWhite, 0.95f));
         }
 
         static public Tuple<byte, Color> GetItemArrow(Item item)

@@ -281,7 +281,7 @@ namespace Landlord
                 return;
             }
 
-            if (!nextPos.Equals(new Point()) || c.CanCarryItem(nextComponent.ToItem()) == true)
+            if (!nextPos.Equals(new Point()) || c.CheckCanCarryItem(nextComponent.ToItem()) == true)
             {
                 bool nextToItem = c.Position.NextToPoint(nextPos);
                 int currentFloor = c.CurrentFloor;
@@ -309,7 +309,7 @@ namespace Landlord
                         }
                     }
                     else {
-                        if (c.CanCarryItem( (Item)blocks[nextPos.X * width + nextPos.Y] )) {
+                        if (c.CheckCanCarryItem( (Item)blocks[nextPos.X * width + nextPos.Y] )) {
                             c.GetItem( nextPos );
                             getIndex++;
                         }

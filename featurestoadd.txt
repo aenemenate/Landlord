@@ -43,6 +43,7 @@ move durability from item to block
 add throwing
 add metal ore to game
 add metal smith block
+restructure crafting to take advantage of smithing
 add crafting recipe that requires smith block
  -> smith block recipe - takes an ore and spits out a block of the same material
  -> add recipe for each weapon
@@ -58,6 +59,12 @@ in smithing menu, crafting recipes that use smith are displayed
 
 ENGINE:
 *support for variable maptile size
+*add InteractionHandler:
+ -> called when two blocks smash eachother
+ -> will flag blocks for deletion if necessary, and
+ -> flag deletionhandler to take action
+add DeletionHandler:
+ -> 
 save each maptile individually
 add ItemDistributor class which is called to get items
 add ItemDistributor.GetRandWeaponMaterial()

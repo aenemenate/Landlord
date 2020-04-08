@@ -713,8 +713,11 @@ namespace Landlord
                 Program.Console.Clear();
                 if (Program.Animations.Count > 0)
                     Program.FinishedAnims.Add(Program.Animations[0]);
-                GeneratingWorldMap state = (GeneratingWorldMap)Program.CurrentState;
-                CreaturePlacementHelper.PlacePlayer(state.UClass, state.Gender, state.Name);
+                if (Program.CurrentState is GeneratingWorldMap)
+                {
+                    GeneratingWorldMap state = (GeneratingWorldMap)Program.CurrentState;
+                    CreaturePlacementHelper.PlacePlayer(state.UClass, state.Gender, state.Name);
+                }
                 Program.CurrentState = new Intro();
                 loading = false;
             }

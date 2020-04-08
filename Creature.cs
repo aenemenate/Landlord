@@ -339,9 +339,9 @@ namespace Landlord
 
             // deplete stamina
             if (weapon != null)
-                ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
+                ChangeResource(Resource.SP, -(int)(weapon.Weight));
             else
-                ChangeResource(Resource.SP, -8);
+                ChangeResource(Resource.SP, -4);
         }
         // Note: this function will return a negative value if the defender blocked. This is for message handling.
         public int Defend(DamageType dmgType, int dmg, Point dmgAngle)
@@ -425,7 +425,7 @@ namespace Landlord
                 }
                 projectiles.Add(new Projectile(blocks, width, height, position, pos, arrow));
                 if (this is Player) Program.MsgConsole.WriteLine(shotTrue ? $"Shot the {arrow.Name}" : $"Clumsily shot the {arrow.Name}");
-                ChangeResource(Resource.SP, -(int)(rw.Weight * 10));
+                ChangeResource(Resource.SP, -(int)(rw.Weight * 3));
                 ApplyActionCost(6);
             }
             else if (this is Player) {
@@ -569,7 +569,7 @@ namespace Landlord
                 if (rng.Next(0, 100) < 30)
                     LvlWeaponSkill(weapon, 10);
                 // deplete stamina
-                ChangeResource( Resource.SP, -(int)( weapon.Weight * 2 ) );
+                ChangeResource( Resource.SP, -(int)( weapon.Weight ) );
                 Program.MsgConsole.WriteLine($"{Name} chopped the tree.");
                 
                 if (tree.Thickness <= 0) {
@@ -591,7 +591,7 @@ namespace Landlord
                     ApplyActionCost(weapon.GetWeaponCost(this));
                     if (rng.Next(0, 100) < 30)
                         LvlWeaponSkill(weapon, 10);
-                    ChangeResource(Resource.SP, -(int)(weapon.Weight * 2));
+                    ChangeResource(Resource.SP, -(int)(weapon.Weight / 2));
                 }
                 ChangeResource(Resource.SP, -20);
 
@@ -617,7 +617,7 @@ namespace Landlord
                 ApplyActionCost(axe.GetWeaponCost(this) );
                 if (rng.Next( 0, 100 ) < 30)
                     LvlWeaponSkill( axe, 10 );
-                ChangeResource( Resource.SP, -(int)( axe.Weight * 2 ) );
+                ChangeResource( Resource.SP, -(int)( axe.Weight * 1.5 ) );
                 wall.HP -= (int)Physics.ImpactYields[axe.Material] - (int)Physics.ImpactYields[Material.Stone];
             }
             if (wall.HP <= 0) {

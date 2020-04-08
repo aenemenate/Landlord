@@ -238,18 +238,21 @@ namespace Landlord
             if (Stats.Resources[Resource.HP] == 0)
                 Die();
         }
-        private void ApplyActionCost( int maxNumOfSeconds )
+        private void ApplyActionCost(int maxNumOfSeconds)
         {
             double granularity = stats.Attributes[Attribute.Agility] / 300;
             int timeToAdd = (int)(maxNumOfSeconds * (1 - granularity));
             nextActionTime.AddTime(timeToAdd);
             if (new Random().Next(0, 100) <= 2)
                 ChangeResource(Resource.HV, -(timeToAdd / 4));
-            if (Stats.Resources[Resource.HV] == 0 && new Random().Next(0, 100) <= 1)
-                ChangeResource(Resource.HP, -1);
-            if (stats.Resources[Resource.SP] >= stats.Resources[Resource.SP] * 0.8F && Program.TimeHandler.CurrentTime.Second % 10 == 0) {
-                if (stats.Resources[Resource.HP] < stats.Resources[Resource.MaxHP]) stats.Resources[Resource.HP] += 1;
-            }
+            if ( stats.Resources[Resource.HV] == 0 
+              && new Random().Next(0, 100) <= 1
+              && stats.Resources[Resource.HP] > 1
+               ) ChangeResource(Resource.HP, -1);
+            if ( stats.Resources[Resource.SP] >= stats.Resources[Resource.SP] * 0.8F 
+              && Program.TimeHandler.CurrentTime.Second % 10 == 0
+              && stats.Resources[Resource.HP] < stats.Resources[Resource.MaxHP]
+               ) stats.Resources[Resource.HP] += 1;
             if (stats.Resources[Resource.HP] > stats.Resources[Resource.MaxHP] * 0.8)
                 this.Splattered = false;
             ApplyEffects();

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Landlord", "Landlord\Landlord.csproj", "{17C7C038-30D9-48F6-9005-CBE3717A8D07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{17C7C038-30D9-48F6-9005-CBE3717A8D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17C7C038-30D9-48F6-9005-CBE3717A8D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17C7C038-30D9-48F6-9005-CBE3717A8D07}.Debug|x64.ActiveCfg = Debug|x64
+		{17C7C038-30D9-48F6-9005-CBE3717A8D07}.Debug|x64.Build.0 = Debug|x64
+		{17C7C038-30D9-48F6-9005-CBE3717A8D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17C7C038-30D9-48F6-9005-CBE3717A8D07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17C7C038-30D9-48F6-9005-CBE3717A8D07}.Release|x64.ActiveCfg = Release|x64
+		{17C7C038-30D9-48F6-9005-CBE3717A8D07}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CEF41599-E2D3-4C05-B39F-A21796602BE3}
+	EndGlobalSection
+EndGlobal

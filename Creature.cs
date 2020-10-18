@@ -769,7 +769,7 @@ namespace Landlord
             int width = Program.WorldMap.TileWidth, height = Program.WorldMap.TileHeight;
             List<Point> freeDirections = blocks.GetEmptyAdjacentBlocks(new Point(width, height), position); 
             if (freeDirections.Count == 0) {
-                Menus.DisplayIncorrectUsage("There's no space to drop that.");
+                Program.MsgConsole.WriteLine($"{Name} couldn't drop {item.Name}.");
                 return false;
             }
             Point point = freeDirections[new Random().Next(0, freeDirections.Count)];
